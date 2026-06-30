@@ -334,7 +334,22 @@ data provided — reason from team form, goal patterns, and the stage of \
 the tournament instead. Be specific and opinionated, not generic. Output ONLY the JSON object."""
 
 
-def generate_prediction(api_key, fixture, home_form, away_form):
+def validate_prediction_schema(parsed):
+    """Raise a clear error if the parsed prediction is missing required fields.
+    Used to catch incomplete API responses instead of silently shipping them."""
+    required_top = ["analysis", "prediction", "winnerConfidence", "scoreConfidence", "confidenceNote", "alternates"]
+    missing = [k for k in required_top if k not in parsed]
+    if missing:
+        raise ValueError(f"Prediction response missing required field(s): {missing}")
+    if not isinstance(parsed["alternates"], list) or len(parsed["alternates"]) < 2:
+        raise ValueError(f"Expected at least 2 alternates, got: {parsed.get('alternates')}")
+    for alt in parsed["alternates"]:
+        for k in ["prediction", "likelihood", "reasoning"]:
+            if k not in alt:
+                raise ValueError(f"Alternate missing required field '{k}': {alt}")
+
+
+def generate_prediction(api_key, fixture, home_form, away_form, max_attempts=2):
     user_prompt = (
         f"Match: {fixture['team1']} vs {fixture['team2']}\n"
         f"Round: {fixture['round']}\n"
@@ -343,14 +358,22 @@ def generate_prediction(api_key, fixture, home_form, away_form):
         f"{fixture['team1']} recent results: {home_form}\n"
         f"{fixture['team2']} recent results: {away_form}\n"
     )
-    raw = call_claude(api_key, PREDICTION_SYSTEM_PROMPT, user_prompt, max_tokens=1500)
-    raw = raw.strip()
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    parsed = json.loads(raw.strip())
-    return parsed
+    last_err = None
+    for attempt in range(1, max_attempts + 1):
+        try:
+            raw = call_claude(api_key, PREDICTION_SYSTEM_PROMPT, user_prompt, max_tokens=1500)
+            raw = raw.strip()
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            parsed = json.loads(raw.strip())
+            validate_prediction_schema(parsed)
+            return parsed
+        except (json.JSONDecodeError, ValueError) as e:
+            last_err = e
+            print(f"  Prediction attempt {attempt}/{max_attempts} produced invalid schema: {e}", file=sys.stderr)
+    raise RuntimeError(f"Could not get a valid prediction after {max_attempts} attempts: {last_err}")
 
 
 def build_todays_predictions(api_key, fixtures, today_str):
