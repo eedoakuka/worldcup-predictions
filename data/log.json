@@ -41,18 +41,12 @@
           "confidenceNote": "Fairly confident Brazil finds a way through, but this looks tight so any exact score is closer to a guess than a read.",
           "alternates": [
             {
-              "prediction": {
-                "home": 1,
-                "away": 1
-              },
+              "prediction": {"home": 1, "away": 1},
               "likelihood": "Draw scenario",
               "reasoning": "If Japan's low block holds for the full 90 without the early concession that actually happened, this becomes the kind of grinding, low-event draw Japan specializes in against bigger sides."
             },
             {
-              "prediction": {
-                "home": 3,
-                "away": 1
-              },
+              "prediction": {"home": 3, "away": 1},
               "likelihood": "Bigger margin",
               "reasoning": "If Vinícius Júnior gets isolated one-on-one repeatedly in the first half the way the group-stage tape suggested, Brazil's central overloads could produce a more comfortable scoreline than a single-goal win."
             }
@@ -106,18 +100,12 @@
           "confidenceNote": "The gap in quality is wide enough that Germany losing would be a genuine shock. The margin is the only real question.",
           "alternates": [
             {
-              "prediction": {
-                "home": 2,
-                "away": 0
-              },
+              "prediction": {"home": 2, "away": 0},
               "likelihood": "Tighter margin",
               "reasoning": "A more conservative read of the same data — Germany's shot-quality edge shows up on the scoreboard, but Paraguay's defensive discipline (they conceded just once in their final two group games) keeps it from getting out of hand."
             },
             {
-              "prediction": {
-                "home": 1,
-                "away": 1
-              },
+              "prediction": {"home": 1, "away": 1},
               "likelihood": "Different winner",
               "reasoning": "If Julio Enciso, the one player flagged as a genuine creative threat, finds space behind a German backline missing Nico Schlotterbeck, a single defensive lapse is enough to turn this into the upset that actually happened."
             }
@@ -171,32 +159,19 @@
           "confidenceNote": "Close to a true coin flip on the winner. The exact score is little more than 'expect goals at both ends.'",
           "alternates": [
             {
-              "prediction": {
-                "home": 1,
-                "away": 1
-              },
+              "prediction": {"home": 1, "away": 1},
               "likelihood": "Draw scenario",
               "reasoning": "Given the Netherlands haven't kept a clean sheet all tournament and Morocco's low block is built to deny exactly the kind of service that's fed their front three so far, a stalemate is a live outcome if Morocco's discipline holds."
             },
             {
-              "prediction": {
-                "home": 1,
-                "away": 2
-              },
+              "prediction": {"home": 1, "away": 2},
               "likelihood": "Different winner",
               "reasoning": "Morocco's underlying shot volume (16 per game, ahead of the Dutch) suggests that if their final-third quality matches their territorial dominance even once, they have the profile to do what they did to Spain and Portugal in 2022."
             }
           ],
-          "status": "final",
-          "result": {
-            "home": 1,
-            "away": 1,
-            "note": ""
-          },
-          "verdict": {
-            "outcome": "wrong",
-            "writeup": "I predicted a Dutch win and they couldn't manage it, so the result is wrong. My reasoning that Morocco's low-block discipline would make this an arm-wrestle proved accurate — the 1-1 scoreline reflects exactly the kind of tight, attritional game I described — but the assumption that Netherlands would find a decisive edge through individual quality didn't hold. I correctly flagged the Dutch defensive vulnerability and Morocco's structural quality, yet somehow still leaned Dutch when the logic of my own analysis pointed to a draw being at least as likely as a narrow Netherlands win."
-          }
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
         }
       ],
       "tournamentContext": {
@@ -245,18 +220,12 @@
           "confidenceNote": "While France's superiority is near-certain based on form and the defensive data on Sweden, pinning the exact margin is speculative — France could ease off after going three up, or Sweden could nick more than one on a set piece, making the precise 4-1 line far less reliable than the overall winner call.",
           "alternates": [
             {
-              "prediction": {
-                "home": 2,
-                "away": 0
-              },
+              "prediction": {"home": 2, "away": 0},
               "likelihood": "Tighter margin",
               "reasoning": "If Sweden's low block holds longer than it did against the Netherlands and France don't get an early breakthrough, this becomes a more cautious, lower-event win rather than the open game their group-stage numbers suggest."
             },
             {
-              "prediction": {
-                "home": 4,
-                "away": 2
-              },
+              "prediction": {"home": 4, "away": 2},
               "likelihood": "Bigger margin",
               "reasoning": "Given Sweden conceded five to the Netherlands and France have scored in every group match without exception, a defensive lapse of similar scale would push this well past a single-goal margin in France's favor."
             }
