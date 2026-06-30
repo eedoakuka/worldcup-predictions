@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Match Sheet — World Cup 2026</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    body { margin: 0; padding: 0; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<!--
+  This file is generated automatically by update_sheet.py, which runs daily
+  via GitHub Actions. The line below injects the latest prediction log.
+  Do not hand-edit the MATCH_SHEET_LOG constant — edit data/log.json and
+  re-run the script (or wait for the next scheduled run) instead.
+-->
+<script>
+  window.MATCH_SHEET_LOG = {"entries": [{"date": "2026-06-29", "matches": [{"id": "braz-japa-2026-06-29", "kickoff": "12:00 PM ET", "venue": "Houston", "round": "Round of 32", "home": {"name": "Brazil", "code": "BRA"}, "away": {"name": "Japan", "code": "JPN"}, "homeForm": "W3 D1 — Group C winners, conceded once in three", "awayForm": "W1 D2 — unbeaten through Group F, two clean sheets", "analysis": [{"heading": "Why Brazil should have control of this game", "body": "Brazil won Group C without really being tested — a 1-1 draw with Morocco bookended by 3-0 wins over Haiti and Scotland. The real signal is Vinícius Júnior: four goals in the group phase, playing with the kind of freedom Ancelotti's system is built to give him. If Brazil's fullbacks push up and Casemiro screens in front of the back line, Brazil's central overloads should eventually find a way through."}, {"heading": "Why Japan is a live underdog, not a paper one", "body": "Japan went unbeaten in a genuinely hard Group F and did it without their best dribbler, Takefusa Kubo, who is out injured. What's left is a defensively compact, positionally disciplined block that wants to deny crosses and force Brazil into low-value possession out wide. Japan beat this same Brazil squad 3-2 in a Kirin Cup friendly in October 2025 — this group of players can be rattled."}, {"heading": "The tactical crux", "body": "Everything hinges on whether Japan's back line can hold its shape against Brazil's central overloads for 90 minutes. Brazil's full-backs will be allowed to bomb forward because the midfield is disciplined enough to cover in behind. Japan's best path to goals is the counter — high-risk, but it worked in the Kirin Cup."}], "prediction": {"home": 2, "away": 1}, "winnerConfidence": 62, "scoreConfidence": 14, "confidenceNote": "Fairly confident Brazil finds a way through, but this looks tight so any exact score is closer to a guess than a read.", "result": {"home": 2, "away": 1, "note": ""}, "verdict": {"outcome": "correct", "writeup": "I predicted Brazil 2-1 and that's exactly how it finished. The shape of the game matched the read too: Japan took an early lead through Kaishu Sano in the 29th minute, which is precisely the kind of rattle I flagged as live given their October 2025 win over this squad, but Brazil's central overloads eventually told, with Casemiro breaking the deadlock in the 56th minute before Gabriel Martinelli sealed it in stoppage time. The low score confidence (14%) was honestly earned — the winner call was right, but pinning the exact 2-1 scoreline was always closer to a coin flip than a read."}}, {"id": "germ-para-2026-06-29", "kickoff": "4:30 PM ET", "venue": "Boston (Foxborough)", "round": "Round of 32", "home": {"name": "Germany", "code": "GER"}, "away": {"name": "Paraguay", "code": "PAR"}, "homeForm": "W2 L1 — Group E winners despite a late wobble", "awayForm": "W1 D1 L1 — scraped through as a third-place qualifier", "analysis": [{"heading": "Why Germany is the right side to back here", "body": "Germany topped Group E comfortably, with an attacking trio that should be hunting for a reset after a quiet send-off. Paraguay don't have the attacking firepower on paper to consistently punish a centre-back pairing of Germany's quality."}, {"heading": "Why Paraguay won't simply roll over", "body": "Paraguay's route here was genuinely shaky — a 4-1 opening loss, a grinding 1-0 win, and a 0-0 stalemate that snuck them through on goal difference. Julio Enciso is the one player worth watching: he's created more chances than anyone else on the roster and presses relentlessly."}, {"heading": "The number that decides this", "body": "The shot data gap between these sides is wide. Paraguay have never scored in five World Cup knockout matches, the longest such drought in tournament history. Breaking that against this German back line looked like a tall ask."}], "prediction": {"home": 3, "away": 0}, "winnerConfidence": 88, "scoreConfidence": 22, "confidenceNote": "The gap in quality is wide enough that Germany losing would be a genuine shock. The margin is the only real question.", "result": {"home": 1, "away": 1, "note": "Paraguay won 4-3 on penalties after extra time."}, "verdict": {"outcome": "wrong", "writeup": "This is the prediction I got most wrong, and it's worth being direct about why. I gave Germany 88% to win and predicted a comfortable 3-0 — but Julio Enciso, the one player I explicitly flagged as live, scored in the 42nd minute to put Paraguay ahead at the half, and Germany only leveled through Kai Havertz in the 54th. The 'Paraguay have never scored in five knockout matches' stat I leaned on as a structural advantage turned out to describe a drought, not a law — droughts end, and this one ended at the worst possible moment for my prediction. The bigger miss was treating Germany's underlying quality as automatically translating to control on the day; Paraguay then won 4-3 on penalties, which my model never gave any real weight to as an outcome at all. An 88% winner confidence should leave more room for exactly this kind of result than I allowed for."}}, {"id": "neth-moro-2026-06-29", "kickoff": "9:00 PM ET", "venue": "Monterrey (Guadalupe)", "round": "Round of 32", "home": {"name": "Netherlands", "code": "NED"}, "away": {"name": "Morocco", "code": "MAR"}, "homeForm": "D1 W2 — 10 goals scored, a clean sheet in none of them", "awayForm": "D1 W2 — unbeaten in a group that included Brazil", "analysis": [{"heading": "Why the Dutch attack makes them favorites on paper", "body": "The Netherlands have been the most clinical team left in the bracket, scoring nearly double what their underlying chances suggested across the group stage, spread across three different scorers."}, {"heading": "Why Morocco are live, not just respectable", "body": "Morocco matched Brazil for spells of their opening game and finished second in Group C unbeaten. This is a side that made the 2022 World Cup semifinal by beating Spain and Portugal, and they bring the same low-block, deny-the-cross discipline that troubled the elite then."}, {"heading": "The flaw that decides it", "body": "The Dutch have not kept a clean sheet all tournament. Morocco are a different class of opponent defensively and should get good, repeatable chances. The likeliest version of this game is an arm-wrestle the Netherlands edge through individual quality, not defensive control."}], "prediction": {"home": 2, "away": 1}, "winnerConfidence": 48, "scoreConfidence": 11, "confidenceNote": "Close to a true coin flip on the winner. The exact score is little more than 'expect goals at both ends.'", "result": null, "verdict": null}]}]};
+</script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// ── API key management (only used for the optional in-page "Ask" feature) ──
+function getApiKey() { return localStorage.getItem("wc-api-key") || ""; }
+function setApiKey(k) { localStorage.setItem("wc-api-key", k); }
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+function formatDateLong(iso) {
+  return new Date(iso + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+}
+function confidenceTier(pct) {
+  if (pct >= 70) return { fg: "#7fd99a" };
+  if (pct >= 40) return { fg: "#e8c468" };
+  return { fg: "#e8896a" };
+}
+
+// ── Components ───────────────────────────────────────────────────────────────
+function ConfidenceMeter({ label, pct }) {
+  const { fg } = confidenceTier(pct);
+  return (
+    <div className="meter">
+      <div className="meter-label-row">
+        <span className="meter-label">{label}</span>
+        <span className="meter-pct" style={{ color: fg }}>{pct}%</span>
+      </div>
+      <div className="meter-track">
+        <div className="meter-fill" style={{ width: `${pct}%`, background: fg }} />
+      </div>
+    </div>
+  );
+}
+
+function ScoreSlip({ match }) {
+  return (
+    <div className="slip">
+      <div className="slip-row">
+        <span className="slip-team">{match.home.name}</span>
+        <span className="slip-score">{match.prediction.home}</span>
+      </div>
+      <div className="slip-row">
+        <span className="slip-team">{match.away.name}</span>
+        <span className="slip-score">{match.prediction.away}</span>
+      </div>
+      <div className="meters">
+        <ConfidenceMeter label="Winner" pct={match.winnerConfidence} />
+        <ConfidenceMeter label="Exact score" pct={match.scoreConfidence} />
+      </div>
+      {match.confidenceNote && <p className="confidence-note">{match.confidenceNote}</p>}
+    </div>
+  );
+}
+
+function buildMatchContext(match) {
+  const lines = [
+    `Match: ${match.home.name} vs ${match.away.name} (${match.round}, ${match.kickoff}, ${match.venue})`,
+    `${match.home.name} form: ${match.homeForm}`,
+    `${match.away.name} form: ${match.awayForm}`,
+    `Predicted: ${match.home.name} ${match.prediction.home}-${match.prediction.away} ${match.away.name}`,
+    `Winner confidence: ${match.winnerConfidence}%. Score confidence: ${match.scoreConfidence}%.`,
+    match.confidenceNote ? `Confidence note: ${match.confidenceNote}` : "",
+    "Analysis:"
+  ];
+  match.analysis.forEach(b => lines.push(`- ${b.heading}: ${b.body}`));
+  if (match.result) lines.push(`ACTUAL RESULT: ${match.home.name} ${match.result.home}-${match.result.away} ${match.away.name}.${match.result.note ? " " + match.result.note : ""}`);
+  if (match.verdict) lines.push(`Verdict: ${match.verdict.outcome}. ${match.verdict.writeup || ""}`);
+  return lines.filter(Boolean).join("\n");
+}
+
+function MatchChat({ match, apiKey }) {
+  const [open, setOpen] = useState(false);
+  const [question, setQuestion] = useState("");
+  const [thread, setThread] = useState([]);
+  const [asking, setAsking] = useState(false);
+  const [err, setErr] = useState(null);
+  const bottomRef = useRef(null);
+
+  useEffect(() => { if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" }); }, [thread, asking]);
+
+  async function ask(e) {
+    e.preventDefault();
+    const q = question.trim();
+    if (!q || asking) return;
+    if (!apiKey) { setErr("Add your Anthropic API key at the top of the page to use this feature."); return; }
+    setErr(null);
+    setQuestion("");
+    const nextThread = [...thread, { role: "user", text: q }];
+    setThread(nextThread);
+    setAsking(true);
+    try {
+      const system = `You are the analyst behind a World Cup prediction column called "The Match Sheet." Answer the reader's question about this specific prediction directly — reference the actual reasoning, players, and numbers. Keep answers to 2-4 sentences unless more is genuinely needed. Plain prose only, no markdown headers.\n\n--- MATCH DATA ---\n${buildMatchContext(match)}`;
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, system, messages: nextThread.map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text })) })
+      });
+      if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error?.message || `API error ${res.status}`); }
+      const data = await res.json();
+      const text = (data.content || []).find(b => b.type === "text")?.text || "No answer returned.";
+      setThread(t => [...t, { role: "assistant", text }]);
+    } catch (e2) {
+      setErr(e2.message || "Couldn't reach the analyst — try again.");
+      setThread(t => t.slice(0, -1));
+      setQuestion(q);
+    } finally { setAsking(false); }
+  }
+
+  if (!open) return <button className="ask-toggle" onClick={() => setOpen(true)}>Ask about this prediction →</button>;
+
+  return (
+    <div className="ask-box">
+      <div className="ask-head">
+        <span>Ask about {match.home.name} vs {match.away.name}</span>
+        <button className="ask-close" onClick={() => setOpen(false)}>×</button>
+      </div>
+      {thread.length > 0 && (
+        <div className="ask-thread">
+          {thread.map((m, i) => (
+            <div key={i} className={`ask-msg ask-msg-${m.role}`}>
+              <span className="ask-msg-label">{m.role === "user" ? "You" : "Analyst"}</span>
+              <p>{m.text}</p>
+            </div>
+          ))}
+          {asking && <div className="ask-msg ask-msg-assistant"><span className="ask-msg-label">Analyst</span><p className="ask-thinking">Thinking…</p></div>}
+          <div ref={bottomRef} />
+        </div>
+      )}
+      {err && <p className="ask-error">{err}</p>}
+      <form className="ask-form" onSubmit={ask}>
+        <input type="text" value={question} onChange={e => setQuestion(e.target.value)} placeholder="e.g. Why isn't your score confidence higher?" disabled={asking} />
+        <button type="submit" disabled={asking || !question.trim()}>Ask</button>
+      </form>
+    </div>
+  );
+}
+
+function ResultStrip({ match }) {
+  const { result, verdict } = match;
+  const styles = { correct: { bg: "#1a3d2e", fg: "#7fd99a", label: "CALLED IT" }, close: { bg: "#3d3214", fg: "#e8c468", label: "CLOSE" }, wrong: { bg: "#3d1f1a", fg: "#e8896a", label: "MISSED" } };
+  const s = styles[verdict?.outcome] || styles.wrong;
+  return (
+    <div className="result-strip">
+      <div className="result-head">
+        <span className="result-badge" style={{ background: s.bg, color: s.fg }}>{s.label}</span>
+        <span className="result-score">Final: {match.home.name} {result.home}–{result.away} {match.away.name} <span className="predicted-was">(predicted {match.prediction.home}-{match.prediction.away})</span></span>
+      </div>
+      {verdict?.writeup && <p className="result-writeup">{verdict.writeup}</p>}
+      {result.note && <p className="result-note">{result.note}</p>}
+    </div>
+  );
+}
+
+function MatchCard({ match, apiKey }) {
+  return (
+    <article className="match">
+      <header className="match-head">
+        <div className="match-meta">
+          <span className="round-tag">{match.round}</span>
+          <span className="dot">·</span><span>{match.kickoff}</span>
+          <span className="dot">·</span><span>{match.venue}</span>
+        </div>
+        <h2 className="match-title">
+          <span className="crest">{match.home.code}</span>
+          {match.home.name}
+          <span className="vs">vs</span>
+          {match.away.name}
+          <span className="crest">{match.away.code}</span>
+        </h2>
+        <div className="form-line">
+          <span><strong>{match.home.name}:</strong> {match.homeForm}</span>
+          <span><strong>{match.away.name}:</strong> {match.awayForm}</span>
+        </div>
+      </header>
+      <div className="match-body">
+        <div className="analysis">
+          {match.analysis.map((b, i) => (
+            <div className="analysis-block" key={i}>
+              <h3>{b.heading}</h3>
+              <p>{b.body}</p>
+            </div>
+          ))}
+        </div>
+        <ScoreSlip match={match} />
+      </div>
+      {match.result && <ResultStrip match={match} />}
+      <MatchChat match={match} apiKey={apiKey} />
+    </article>
+  );
+}
+
+function DaySection({ entry, apiKey }) {
+  const isToday = entry.date === todayISO();
+  return (
+    <section className="day">
+      <div className="day-head">
+        <h2>{formatDateLong(entry.date)}</h2>
+        {isToday && <span className="today-flag">Today's slate</span>}
+      </div>
+      {entry.matches.map(m => <MatchCard key={m.id} match={m} apiKey={apiKey} />)}
+    </section>
+  );
+}
+
+function BankRow({ match, apiKey }) {
+  const graded = !!match.result;
+  const styles = { correct: { bg: "#1a3d2e", fg: "#7fd99a", label: "CALLED IT" }, close: { bg: "#3d3214", fg: "#e8c468", label: "CLOSE" }, wrong: { bg: "#3d1f1a", fg: "#e8896a", label: "MISSED" } };
+  const s = graded ? (styles[match.verdict?.outcome] || styles.wrong) : null;
+  return (
+    <div className="bank-row">
+      <div className="bank-row-top">
+        <span className="bank-date">{formatDateLong(match.date)}</span>
+        {graded ? <span className="bank-badge" style={{ background: s.bg, color: s.fg }}>{s.label}</span> : <span className="bank-badge bank-badge-pending">PENDING</span>}
+      </div>
+      <div className="bank-row-main">
+        <span className="bank-teams">{match.home.name} vs {match.away.name}</span>
+        <span className="bank-scores">Predicted {match.prediction.home}-{match.prediction.away}{graded ? ` → Actual ${match.result.home}-${match.result.away}` : ""}</span>
+      </div>
+      <div className="bank-row-conf">
+        <span>Winner confidence: <strong>{match.winnerConfidence}%</strong></span>
+        <span>Score confidence: <strong>{match.scoreConfidence}%</strong></span>
+      </div>
+      {graded && match.verdict?.writeup && <p className="bank-writeup">{match.verdict.writeup}</p>}
+      <MatchChat match={match} apiKey={apiKey} />
+    </div>
+  );
+}
+
+function BankView({ entries, apiKey }) {
+  const flat = entries.flatMap(e => e.matches.map(m => ({ ...m, date: e.date })));
+  const graded = flat.filter(m => m.result);
+  const correct = graded.filter(m => m.verdict?.outcome === "correct").length;
+  const close = graded.filter(m => m.verdict?.outcome === "close").length;
+  const wrong = graded.filter(m => m.verdict?.outcome === "wrong").length;
+  const exactScores = graded.filter(m => m.result.home === m.prediction.home && m.result.away === m.prediction.away).length;
+  const winnersRight = graded.filter(m => {
+    const po = m.prediction.home > m.prediction.away ? "h" : m.prediction.home < m.prediction.away ? "a" : "d";
+    const ao = m.result.home > m.result.away ? "h" : m.result.home < m.result.away ? "a" : "d";
+    return po === ao;
+  }).length;
+  const sorted = [...flat].sort((a, b) => a.date < b.date ? 1 : -1);
+  return (
+    <div className="bank">
+      <div className="bank-stats">
+        <div className="stat"><span className="stat-num">{graded.length ? Math.round(winnersRight / graded.length * 100) : 0}%</span><span className="stat-label">Winner called right</span></div>
+        <div className="stat"><span className="stat-num">{graded.length ? Math.round(exactScores / graded.length * 100) : 0}%</span><span className="stat-label">Exact score hit</span></div>
+        <div className="stat"><span className="stat-num">{correct}-{close}-{wrong}</span><span className="stat-label">Called it / close / missed</span></div>
+        <div className="stat"><span className="stat-num">{graded.length}</span><span className="stat-label">Graded predictions</span></div>
+      </div>
+      {flat.length === 0 ? <p className="bank-empty">No predictions logged yet.</p> : sorted.map(m => <BankRow key={m.id} match={m} apiKey={apiKey} />)}
+    </div>
+  );
+}
+
+function ApiKeyBanner({ apiKey, onSave }) {
+  const [val, setVal] = useState(apiKey);
+  const [saved, setSaved] = useState(false);
+  function save(e) {
+    e.preventDefault();
+    onSave(val.trim());
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
+  return (
+    <div className="api-banner">
+      <span className="api-label">Anthropic API key for Ask feature:</span>
+      <form className="api-form" onSubmit={save}>
+        <input type="password" value={val} onChange={e => setVal(e.target.value)} placeholder="sk-ant-…" spellCheck={false} />
+        <button type="submit">{saved ? "Saved ✓" : "Save"}</button>
+      </form>
+      <a className="api-link" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Get a key →</a>
+    </div>
+  );
+}
+
+// ── App ──────────────────────────────────────────────────────────────────────
+function App() {
+  const [tab, setTab] = useState("sheet");
+  const [apiKey, setApiKeyState] = useState(getApiKey);
+  const log = window.MATCH_SHEET_LOG || { entries: [] };
+
+  function saveApiKey(k) { setApiKey(k); setApiKeyState(k); }
+
+  const entries = [...log.entries].sort((a, b) => a.date < b.date ? 1 : -1);
+
+  return (
+    <div className="page">
+      <Styles />
+      <header className="masthead">
+        <div className="masthead-inner">
+          <p className="kicker">THE MATCH SHEET</p>
+          <h1>World Cup 2026, Predicted Daily</h1>
+          <p className="sub">Every matchday gets a full breakdown and a locked-in score before kickoff. Every result gets graded the next day — no quiet edits, no deleted misses. Updates automatically every morning.</p>
+        </div>
+      </header>
+
+      <ApiKeyBanner apiKey={apiKey} onSave={saveApiKey} />
+
+      <nav className="tabs">
+        <div className="tabs-inner">
+          <button className={`tab ${tab === "sheet" ? "tab-active" : ""}`} onClick={() => setTab("sheet")}>Match Sheet</button>
+          <button className={`tab ${tab === "bank" ? "tab-active" : ""}`} onClick={() => setTab("bank")}>Prediction Bank</button>
+        </div>
+      </nav>
+
+      <main className="content">
+        {entries.length === 0 ? (
+          <p className="bank-empty">No predictions logged yet — check back after the next scheduled update.</p>
+        ) : tab === "sheet"
+          ? entries.map(e => <DaySection key={e.date} entry={e} apiKey={apiKey} />)
+          : <BankView entries={entries} apiKey={apiKey} />}
+      </main>
+
+      <footer className="page-footer">
+        <p>This page rebuilds itself automatically every morning via GitHub Actions — no manual updates needed. Use the Prediction Bank to see the full track record, and "Ask about this prediction" on any match to question the reasoning directly.</p>
+      </footer>
+    </div>
+  );
+}
+
+// ── Styles ───────────────────────────────────────────────────────────────────
+function Styles() {
+  return <style>{`
+    *{box-sizing:border-box}
+    .page{--ink:#14110f;--paper:#ece7dd;--paper-raised:#f5f1e8;--rule:#c9c0ad;--pitch:#1f4d3a;--pitch-deep:#163829;--accent:#c44a2c;font-family:'Georgia','Iowan Old Style',serif;background:var(--paper);color:var(--ink);min-height:100vh;line-height:1.5}
+    .masthead{background:var(--pitch-deep);color:var(--paper-raised);padding:2.5rem 1.5rem 2rem;border-bottom:6px solid var(--accent)}
+    .masthead-inner{max-width:760px;margin:0 auto}
+    .kicker{font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;letter-spacing:.28em;font-size:.72rem;color:#9fcab0;margin:0 0 .6rem}
+    .masthead h1{font-family:Georgia,serif;font-weight:700;font-size:clamp(1.8rem,5vw,2.6rem);margin:0 0 .7rem;letter-spacing:-.01em;line-height:1.08}
+    .masthead .sub{font-family:'Arial',Helvetica,sans-serif;font-size:.95rem;color:#cdd8cf;max-width:52ch;margin:0}
+    .api-banner{background:#2a2420;padding:.65rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;max-width:100%}
+    .api-label{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.04em;color:#aaa295;text-transform:uppercase;white-space:nowrap}
+    .api-form{display:flex;gap:.4rem;flex:1;min-width:0}
+    .api-form input{flex:1;min-width:0;font-family:'Arial',Helvetica,sans-serif;font-size:.85rem;padding:.35rem .65rem;border:1px solid #4a4238;background:#1a1714;color:#f5f1e8;border-radius:2px}
+    .api-form button{font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;font-size:.75rem;text-transform:uppercase;background:var(--pitch);color:#fff;border:none;padding:.35rem .8rem;cursor:pointer;white-space:nowrap;border-radius:2px}
+    .api-link{font-family:'Arial',Helvetica,sans-serif;font-size:.78rem;color:#9fcab0;text-decoration:none;white-space:nowrap}
+    .api-link:hover{text-decoration:underline}
+    .tabs{background:var(--ink);border-bottom:3px solid var(--accent)}
+    .tabs-inner{max-width:760px;margin:0 auto;padding:0 1.5rem;display:flex;gap:.25rem}
+    .tab{font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;background:transparent;color:#aaa295;border:none;padding:.85rem 1rem;cursor:pointer}
+    .tab:hover{color:#f5f1e8}
+    .tab-active{color:#fff;position:relative}
+    .tab-active::after{content:"";position:absolute;bottom:-3px;left:0;right:0;height:3px;background:var(--accent)}
+    .content{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3rem}
+    .day{margin-bottom:3rem}
+    .day-head{display:flex;align-items:baseline;gap:.75rem;border-bottom:2px solid var(--ink);padding-bottom:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
+    .day-head h2{font-size:1.3rem;margin:0;font-weight:700}
+    .today-flag{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.12em;background:var(--accent);color:#fff;padding:.2rem .55rem;border-radius:2px;text-transform:uppercase}
+    .match{background:var(--paper-raised);border:1px solid var(--rule);margin-bottom:1.75rem;padding:1.5rem;position:relative}
+    .match::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--pitch)}
+    .match-meta{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.78rem;color:#6b6354;letter-spacing:.03em;margin-bottom:.5rem;display:flex;gap:.4rem;flex-wrap:wrap}
+    .round-tag{font-weight:700;color:var(--pitch);text-transform:uppercase}
+    .dot{color:var(--rule)}
+    .match-title{font-size:1.5rem;margin:0 0 .6rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-weight:700}
+    .vs{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.75rem;color:#948c7a;font-weight:400;margin:0 .15rem}
+    .crest{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.65rem;font-weight:700;background:var(--ink);color:var(--paper-raised);padding:.2rem .4rem;border-radius:2px;letter-spacing:.02em}
+    .form-line{font-family:'Arial',Helvetica,sans-serif;font-size:.85rem;color:#5a5346;display:flex;flex-direction:column;gap:.2rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px dashed var(--rule)}
+    .match-body{display:grid;grid-template-columns:1fr 200px;gap:1.5rem;align-items:start}
+    @media(max-width:600px){.match-body{grid-template-columns:1fr}}
+    .analysis-block{margin-bottom:1.1rem}
+    .analysis-block:last-child{margin-bottom:0}
+    .analysis-block h3{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.85rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.03em;margin:0 0 .35rem}
+    .analysis-block p{margin:0;font-size:.97rem;color:#2a2620}
+    .slip{background:var(--ink);color:var(--paper-raised);padding:1rem;position:sticky;top:1rem}
+    .slip-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'Arial Narrow',Helvetica,sans-serif;padding:.3rem 0;border-bottom:1px solid #3a352c}
+    .slip-row:nth-child(2){border-bottom:none}
+    .slip-team{font-size:.78rem;text-transform:uppercase;letter-spacing:.02em}
+    .slip-score{font-size:1.4rem;font-weight:700;font-family:Georgia,serif}
+    .meters{margin-top:.85rem;display:flex;flex-direction:column;gap:.6rem}
+    .meter-label-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'Arial Narrow',Helvetica,sans-serif;margin-bottom:.25rem}
+    .meter-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:#aaa295}
+    .meter-pct{font-size:.78rem;font-weight:700}
+    .meter-track{height:5px;background:#3a352c;border-radius:3px;overflow:hidden}
+    .meter-fill{height:100%;border-radius:3px}
+    .confidence-note{margin:.85rem 0 0;padding-top:.7rem;border-top:1px solid #3a352c;font-family:'Arial',Helvetica,sans-serif;font-size:.78rem;line-height:1.45;color:#cbc4b5}
+    .result-strip{margin-top:1.25rem;padding-top:1.1rem;border-top:2px solid var(--ink)}
+    .result-head{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.5rem}
+    .result-badge{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.08em;padding:.25rem .5rem}
+    .result-score{font-family:'Arial',Helvetica,sans-serif;font-size:.92rem;font-weight:600}
+    .predicted-was{font-weight:400;color:#6b6354}
+    .result-writeup,.result-note{font-size:.95rem;margin:.4rem 0 0;color:#2a2620}
+    .ask-toggle{margin-top:1.25rem;font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.02em;background:transparent;color:var(--pitch);border:1.5px solid var(--pitch);padding:.5rem .9rem;cursor:pointer}
+    .ask-toggle:hover{background:var(--pitch);color:#fff}
+    .ask-box{margin-top:1.25rem;background:#e3ddcd;border:1px solid var(--rule)}
+    .ask-head{display:flex;justify-content:space-between;align-items:center;background:var(--pitch);color:#fff;padding:.55rem .9rem;font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;font-size:.82rem}
+    .ask-close{background:transparent;border:none;color:#fff;font-size:1.2rem;cursor:pointer;line-height:1;padding:0 .2rem}
+    .ask-thread{padding:.9rem;display:flex;flex-direction:column;gap:.7rem;max-height:360px;overflow-y:auto}
+    .ask-msg p{margin:.2rem 0 0;font-size:.92rem;color:#2a2620;font-family:'Arial',Helvetica,sans-serif;line-height:1.45}
+    .ask-msg-label{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#847b69}
+    .ask-msg-user .ask-msg-label{color:var(--accent)}
+    .ask-thinking{font-style:italic;color:#847b69}
+    .ask-error{margin:0 .9rem;font-family:'Arial',Helvetica,sans-serif;font-size:.82rem;color:#a3402a}
+    .ask-form{display:flex;gap:.5rem;padding:.75rem .9rem;border-top:1px solid var(--rule)}
+    .ask-form input{flex:1;font-family:'Arial',Helvetica,sans-serif;font-size:.9rem;padding:.5rem .65rem;border:1px solid var(--rule);background:#fff;color:var(--ink)}
+    .ask-form input:focus{outline:2px solid var(--pitch);outline-offset:1px}
+    .ask-form button{font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;font-size:.82rem;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0 1.1rem;cursor:pointer}
+    .ask-form button:disabled{background:#c9bfa8;cursor:not-allowed}
+    .bank-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:2rem}
+    @media(max-width:600px){.bank-stats{grid-template-columns:repeat(2,1fr)}}
+    .stat{background:var(--paper-raised);padding:1.1rem .75rem;text-align:center}
+    .stat-num{display:block;font-family:Georgia,serif;font-weight:700;font-size:1.7rem;color:var(--pitch-deep)}
+    .stat-label{display:block;font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:#6b6354;margin-top:.25rem}
+    .bank-empty{color:#6b6354;font-style:italic}
+    .bank-row{background:var(--paper-raised);border:1px solid var(--rule);padding:1.1rem 1.25rem;margin-bottom:1rem}
+    .bank-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+    .bank-date{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.75rem;color:#847b69}
+    .bank-badge{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.08em;padding:.2rem .5rem}
+    .bank-badge-pending{background:#d8d0bc;color:#6b6354}
+    .bank-row-main{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.4rem;margin-bottom:.4rem}
+    .bank-teams{font-weight:700;font-size:1.05rem}
+    .bank-scores{font-family:'Arial',Helvetica,sans-serif;font-size:.85rem;color:#5a5346}
+    .bank-row-conf{display:flex;gap:1.5rem;flex-wrap:wrap;font-family:'Arial',Helvetica,sans-serif;font-size:.82rem;color:#5a5346;margin-bottom:.3rem}
+    .bank-writeup{font-size:.92rem;margin:.5rem 0 0;color:#2a2620;padding-top:.5rem;border-top:1px dashed var(--rule)}
+    .page-footer{max-width:760px;margin:0 auto;padding:1.25rem 1.5rem 2.5rem;font-family:'Arial',Helvetica,sans-serif;font-size:.82rem;color:#847b69;border-top:1px solid var(--rule)}
+  `}</style>;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
