@@ -376,8 +376,18 @@ def generate_prediction(api_key, fixture, home_form, away_form, max_attempts=2):
     raise RuntimeError(f"Could not get a valid prediction after {max_attempts} attempts: {last_err}")
 
 
-def build_todays_predictions(api_key, fixtures, today_str):
+def build_todays_predictions(api_key, fixtures, today_str, only_ids=None):
+    """Generate predictions for today's fixtures. If only_ids is given, only
+    fixtures whose match_id is in that set are processed — this lets the
+    caller request just the fixtures that are missing a prediction, rather
+    than redoing ones that already exist (which would waste API calls and
+    could overwrite a result that's already been graded)."""
     todays_fixtures = [f for f in fixtures if f["date"] == today_str]
+    if only_ids is not None:
+        todays_fixtures = [
+            f for f in todays_fixtures
+            if match_id(f["date"], f["team1"], f["team2"]) in only_ids
+        ]
     matches = []
     for fx in todays_fixtures:
         mid = match_id(fx["date"], fx["team1"], fx["team2"])
@@ -452,19 +462,31 @@ def main():
         print("  Nothing new to grade.")
 
     existing_today = find_entry(log, today_str)
-    if existing_today and existing_today["matches"]:
-        print(f"Today ({today_str}) already has {len(existing_today['matches'])} prediction(s) logged. Skipping generation.")
+    already_predicted_ids = set()
+    if existing_today:
+        already_predicted_ids = {m["id"] for m in existing_today["matches"]}
+
+    all_todays_fixture_ids = {
+        match_id(f["date"], f["team1"], f["team2"])
+        for f in fixtures if f["date"] == today_str
+    }
+    missing_ids = all_todays_fixture_ids - already_predicted_ids
+
+    if not all_todays_fixture_ids:
+        print(f"No fixtures found in the data source for today ({today_str}).")
+    elif not missing_ids:
+        print(f"Today ({today_str}) already has all {len(all_todays_fixture_ids)} known fixture(s) predicted. Nothing new to generate.")
     else:
-        print(f"Generating predictions for today ({today_str})...")
-        todays_matches = build_todays_predictions(api_key, fixtures, today_str)
-        if todays_matches:
+        print(f"Today ({today_str}) has {len(missing_ids)} fixture(s) not yet predicted (out of {len(all_todays_fixture_ids)} total). Generating...")
+        new_matches = build_todays_predictions(api_key, fixtures, today_str, only_ids=missing_ids)
+        if new_matches:
             if existing_today:
-                existing_today["matches"] = todays_matches
+                existing_today["matches"].extend(new_matches)
             else:
-                log["entries"].append({"date": today_str, "matches": todays_matches})
-            print(f"  Added {len(todays_matches)} prediction(s) for today.")
+                log["entries"].append({"date": today_str, "matches": new_matches})
+            print(f"  Added {len(new_matches)} new prediction(s) for today.")
         else:
-            print("  No fixtures found for today, or all predictions failed to generate.")
+            print("  All missing fixtures failed to generate a valid prediction this run — will retry on the next run.")
 
     log["entries"].sort(key=lambda e: e["date"])
 
