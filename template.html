@@ -199,11 +199,7 @@ function MatchChat({ match, apiKey }) {
     } finally { setAsking(false); }
   }
 
-  if (!open) return (
-    <button className="ask-toggle" onClick={() => setOpen(true)}>
-      <span className="ask-toggle-icon">⚡</span> Ask about this prediction
-    </button>
-  );
+  if (!open) return <button className="ask-toggle" onClick={() => setOpen(true)}>Ask about this prediction →</button>;
 
   return (
     <div className="ask-box">
@@ -234,16 +230,12 @@ function MatchChat({ match, apiKey }) {
 
 function ResultStrip({ match }) {
   const { result, verdict } = match;
-  const styles = {
-    correct: { fg: "#5fe89a", glow: "rgba(95,232,154,0.4)", label: "CALLED IT" },
-    close: { fg: "#ffb627", glow: "rgba(255,182,39,0.4)", label: "CLOSE" },
-    wrong: { fg: "#ff6b5c", glow: "rgba(255,107,92,0.4)", label: "MISSED" }
-  };
+  const styles = { correct: { bg: "#1a3d2e", fg: "#7fd99a", label: "CALLED IT" }, close: { bg: "#3d3214", fg: "#e8c468", label: "CLOSE" }, wrong: { bg: "#3d1f1a", fg: "#ff6b5c", label: "MISSED" } };
   const s = styles[verdict?.outcome] || styles.wrong;
   return (
     <div className="result-strip">
       <div className="result-head">
-        <span className="result-badge" style={{ color: s.fg, borderColor: s.fg, boxShadow: `0 0 16px ${s.glow}` }}>{s.label}</span>
+        <span className="result-badge" style={{ color: s.fg, borderColor: s.fg }}>{s.label}</span>
         <span className="result-score">
           Final <strong>{match.home.name} {result.home}–{result.away} {match.away.name}</strong>
           <span className="predicted-was"> · predicted {match.prediction.home}-{match.prediction.away}</span>
@@ -316,6 +308,14 @@ function DaySection({ entry, apiKey }) {
   );
 }
 
+function allMatchesFlat(entries) {
+  const out = [];
+  entries.forEach((entry) => {
+    entry.matches.forEach((m) => out.push({ ...m, date: entry.date }));
+  });
+  return out;
+}
+
 function BankRow({ match, apiKey }) {
   const graded = !!match.result;
   const styles = {
@@ -348,20 +348,24 @@ function BankRow({ match, apiKey }) {
 }
 
 function BankView({ entries, apiKey }) {
-  const flat = entries.flatMap(e => e.matches.map(m => ({ ...m, date: e.date })));
-  const graded = flat.filter(m => m.result);
-  const correct = graded.filter(m => m.verdict?.outcome === "correct").length;
-  const close = graded.filter(m => m.verdict?.outcome === "close").length;
-  const wrong = graded.filter(m => m.verdict?.outcome === "wrong").length;
-  const exactScores = graded.filter(m => m.result.home === m.prediction.home && m.result.away === m.prediction.away).length;
-  const winnersRight = graded.filter(m => {
+  const flat = allMatchesFlat(entries);
+  const graded = flat.filter((m) => m.result);
+  const correct = graded.filter((m) => m.verdict?.outcome === "correct").length;
+  const close = graded.filter((m) => m.verdict?.outcome === "close").length;
+  const wrong = graded.filter((m) => m.verdict?.outcome === "wrong").length;
+  const exactScores = graded.filter(
+    (m) => m.result.home === m.prediction.home && m.result.away === m.prediction.away
+  ).length;
+  const winnersRight = graded.filter((m) => {
     const po = m.prediction.home > m.prediction.away ? "h" : m.prediction.home < m.prediction.away ? "a" : "d";
     const ao = m.result.home > m.result.away ? "h" : m.result.home < m.result.away ? "a" : "d";
     return po === ao;
   }).length;
-  const sorted = [...flat].sort((a, b) => a.date < b.date ? 1 : -1);
-  const winnerPct = graded.length ? Math.round(winnersRight / graded.length * 100) : 0;
-  const scorePct = graded.length ? Math.round(exactScores / graded.length * 100) : 0;
+
+  const sorted = [...flat].sort((a, b) => (a.date < b.date ? 1 : -1));
+  const winnerPct = graded.length ? Math.round((winnersRight / graded.length) * 100) : 0;
+  const scorePct = graded.length ? Math.round((exactScores / graded.length) * 100) : 0;
+
   return (
     <div className="bank">
       <div className="bank-stats">
@@ -374,7 +378,7 @@ function BankView({ entries, apiKey }) {
           <span className="stat-label">Exact score hit</span>
         </div>
         <div className="stat stat-tally">
-          <span className="stat-num mono">{correct}–{close}–{wrong}</span>
+          <span className="stat-num mono">{correct}-{close}-{wrong}</span>
           <span className="stat-label">Called it / close / missed</span>
         </div>
         <div className="stat stat-tally">
@@ -382,7 +386,12 @@ function BankView({ entries, apiKey }) {
           <span className="stat-label">Graded predictions</span>
         </div>
       </div>
-      {flat.length === 0 ? <p className="bank-empty">No predictions logged yet.</p> : sorted.map(m => <BankRow key={m.id} match={m} apiKey={apiKey} />)}
+
+      {flat.length === 0 ? (
+        <p className="bank-empty">No predictions logged yet.</p>
+      ) : (
+        sorted.map((m) => <BankRow key={m.id} match={m} apiKey={apiKey} />)
+      )}
     </div>
   );
 }
@@ -418,6 +427,8 @@ function App() {
 
   const entries = [...log.entries].sort((a, b) => a.date < b.date ? 1 : -1);
   const lastUpdated = entries.length > 0 ? formatDateShort(entries[0].date) : null;
+  const todaysEntry = entries.find(e => e.date === todayISO());
+  const mostRecentEntry = entries[0]; // entries are sorted newest-first
 
   return (
     <div className="page">
@@ -446,13 +457,26 @@ function App() {
       <main className="content">
         {entries.length === 0 ? (
           <p className="bank-empty">No predictions logged yet — check back after the next scheduled update.</p>
-        ) : tab === "sheet"
-          ? entries.map(e => <DaySection key={e.date} entry={e} apiKey={apiKey} />)
-          : <BankView entries={entries} apiKey={apiKey} />}
+        ) : tab === "sheet" ? (
+          todaysEntry ? (
+            <DaySection entry={todaysEntry} apiKey={apiKey} />
+          ) : mostRecentEntry ? (
+            <div>
+              <p className="stale-notice">
+                Today's slate hasn't been generated yet — showing the most recent matchday instead.
+              </p>
+              <DaySection entry={mostRecentEntry} apiKey={apiKey} />
+            </div>
+          ) : (
+            <p className="bank-empty">No predictions logged yet — check back after the next scheduled update.</p>
+          )
+        ) : (
+          <BankView entries={entries} apiKey={apiKey} />
+        )}
       </main>
 
       <footer className="page-footer">
-        <p>This page rebuilds itself automatically every morning via GitHub Actions — no manual updates needed. Use the Prediction Bank to see the full track record, and "Ask about this prediction" on any match to question the reasoning directly.</p>
+        <p>This page rebuilds itself automatically every morning via GitHub Actions — no manual updates needed. The Match Sheet always shows today's slate; once a matchday is finished, it moves into the Prediction Bank for the full track record. Use "Ask about this prediction" on any match to question the reasoning directly.</p>
       </footer>
     </div>
   );
@@ -521,15 +545,15 @@ function Styles() {
     .api-link:hover{text-decoration:underline}
 
     /* ── Tabs ── */
-    .tabs{background:#070b07;border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px)}
+    .tabs{background:var(--ink);border-bottom:3px solid var(--accent, var(--amber))}
     .tabs-inner{max-width:800px;margin:0 auto;padding:0 1.5rem;display:flex;gap:0.25rem}
-    .tab{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase;background:transparent;color:var(--chalk-dim);border:none;border-bottom:2px solid transparent;padding:0.95rem 1rem;cursor:pointer;transition:color 0.15s}
+    .tab{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:0.82rem;letter-spacing:0.04em;text-transform:uppercase;background:transparent;color:var(--chalk-dim);border:none;padding:0.85rem 1rem;cursor:pointer;transition:color 0.15s}
     .tab:hover{color:var(--chalk)}
-    .tab-active{color:var(--amber);border-bottom-color:var(--amber)}
+    .tab-active{color:var(--amber);position:relative}
+    .tab-active::after{content:"";position:absolute;bottom:-3px;left:0;right:0;height:3px;background:var(--amber)}
 
     .content{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem 3rem}
 
-    /* ── Day section ── */
     .day{margin-bottom:3.5rem}
     .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:0.75rem;padding-bottom:0.75rem;margin-bottom:1.75rem;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
     .day-head-left{display:flex;align-items:baseline;gap:0.85rem;flex-wrap:wrap}
@@ -628,7 +652,6 @@ function Styles() {
       padding:0.55rem 1rem;cursor:pointer;transition:all 0.15s;
     }
     .ask-toggle:hover{background:rgba(74,158,255,0.1);border-color:var(--blue)}
-    .ask-toggle-icon{font-size:0.85em}
 
     .ask-box{position:relative;z-index:1;margin-top:1.5rem;background:#070b07;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
     .ask-head{display:flex;justify-content:space-between;align-items:center;background:var(--pitch-light);color:var(--chalk);padding:0.6rem 1rem;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.78rem}
@@ -655,14 +678,24 @@ function Styles() {
     .stat-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--chalk-dim);font-family:'IBM Plex Mono',monospace}
 
     .bank-empty{color:var(--chalk-dim);font-style:italic}
+    .stale-notice{
+      font-family:'IBM Plex Mono',monospace;
+      font-size:0.78rem;
+      color:var(--amber);
+      background:rgba(255,182,39,0.08);
+      border:1px solid rgba(255,182,39,0.3);
+      border-radius:6px;
+      padding:0.75rem 1rem;
+      margin-bottom:1.5rem;
+    }
 
-    .bank-row{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:1.25rem 1.4rem;margin-bottom:1rem}
-    .bank-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem}
-    .bank-date{font-size:0.74rem;color:var(--chalk-dim)}
-    .bank-badge{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;padding:0.22rem 0.55rem;border:1px solid;border-radius:4px}
+    .bank-row{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:1.1rem 1.25rem;margin-bottom:1rem}
+    .bank-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
+    .bank-date{font-size:0.75rem;color:var(--chalk-dim)}
+    .bank-badge{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;padding:0.2rem 0.5rem;border:1px solid;border-radius:4px}
     .bank-badge-pending{background:transparent;color:var(--chalk-dim);border-color:var(--rule)}
-    .bank-row-main{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.5rem}
-    .bank-teams{font-weight:700;font-size:1.08rem}
+    .bank-row-main{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.4rem}
+    .bank-teams{font-weight:700;font-size:1.05rem}
     .bank-vs{font-weight:400;color:var(--chalk-dim);font-size:0.85em}
     .bank-scores{font-size:0.88rem;color:var(--chalk-dim)}
     .bank-arrow{color:var(--amber)}
