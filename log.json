@@ -1,0 +1,201 @@
+{
+  "entries": [
+    {
+      "date": "2026-06-29",
+      "matches": [
+        {
+          "id": "braz-japa-2026-06-29",
+          "kickoff": "12:00 PM ET",
+          "venue": "Houston",
+          "round": "Round of 32",
+          "home": {
+            "name": "Brazil",
+            "code": "BRA"
+          },
+          "away": {
+            "name": "Japan",
+            "code": "JPN"
+          },
+          "homeForm": "W3 D1 — Group C winners, conceded once in three",
+          "awayForm": "W1 D2 — unbeaten through Group F, two clean sheets",
+          "analysis": [
+            {
+              "heading": "Why Brazil should have control of this game",
+              "body": "Brazil won Group C without really being tested — a 1-1 draw with Morocco bookended by 3-0 wins over Haiti and Scotland. The real signal is Vinícius Júnior: four goals in the group phase, playing with the kind of freedom Ancelotti's system is built to give him. If Brazil's fullbacks push up and Casemiro screens in front of the back line, Brazil's central overloads should eventually find a way through."
+            },
+            {
+              "heading": "Why Japan is a live underdog, not a paper one",
+              "body": "Japan went unbeaten in a genuinely hard Group F and did it without their best dribbler, Takefusa Kubo, who is out injured. What's left is a defensively compact, positionally disciplined block that wants to deny crosses and force Brazil into low-value possession out wide. Japan beat this same Brazil squad 3-2 in a Kirin Cup friendly in October 2025 — this group of players can be rattled."
+            },
+            {
+              "heading": "The tactical crux",
+              "body": "Everything hinges on whether Japan's back line can hold its shape against Brazil's central overloads for 90 minutes. Brazil's full-backs will be allowed to bomb forward because the midfield is disciplined enough to cover in behind. Japan's best path to goals is the counter — high-risk, but it worked in the Kirin Cup."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 1
+          },
+          "winnerConfidence": 62,
+          "scoreConfidence": 14,
+          "confidenceNote": "Fairly confident Brazil finds a way through, but this looks tight so any exact score is closer to a guess than a read.",
+          "result": {
+            "home": 2,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "correct",
+            "writeup": "I predicted Brazil 2-1 and that's exactly how it finished. The shape of the game matched the read too: Japan took an early lead through Kaishu Sano in the 29th minute, which is precisely the kind of rattle I flagged as live given their October 2025 win over this squad, but Brazil's central overloads eventually told, with Casemiro breaking the deadlock in the 56th minute before Gabriel Martinelli sealed it in stoppage time. The low score confidence (14%) was honestly earned — the winner call was right, but pinning the exact 2-1 scoreline was always closer to a coin flip than a read."
+          },
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Japan's low block holds for the full 90 without the early concession that actually happened, this becomes the kind of grinding, low-event draw Japan specializes in against bigger sides."
+            },
+            {
+              "prediction": {
+                "home": 3,
+                "away": 1
+              },
+              "likelihood": "Bigger margin",
+              "reasoning": "If Vinícius Júnior gets isolated one-on-one repeatedly in the first half the way the group-stage tape suggested, Brazil's central overloads could produce a more comfortable scoreline than a single-goal win."
+            }
+          ],
+          "status": "final"
+        },
+        {
+          "id": "germ-para-2026-06-29",
+          "kickoff": "4:30 PM ET",
+          "venue": "Boston (Foxborough)",
+          "round": "Round of 32",
+          "home": {
+            "name": "Germany",
+            "code": "GER"
+          },
+          "away": {
+            "name": "Paraguay",
+            "code": "PAR"
+          },
+          "homeForm": "W2 L1 — Group E winners despite a late wobble",
+          "awayForm": "W1 D1 L1 — scraped through as a third-place qualifier",
+          "analysis": [
+            {
+              "heading": "Why Germany is the right side to back here",
+              "body": "Germany topped Group E comfortably, with an attacking trio that should be hunting for a reset after a quiet send-off. Paraguay don't have the attacking firepower on paper to consistently punish a centre-back pairing of Germany's quality."
+            },
+            {
+              "heading": "Why Paraguay won't simply roll over",
+              "body": "Paraguay's route here was genuinely shaky — a 4-1 opening loss, a grinding 1-0 win, and a 0-0 stalemate that snuck them through on goal difference. Julio Enciso is the one player worth watching: he's created more chances than anyone else on the roster and presses relentlessly."
+            },
+            {
+              "heading": "The number that decides this",
+              "body": "The shot data gap between these sides is wide. Paraguay have never scored in five World Cup knockout matches, the longest such drought in tournament history. Breaking that against this German back line looked like a tall ask."
+            }
+          ],
+          "prediction": {
+            "home": 3,
+            "away": 0
+          },
+          "winnerConfidence": 88,
+          "scoreConfidence": 22,
+          "confidenceNote": "The gap in quality is wide enough that Germany losing would be a genuine shock. The margin is the only real question.",
+          "result": {
+            "home": 1,
+            "away": 1,
+            "note": "Paraguay won 4-3 on penalties after extra time."
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "This is the prediction I got most wrong, and it's worth being direct about why. I gave Germany 88% to win and predicted a comfortable 3-0 — but Julio Enciso, the one player I explicitly flagged as live, scored in the 42nd minute to put Paraguay ahead at the half, and Germany only leveled through Kai Havertz in the 54th. The 'Paraguay have never scored in five knockout matches' stat I leaned on as a structural advantage turned out to describe a drought, not a law — droughts end, and this one ended at the worst possible moment for my prediction. The bigger miss was treating Germany's underlying quality as automatically translating to control on the day; Paraguay then won 4-3 on penalties, which my model never gave any real weight to as an outcome at all. An 88% winner confidence should leave more room for exactly this kind of result than I allowed for."
+          },
+          "alternates": [
+            {
+              "prediction": {
+                "home": 2,
+                "away": 0
+              },
+              "likelihood": "Tighter margin",
+              "reasoning": "A more conservative read of the same data — Germany's shot-quality edge shows up on the scoreboard, but Paraguay's defensive discipline (they conceded just once in their final two group games) keeps it from getting out of hand."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Different winner",
+              "reasoning": "If Julio Enciso, the one player flagged as a genuine creative threat, finds space behind a German backline missing Nico Schlotterbeck, a single defensive lapse is enough to turn this into the upset that actually happened."
+            }
+          ],
+          "status": "final"
+        },
+        {
+          "id": "neth-moro-2026-06-29",
+          "kickoff": "9:00 PM ET",
+          "venue": "Monterrey (Guadalupe)",
+          "round": "Round of 32",
+          "home": {
+            "name": "Netherlands",
+            "code": "NED"
+          },
+          "away": {
+            "name": "Morocco",
+            "code": "MAR"
+          },
+          "homeForm": "D1 W2 — 10 goals scored, a clean sheet in none of them",
+          "awayForm": "D1 W2 — unbeaten in a group that included Brazil",
+          "analysis": [
+            {
+              "heading": "Why the Dutch attack makes them favorites on paper",
+              "body": "The Netherlands have been the most clinical team left in the bracket, scoring nearly double what their underlying chances suggested across the group stage, spread across three different scorers."
+            },
+            {
+              "heading": "Why Morocco are live, not just respectable",
+              "body": "Morocco matched Brazil for spells of their opening game and finished second in Group C unbeaten. This is a side that made the 2022 World Cup semifinal by beating Spain and Portugal, and they bring the same low-block, deny-the-cross discipline that troubled the elite then."
+            },
+            {
+              "heading": "The flaw that decides it",
+              "body": "The Dutch have not kept a clean sheet all tournament. Morocco are a different class of opponent defensively and should get good, repeatable chances. The likeliest version of this game is an arm-wrestle the Netherlands edge through individual quality, not defensive control."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 1
+          },
+          "winnerConfidence": 48,
+          "scoreConfidence": 11,
+          "confidenceNote": "Close to a true coin flip on the winner. The exact score is little more than 'expect goals at both ends.'",
+          "result": null,
+          "verdict": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "Given the Netherlands haven't kept a clean sheet all tournament and Morocco's low block is built to deny exactly the kind of service that's fed their front three so far, a stalemate is a live outcome if Morocco's discipline holds."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 2
+              },
+              "likelihood": "Different winner",
+              "reasoning": "Morocco's underlying shot volume (16 per game, ahead of the Dutch) suggests that if their final-third quality matches their territorial dominance even once, they have the profile to do what they did to Spain and Portugal in 2022."
+            }
+          ],
+          "status": "upcoming"
+        }
+      ],
+      "tournamentContext": {
+        "day": 19,
+        "totalDays": 39
+      }
+    }
+  ]
+}

@@ -8,15 +8,19 @@ Runs once a day (via GitHub Actions). On each run it:
   2. Loads data/log.json, the running prediction history.
   3. Grades any of yesterday's predictions whose real result is now known.
   4. Finds today's fixtures and, for any that aren't already predicted,
-     asks the Claude API to write an in-depth prediction (analysis +
-     dual confidence ratings) grounded in real form data pulled from
-     the same fixture list (recent results for each team).
-  5. Writes data/log.json back out and regenerates index.html from it.
+     asks the Claude API to write an in-depth prediction (analysis,
+     dual confidence ratings, and two alternate scenarios) grounded in
+     real form data pulled from the same fixture list.
+  5. Computes a status (upcoming / final) and tournament context
+     (round label, day-of-tournament counter) for every match.
+  6. Writes data/log.json back out and regenerates index.html from it.
 
 Designed to fail safely: if the upstream data source has a gap (it's a
 once-a-day "wiki" dataset, not truly live), the script simply finds
 nothing new to grade or predict and exits cleanly — it never invents
-a score or a fixture.
+a score or a fixture. Live, in-progress match states are intentionally
+out of scope for now (see README for why) — matches are either
+"upcoming" or "final," nothing in between.
 """
 
 import json
@@ -157,6 +161,37 @@ def match_id(date, team1, team2):
     return f"{slug(team1)}-{slug(team2)}-{date}"
 
 
+def tournament_context(fixtures, for_date):
+    """Compute a 'Day N of the tournament' style context string for a given date,
+    derived from the actual span of dates in the fixture list (no hardcoded dates)."""
+    all_dates = sorted(set(f["date"] for f in fixtures if f["date"]))
+    if not all_dates or for_date not in all_dates:
+        # for_date might fall on a rest day between rounds — find its position
+        # relative to the full span instead of requiring an exact match.
+        if not all_dates:
+            return None
+        start = datetime.strptime(all_dates[0], "%Y-%m-%d")
+        end = datetime.strptime(all_dates[-1], "%Y-%m-%d")
+        cur = datetime.strptime(for_date, "%Y-%m-%d")
+        if cur < start or cur > end:
+            return None
+        day_num = (cur - start).days + 1
+        total_days = (end - start).days + 1
+        return {"day": day_num, "totalDays": total_days}
+    start = datetime.strptime(all_dates[0], "%Y-%m-%d")
+    end = datetime.strptime(all_dates[-1], "%Y-%m-%d")
+    cur = datetime.strptime(for_date, "%Y-%m-%d")
+    day_num = (cur - start).days + 1
+    total_days = (end - start).days + 1
+    return {"day": day_num, "totalDays": total_days}
+
+
+def match_status(fixture_decided):
+    """Matches are only ever 'upcoming' or 'final' — true live/in-progress
+    tracking is intentionally out of scope (see module docstring)."""
+    return "final" if fixture_decided else "upcoming"
+
+
 # ───────────────────────── log (prediction history) ─────────────────────────
 
 def load_log():
@@ -214,14 +249,17 @@ def grade_predictions(log, fixtures_by_id):
     for entry in log["entries"]:
         for m in entry["matches"]:
             if m.get("result"):
+                m["status"] = "final"  # belt-and-suspenders for older entries
                 continue  # already graded
             fx = fixtures_by_id.get(m["id"])
             if not fx or not fx["decided"]:
+                m.setdefault("status", "upcoming")  # backfill for pre-status log entries
                 continue  # real result not known yet — leave pending, don't guess
             actual = {"home": fx["home_score"], "away": fx["away_score"]}
             outcome = outcome_label(m["prediction"], actual)
             m["result"] = {"home": actual["home"], "away": actual["away"], "note": ""}
             m["verdict"] = {"outcome": outcome, "writeup": None}  # writeup filled by Claude below
+            m["status"] = "final"
             newly_graded.append(m)
     return newly_graded
 
@@ -273,11 +311,26 @@ matching this schema and nothing else (no markdown fences, no preamble):
   "prediction": {"home": <int>, "away": <int>},
   "winnerConfidence": <int 0-100, how sure you are of the WINNER/DRAW outcome>,
   "scoreConfidence": <int 0-100, how sure you are of the EXACT scoreline — always much lower than winnerConfidence>,
-  "confidenceNote": "one sentence explaining the gap between the two confidence numbers"
+  "confidenceNote": "one sentence explaining the gap between the two confidence numbers",
+  "alternates": [
+    {
+      "prediction": {"home": <int>, "away": <int>},
+      "likelihood": "<short 2-4 word label, e.g. 'Live underdog', 'Tighter margin', 'Bigger margin', 'Different winner', 'Draw scenario'>",
+      "reasoning": "1-2 sentences on the specific condition that would produce THIS outcome instead of your main pick"
+    },
+    {
+      "prediction": {"home": <int>, "away": <int>},
+      "likelihood": "<a different short label than the first alternate>",
+      "reasoning": "1-2 sentences on the specific condition that would produce THIS outcome instead"
+    }
+  ]
 }
 
-Ground every claim in the form data and context given to you. Do not invent player injuries, transfers, \
-or statistics not implied by the data provided — reason from team form, goal patterns, and the stage of \
+The two alternates must be genuinely different from your main prediction and from each other — not just \
+off-by-one variations. At least one alternate should represent a real, named risk to your main pick (e.g. \
+a different winner entirely, or a draw, if those are plausible outcomes). Ground every claim in the form \
+data and context given to you. Do not invent player injuries, transfers, or statistics not implied by the \
+data provided — reason from team form, goal patterns, and the stage of \
 the tournament instead. Be specific and opinionated, not generic. Output ONLY the JSON object."""
 
 
@@ -327,6 +380,8 @@ def build_todays_predictions(api_key, fixtures, today_str):
             "winnerConfidence": pred["winnerConfidence"],
             "scoreConfidence": pred["scoreConfidence"],
             "confidenceNote": pred["confidenceNote"],
+            "alternates": pred.get("alternates", []),
+            "status": match_status(fx["decided"]),
             "result": None,
             "verdict": None,
         })
@@ -389,6 +444,14 @@ def main():
             print("  No fixtures found for today, or all predictions failed to generate.")
 
     log["entries"].sort(key=lambda e: e["date"])
+
+    # Backfill tournament context (day N of total) on every entry, including
+    # older ones — cheap to recompute and keeps it correct if the underlying
+    # fixture list's span ever shifts (e.g. a postponed match).
+    for entry in log["entries"]:
+        ctx = tournament_context(fixtures, entry["date"])
+        if ctx:
+            entry["tournamentContext"] = ctx
 
     print("Saving log and rebuilding index.html...")
     save_log(log)

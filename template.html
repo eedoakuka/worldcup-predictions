@@ -4,12 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Match Sheet — World Cup 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <style>
-    body { margin: 0; padding: 0; }
+    body { margin: 0; padding: 0; background: #0a0f0a; }
     #root { min-height: 100vh; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
   </style>
 </head>
 <body>
@@ -37,24 +43,75 @@ function todayISO() { return new Date().toISOString().slice(0, 10); }
 function formatDateLong(iso) {
   return new Date(iso + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 }
+function formatDateShort(iso) {
+  return new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
 function confidenceTier(pct) {
-  if (pct >= 70) return { fg: "#7fd99a" };
-  if (pct >= 40) return { fg: "#e8c468" };
-  return { fg: "#e8896a" };
+  if (pct >= 70) return { fg: "#5fe89a", glow: "rgba(95,232,154,0.35)" };
+  if (pct >= 40) return { fg: "#ffb627", glow: "rgba(255,182,39,0.35)" };
+  return { fg: "#ff6b5c", glow: "rgba(255,107,92,0.35)" };
 }
 
-// ── Components ───────────────────────────────────────────────────────────────
-function ConfidenceMeter({ label, pct }) {
-  const { fg } = confidenceTier(pct);
+// ── Pitch-line background motif (signature visual element) ─────────────────
+function PitchLines() {
   return (
-    <div className="meter">
-      <div className="meter-label-row">
-        <span className="meter-label">{label}</span>
-        <span className="meter-pct" style={{ color: fg }}>{pct}%</span>
-      </div>
-      <div className="meter-track">
-        <div className="meter-fill" style={{ width: `${pct}%`, background: fg }} />
-      </div>
+    <svg className="pitch-lines" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <line x1="600" y1="0" x2="600" y2="800" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="600" cy="400" r="110" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="600" cy="400" r="3" fill="currentColor" />
+      <rect x="0" y="220" width="160" height="360" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="1040" y="220" width="160" height="360" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+// ── Radial confidence dial (signature data visualization) ───────────────────
+function ConfidenceDial({ label, pct, size = 88 }) {
+  const { fg, glow } = confidenceTier(pct);
+  const r = (size - 12) / 2;
+  const circumference = 2 * Math.PI * r;
+  const offset = circumference - (pct / 100) * circumference;
+  return (
+    <div className="dial" style={{ width: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(240,237,228,0.1)" strokeWidth="6" />
+        <circle
+          cx={size / 2} cy={size / 2} r={r} fill="none"
+          stroke={fg} strokeWidth="6" strokeLinecap="round"
+          strokeDasharray={circumference} strokeDashoffset={offset}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          style={{ filter: `drop-shadow(0 0 6px ${glow})`, transition: "stroke-dashoffset 0.8s ease" }}
+        />
+        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" className="dial-pct" fill={fg}>{pct}</text>
+      </svg>
+      <span className="dial-label">{label}</span>
+    </div>
+  );
+}
+
+function StatusChip({ status }) {
+  if (status === "final") {
+    return <span className="status-chip status-final">FINAL</span>;
+  }
+  return <span className="status-chip status-upcoming">UPCOMING</span>;
+}
+
+function AlternateScenarios({ alternates }) {
+  if (!alternates || alternates.length === 0) return null;
+  return (
+    <div className="alternates">
+      <p className="alternates-label">Other live scenarios</p>
+      {alternates.map((alt, i) => (
+        <div className="alt-row" key={i}>
+          <div className="alt-score-tag">
+            {alt.prediction.home}–{alt.prediction.away}
+          </div>
+          <div className="alt-body">
+            <span className="alt-likelihood">{alt.likelihood}</span>
+            <p>{alt.reasoning}</p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -62,19 +119,23 @@ function ConfidenceMeter({ label, pct }) {
 function ScoreSlip({ match }) {
   return (
     <div className="slip">
-      <div className="slip-row">
-        <span className="slip-team">{match.home.name}</span>
-        <span className="slip-score">{match.prediction.home}</span>
+      <div className="slip-board">
+        <div className="slip-row">
+          <span className="slip-team">{match.home.name}</span>
+          <span className="slip-score">{match.prediction.home}</span>
+        </div>
+        <div className="slip-divider" />
+        <div className="slip-row">
+          <span className="slip-team">{match.away.name}</span>
+          <span className="slip-score">{match.prediction.away}</span>
+        </div>
       </div>
-      <div className="slip-row">
-        <span className="slip-team">{match.away.name}</span>
-        <span className="slip-score">{match.prediction.away}</span>
-      </div>
-      <div className="meters">
-        <ConfidenceMeter label="Winner" pct={match.winnerConfidence} />
-        <ConfidenceMeter label="Exact score" pct={match.scoreConfidence} />
+      <div className="dials">
+        <ConfidenceDial label="WINNER" pct={match.winnerConfidence} />
+        <ConfidenceDial label="SCORE" pct={match.scoreConfidence} />
       </div>
       {match.confidenceNote && <p className="confidence-note">{match.confidenceNote}</p>}
+      <AlternateScenarios alternates={match.alternates} />
     </div>
   );
 }
@@ -82,6 +143,7 @@ function ScoreSlip({ match }) {
 function buildMatchContext(match) {
   const lines = [
     `Match: ${match.home.name} vs ${match.away.name} (${match.round}, ${match.kickoff}, ${match.venue})`,
+    `Status: ${match.status === "final" ? "Final" : "Upcoming"}`,
     `${match.home.name} form: ${match.homeForm}`,
     `${match.away.name} form: ${match.awayForm}`,
     `Predicted: ${match.home.name} ${match.prediction.home}-${match.prediction.away} ${match.away.name}`,
@@ -90,6 +152,10 @@ function buildMatchContext(match) {
     "Analysis:"
   ];
   match.analysis.forEach(b => lines.push(`- ${b.heading}: ${b.body}`));
+  if (match.alternates && match.alternates.length > 0) {
+    lines.push("Alternate scenarios also considered:");
+    match.alternates.forEach(alt => lines.push(`- ${alt.likelihood} (${alt.prediction.home}-${alt.prediction.away}): ${alt.reasoning}`));
+  }
   if (match.result) lines.push(`ACTUAL RESULT: ${match.home.name} ${match.result.home}-${match.result.away} ${match.away.name}.${match.result.note ? " " + match.result.note : ""}`);
   if (match.verdict) lines.push(`Verdict: ${match.verdict.outcome}. ${match.verdict.writeup || ""}`);
   return lines.filter(Boolean).join("\n");
@@ -133,12 +199,16 @@ function MatchChat({ match, apiKey }) {
     } finally { setAsking(false); }
   }
 
-  if (!open) return <button className="ask-toggle" onClick={() => setOpen(true)}>Ask about this prediction →</button>;
+  if (!open) return (
+    <button className="ask-toggle" onClick={() => setOpen(true)}>
+      <span className="ask-toggle-icon">⚡</span> Ask about this prediction
+    </button>
+  );
 
   return (
     <div className="ask-box">
       <div className="ask-head">
-        <span>Ask about {match.home.name} vs {match.away.name}</span>
+        <span>Ask — {match.home.name} vs {match.away.name}</span>
         <button className="ask-close" onClick={() => setOpen(false)}>×</button>
       </div>
       {thread.length > 0 && (
@@ -164,13 +234,20 @@ function MatchChat({ match, apiKey }) {
 
 function ResultStrip({ match }) {
   const { result, verdict } = match;
-  const styles = { correct: { bg: "#1a3d2e", fg: "#7fd99a", label: "CALLED IT" }, close: { bg: "#3d3214", fg: "#e8c468", label: "CLOSE" }, wrong: { bg: "#3d1f1a", fg: "#e8896a", label: "MISSED" } };
+  const styles = {
+    correct: { fg: "#5fe89a", glow: "rgba(95,232,154,0.4)", label: "CALLED IT" },
+    close: { fg: "#ffb627", glow: "rgba(255,182,39,0.4)", label: "CLOSE" },
+    wrong: { fg: "#ff6b5c", glow: "rgba(255,107,92,0.4)", label: "MISSED" }
+  };
   const s = styles[verdict?.outcome] || styles.wrong;
   return (
     <div className="result-strip">
       <div className="result-head">
-        <span className="result-badge" style={{ background: s.bg, color: s.fg }}>{s.label}</span>
-        <span className="result-score">Final: {match.home.name} {result.home}–{result.away} {match.away.name} <span className="predicted-was">(predicted {match.prediction.home}-{match.prediction.away})</span></span>
+        <span className="result-badge" style={{ color: s.fg, borderColor: s.fg, boxShadow: `0 0 16px ${s.glow}` }}>{s.label}</span>
+        <span className="result-score">
+          Final <strong>{match.home.name} {result.home}–{result.away} {match.away.name}</strong>
+          <span className="predicted-was"> · predicted {match.prediction.home}-{match.prediction.away}</span>
+        </span>
       </div>
       {verdict?.writeup && <p className="result-writeup">{verdict.writeup}</p>}
       {result.note && <p className="result-note">{result.note}</p>}
@@ -178,32 +255,37 @@ function ResultStrip({ match }) {
   );
 }
 
-function MatchCard({ match, apiKey }) {
+function MatchCard({ match, apiKey, index }) {
   return (
-    <article className="match">
+    <article className="match" style={{ "--delay": `${index * 0.08}s` }}>
       <header className="match-head">
-        <div className="match-meta">
-          <span className="round-tag">{match.round}</span>
-          <span className="dot">·</span><span>{match.kickoff}</span>
-          <span className="dot">·</span><span>{match.venue}</span>
+        <div className="match-meta-row">
+          <div className="match-meta">
+            <span className="round-tag">{match.round}</span>
+            <span className="dot">/</span>
+            <span className="mono">{match.kickoff}</span>
+            <span className="dot">/</span>
+            <span className="mono">{match.venue}</span>
+          </div>
+          <StatusChip status={match.status} />
         </div>
         <h2 className="match-title">
+          <span className="team-name">{match.home.name}</span>
           <span className="crest">{match.home.code}</span>
-          {match.home.name}
-          <span className="vs">vs</span>
-          {match.away.name}
+          <span className="vs">VS</span>
           <span className="crest">{match.away.code}</span>
+          <span className="team-name">{match.away.name}</span>
         </h2>
         <div className="form-line">
-          <span><strong>{match.home.name}:</strong> {match.homeForm}</span>
-          <span><strong>{match.away.name}:</strong> {match.awayForm}</span>
+          <span><strong>{match.home.name}</strong> <span className="mono">{match.homeForm}</span></span>
+          <span><strong>{match.away.name}</strong> <span className="mono">{match.awayForm}</span></span>
         </div>
       </header>
       <div className="match-body">
         <div className="analysis">
           {match.analysis.map((b, i) => (
             <div className="analysis-block" key={i}>
-              <h3>{b.heading}</h3>
+              <h3><span className="block-marker" />{b.heading}</h3>
               <p>{b.body}</p>
             </div>
           ))}
@@ -221,31 +303,43 @@ function DaySection({ entry, apiKey }) {
   return (
     <section className="day">
       <div className="day-head">
-        <h2>{formatDateLong(entry.date)}</h2>
-        {isToday && <span className="today-flag">Today's slate</span>}
+        <div className="day-head-left">
+          <h2>{formatDateLong(entry.date)}</h2>
+          {entry.tournamentContext && (
+            <span className="day-counter mono">DAY {entry.tournamentContext.day} OF {entry.tournamentContext.totalDays}</span>
+          )}
+        </div>
+        {isToday && <span className="today-flag">● LIVE SLATE</span>}
       </div>
-      {entry.matches.map(m => <MatchCard key={m.id} match={m} apiKey={apiKey} />)}
+      {entry.matches.map((m, i) => <MatchCard key={m.id} match={m} apiKey={apiKey} index={i} />)}
     </section>
   );
 }
 
 function BankRow({ match, apiKey }) {
   const graded = !!match.result;
-  const styles = { correct: { bg: "#1a3d2e", fg: "#7fd99a", label: "CALLED IT" }, close: { bg: "#3d3214", fg: "#e8c468", label: "CLOSE" }, wrong: { bg: "#3d1f1a", fg: "#e8896a", label: "MISSED" } };
+  const styles = {
+    correct: { fg: "#5fe89a", label: "CALLED IT" },
+    close: { fg: "#ffb627", label: "CLOSE" },
+    wrong: { fg: "#ff6b5c", label: "MISSED" }
+  };
   const s = graded ? (styles[match.verdict?.outcome] || styles.wrong) : null;
   return (
     <div className="bank-row">
       <div className="bank-row-top">
-        <span className="bank-date">{formatDateLong(match.date)}</span>
-        {graded ? <span className="bank-badge" style={{ background: s.bg, color: s.fg }}>{s.label}</span> : <span className="bank-badge bank-badge-pending">PENDING</span>}
+        <span className="bank-date mono">{formatDateLong(match.date)}</span>
+        {graded ? <span className="bank-badge" style={{ color: s.fg, borderColor: s.fg }}>{s.label}</span> : <span className="bank-badge bank-badge-pending">PENDING</span>}
       </div>
       <div className="bank-row-main">
-        <span className="bank-teams">{match.home.name} vs {match.away.name}</span>
-        <span className="bank-scores">Predicted {match.prediction.home}-{match.prediction.away}{graded ? ` → Actual ${match.result.home}-${match.result.away}` : ""}</span>
+        <span className="bank-teams">{match.home.name} <span className="bank-vs">vs</span> {match.away.name}</span>
+        <span className="bank-scores mono">
+          {match.prediction.home}-{match.prediction.away}
+          {graded && <> <span className="bank-arrow">→</span> {match.result.home}-{match.result.away}</>}
+        </span>
       </div>
       <div className="bank-row-conf">
-        <span>Winner confidence: <strong>{match.winnerConfidence}%</strong></span>
-        <span>Score confidence: <strong>{match.scoreConfidence}%</strong></span>
+        <span>Winner <strong className="mono">{match.winnerConfidence}%</strong></span>
+        <span>Score <strong className="mono">{match.scoreConfidence}%</strong></span>
       </div>
       {graded && match.verdict?.writeup && <p className="bank-writeup">{match.verdict.writeup}</p>}
       <MatchChat match={match} apiKey={apiKey} />
@@ -266,13 +360,27 @@ function BankView({ entries, apiKey }) {
     return po === ao;
   }).length;
   const sorted = [...flat].sort((a, b) => a.date < b.date ? 1 : -1);
+  const winnerPct = graded.length ? Math.round(winnersRight / graded.length * 100) : 0;
+  const scorePct = graded.length ? Math.round(exactScores / graded.length * 100) : 0;
   return (
     <div className="bank">
       <div className="bank-stats">
-        <div className="stat"><span className="stat-num">{graded.length ? Math.round(winnersRight / graded.length * 100) : 0}%</span><span className="stat-label">Winner called right</span></div>
-        <div className="stat"><span className="stat-num">{graded.length ? Math.round(exactScores / graded.length * 100) : 0}%</span><span className="stat-label">Exact score hit</span></div>
-        <div className="stat"><span className="stat-num">{correct}-{close}-{wrong}</span><span className="stat-label">Called it / close / missed</span></div>
-        <div className="stat"><span className="stat-num">{graded.length}</span><span className="stat-label">Graded predictions</span></div>
+        <div className="stat">
+          <ConfidenceDial label="" pct={winnerPct} size={72} />
+          <span className="stat-label">Winner called right</span>
+        </div>
+        <div className="stat">
+          <ConfidenceDial label="" pct={scorePct} size={72} />
+          <span className="stat-label">Exact score hit</span>
+        </div>
+        <div className="stat stat-tally">
+          <span className="stat-num mono">{correct}–{close}–{wrong}</span>
+          <span className="stat-label">Called it / close / missed</span>
+        </div>
+        <div className="stat stat-tally">
+          <span className="stat-num mono">{graded.length}</span>
+          <span className="stat-label">Graded predictions</span>
+        </div>
       </div>
       {flat.length === 0 ? <p className="bank-empty">No predictions logged yet.</p> : sorted.map(m => <BankRow key={m.id} match={m} apiKey={apiKey} />)}
     </div>
@@ -290,10 +398,10 @@ function ApiKeyBanner({ apiKey, onSave }) {
   }
   return (
     <div className="api-banner">
-      <span className="api-label">Anthropic API key for Ask feature:</span>
+      <span className="api-label mono">API KEY</span>
       <form className="api-form" onSubmit={save}>
         <input type="password" value={val} onChange={e => setVal(e.target.value)} placeholder="sk-ant-…" spellCheck={false} />
-        <button type="submit">{saved ? "Saved ✓" : "Save"}</button>
+        <button type="submit">{saved ? "✓ SAVED" : "SAVE"}</button>
       </form>
       <a className="api-link" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Get a key →</a>
     </div>
@@ -309,15 +417,20 @@ function App() {
   function saveApiKey(k) { setApiKey(k); setApiKeyState(k); }
 
   const entries = [...log.entries].sort((a, b) => a.date < b.date ? 1 : -1);
+  const lastUpdated = entries.length > 0 ? formatDateShort(entries[0].date) : null;
 
   return (
     <div className="page">
       <Styles />
       <header className="masthead">
+        <PitchLines />
         <div className="masthead-inner">
-          <p className="kicker">THE MATCH SHEET</p>
-          <h1>World Cup 2026, Predicted Daily</h1>
-          <p className="sub">Every matchday gets a full breakdown and a locked-in score before kickoff. Every result gets graded the next day — no quiet edits, no deleted misses. Updates automatically every morning.</p>
+          <div className="kicker-row">
+            <p className="kicker">⚽ THE MATCH SHEET</p>
+            {lastUpdated && <span className="kicker-meta mono">UPDATED {lastUpdated}</span>}
+          </div>
+          <h1>World Cup 2026<br/><span className="h1-accent">Predicted Daily</span></h1>
+          <p className="sub">Every matchday gets a full breakdown and a locked-in score before kickoff. Every result gets graded the next day — no quiet edits, no deleted misses.</p>
         </div>
       </header>
 
@@ -349,96 +462,215 @@ function App() {
 function Styles() {
   return <style>{`
     *{box-sizing:border-box}
-    .page{--ink:#14110f;--paper:#ece7dd;--paper-raised:#f5f1e8;--rule:#c9c0ad;--pitch:#1f4d3a;--pitch-deep:#163829;--accent:#c44a2c;font-family:'Georgia','Iowan Old Style',serif;background:var(--paper);color:var(--ink);min-height:100vh;line-height:1.5}
-    .masthead{background:var(--pitch-deep);color:var(--paper-raised);padding:2.5rem 1.5rem 2rem;border-bottom:6px solid var(--accent)}
-    .masthead-inner{max-width:760px;margin:0 auto}
-    .kicker{font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;letter-spacing:.28em;font-size:.72rem;color:#9fcab0;margin:0 0 .6rem}
-    .masthead h1{font-family:Georgia,serif;font-weight:700;font-size:clamp(1.8rem,5vw,2.6rem);margin:0 0 .7rem;letter-spacing:-.01em;line-height:1.08}
-    .masthead .sub{font-family:'Arial',Helvetica,sans-serif;font-size:.95rem;color:#cdd8cf;max-width:52ch;margin:0}
-    .api-banner{background:#2a2420;padding:.65rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;max-width:100%}
-    .api-label{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.04em;color:#aaa295;text-transform:uppercase;white-space:nowrap}
-    .api-form{display:flex;gap:.4rem;flex:1;min-width:0}
-    .api-form input{flex:1;min-width:0;font-family:'Arial',Helvetica,sans-serif;font-size:.85rem;padding:.35rem .65rem;border:1px solid #4a4238;background:#1a1714;color:#f5f1e8;border-radius:2px}
-    .api-form button{font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;font-size:.75rem;text-transform:uppercase;background:var(--pitch);color:#fff;border:none;padding:.35rem .8rem;cursor:pointer;white-space:nowrap;border-radius:2px}
-    .api-link{font-family:'Arial',Helvetica,sans-serif;font-size:.78rem;color:#9fcab0;text-decoration:none;white-space:nowrap}
+    .page{
+      --ink:#0a0f0a;
+      --pitch:#0d2818;
+      --pitch-light:#143824;
+      --panel:#11201a;
+      --panel-raised:#162a22;
+      --chalk:#f0ede4;
+      --chalk-dim:#a8b0a8;
+      --rule:rgba(240,237,228,0.12);
+      --amber:#ffb627;
+      --blue:#4a9eff;
+      --green:#5fe89a;
+      --red:#ff6b5c;
+      font-family:'Inter',-apple-system,sans-serif;
+      background:var(--ink);
+      color:var(--chalk);
+      min-height:100vh;
+      line-height:1.55;
+    }
+    .mono{font-family:'IBM Plex Mono',monospace}
+
+    .pitch-lines{position:absolute;inset:0;width:100%;height:100%;color:var(--chalk);opacity:0.08;pointer-events:none;z-index:0}
+
+    /* ── Masthead ── */
+    .masthead{
+      position:relative;
+      overflow:hidden;
+      background:radial-gradient(ellipse 120% 100% at 50% -20%, var(--pitch-light) 0%, var(--pitch) 45%, var(--ink) 100%);
+      padding:3.5rem 1.5rem 2.5rem;
+      border-bottom:1px solid var(--rule);
+    }
+    .masthead-inner{position:relative;z-index:1;max-width:800px;margin:0 auto}
+    .kicker-row{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.1rem}
+    .kicker{font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:0.22em;font-size:0.72rem;color:var(--amber);margin:0;text-transform:uppercase}
+    .kicker-meta{font-size:0.68rem;color:var(--chalk-dim);letter-spacing:0.08em}
+    .masthead h1{
+      font-family:'Anton',sans-serif;
+      font-weight:400;
+      font-size:clamp(2.6rem,8vw,4.5rem);
+      margin:0 0 1rem;
+      letter-spacing:0.01em;
+      line-height:0.95;
+      text-transform:uppercase;
+    }
+    .h1-accent{color:var(--amber);text-shadow:0 0 40px rgba(255,182,39,0.35)}
+    .masthead .sub{font-size:1rem;color:var(--chalk-dim);max-width:54ch;margin:0;font-weight:400}
+
+    /* ── API banner ── */
+    .api-banner{background:#070b07;padding:0.65rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
+    .api-label{font-size:0.68rem;font-weight:600;letter-spacing:0.1em;color:var(--chalk-dim);white-space:nowrap}
+    .api-form{display:flex;gap:0.4rem;flex:1;min-width:0}
+    .api-form input{flex:1;min-width:0;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;padding:0.4rem 0.65rem;border:1px solid var(--rule);background:var(--panel);color:var(--chalk);border-radius:3px}
+    .api-form input:focus{outline:none;border-color:var(--amber)}
+    .api-form button{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.7rem;letter-spacing:0.06em;background:var(--pitch-light);color:var(--green);border:1px solid var(--rule);padding:0.4rem 0.8rem;cursor:pointer;white-space:nowrap;border-radius:3px}
+    .api-form button:hover{border-color:var(--green)}
+    .api-link{font-size:0.78rem;color:var(--blue);text-decoration:none;white-space:nowrap}
     .api-link:hover{text-decoration:underline}
-    .tabs{background:var(--ink);border-bottom:3px solid var(--accent)}
-    .tabs-inner{max-width:760px;margin:0 auto;padding:0 1.5rem;display:flex;gap:.25rem}
-    .tab{font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;background:transparent;color:#aaa295;border:none;padding:.85rem 1rem;cursor:pointer}
-    .tab:hover{color:#f5f1e8}
-    .tab-active{color:#fff;position:relative}
-    .tab-active::after{content:"";position:absolute;bottom:-3px;left:0;right:0;height:3px;background:var(--accent)}
-    .content{max-width:760px;margin:0 auto;padding:2rem 1.5rem 3rem}
-    .day{margin-bottom:3rem}
-    .day-head{display:flex;align-items:baseline;gap:.75rem;border-bottom:2px solid var(--ink);padding-bottom:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
-    .day-head h2{font-size:1.3rem;margin:0;font-weight:700}
-    .today-flag{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.12em;background:var(--accent);color:#fff;padding:.2rem .55rem;border-radius:2px;text-transform:uppercase}
-    .match{background:var(--paper-raised);border:1px solid var(--rule);margin-bottom:1.75rem;padding:1.5rem;position:relative}
-    .match::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--pitch)}
-    .match-meta{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.78rem;color:#6b6354;letter-spacing:.03em;margin-bottom:.5rem;display:flex;gap:.4rem;flex-wrap:wrap}
-    .round-tag{font-weight:700;color:var(--pitch);text-transform:uppercase}
+
+    /* ── Tabs ── */
+    .tabs{background:#070b07;border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px)}
+    .tabs-inner{max-width:800px;margin:0 auto;padding:0 1.5rem;display:flex;gap:0.25rem}
+    .tab{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase;background:transparent;color:var(--chalk-dim);border:none;border-bottom:2px solid transparent;padding:0.95rem 1rem;cursor:pointer;transition:color 0.15s}
+    .tab:hover{color:var(--chalk)}
+    .tab-active{color:var(--amber);border-bottom-color:var(--amber)}
+
+    .content{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem 3rem}
+
+    /* ── Day section ── */
+    .day{margin-bottom:3.5rem}
+    .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:0.75rem;padding-bottom:0.75rem;margin-bottom:1.75rem;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
+    .day-head-left{display:flex;align-items:baseline;gap:0.85rem;flex-wrap:wrap}
+    .day-head h2{font-family:'Anton',sans-serif;font-weight:400;font-size:1.6rem;margin:0;letter-spacing:0.01em;text-transform:uppercase}
+    .day-counter{font-size:0.68rem;color:var(--chalk-dim);letter-spacing:0.06em;opacity:0.8}
+    .today-flag{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;letter-spacing:0.1em;color:var(--green);text-shadow:0 0 12px rgba(95,232,154,0.5)}
+
+    /* ── Match card ── */
+    .match{
+      position:relative;
+      background:var(--panel);
+      border:1px solid var(--rule);
+      border-radius:10px;
+      margin-bottom:1.75rem;
+      padding:1.75rem;
+      overflow:hidden;
+      animation:rise 0.5s ease backwards;
+      animation-delay:var(--delay,0s);
+    }
+    @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    @media(prefers-reduced-motion:reduce){.match{animation:none}}
+
+    .match-head{position:relative;z-index:1}
+    .match-meta-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.9rem}
+    .match-meta{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--chalk-dim);display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center}
+    .round-tag{font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:0.04em}
     .dot{color:var(--rule)}
-    .match-title{font-size:1.5rem;margin:0 0 .6rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-weight:700}
-    .vs{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.75rem;color:#948c7a;font-weight:400;margin:0 .15rem}
-    .crest{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.65rem;font-weight:700;background:var(--ink);color:var(--paper-raised);padding:.2rem .4rem;border-radius:2px;letter-spacing:.02em}
-    .form-line{font-family:'Arial',Helvetica,sans-serif;font-size:.85rem;color:#5a5346;display:flex;flex-direction:column;gap:.2rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px dashed var(--rule)}
-    .match-body{display:grid;grid-template-columns:1fr 200px;gap:1.5rem;align-items:start}
-    @media(max-width:600px){.match-body{grid-template-columns:1fr}}
-    .analysis-block{margin-bottom:1.1rem}
+
+    .status-chip{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;padding:0.22rem 0.55rem;border-radius:4px;border:1px solid;white-space:nowrap}
+    .status-upcoming{color:var(--blue);border-color:rgba(74,158,255,0.4);background:rgba(74,158,255,0.08)}
+    .status-final{color:var(--chalk-dim);border-color:var(--rule);background:transparent}
+
+    .match-title{font-size:clamp(1.1rem,4vw,1.6rem);margin:0 0 1rem;display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;font-weight:800}
+    .team-name{flex:0 1 auto}
+    .crest{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:600;background:var(--pitch-light);color:var(--chalk-dim);padding:0.25rem 0.5rem;border-radius:4px;letter-spacing:0.03em;border:1px solid var(--rule)}
+    .vs{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--chalk-dim);font-weight:600;letter-spacing:0.1em}
+
+    .form-line{font-size:0.86rem;color:var(--chalk-dim);display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1.4rem;padding-bottom:1.1rem;border-bottom:1px dashed var(--rule)}
+    .form-line strong{color:var(--chalk);font-weight:600}
+    .form-line .mono{font-size:0.8rem}
+
+    .match-body{position:relative;z-index:1;display:grid;grid-template-columns:1fr 220px;gap:1.75rem;align-items:start}
+    @media(max-width:640px){.match-body{grid-template-columns:1fr}}
+
+    .analysis-block{margin-bottom:1.25rem}
     .analysis-block:last-child{margin-bottom:0}
-    .analysis-block h3{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.85rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.03em;margin:0 0 .35rem}
-    .analysis-block p{margin:0;font-size:.97rem;color:#2a2620}
-    .slip{background:var(--ink);color:var(--paper-raised);padding:1rem;position:sticky;top:1rem}
-    .slip-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'Arial Narrow',Helvetica,sans-serif;padding:.3rem 0;border-bottom:1px solid #3a352c}
-    .slip-row:nth-child(2){border-bottom:none}
-    .slip-team{font-size:.78rem;text-transform:uppercase;letter-spacing:.02em}
-    .slip-score{font-size:1.4rem;font-weight:700;font-family:Georgia,serif}
-    .meters{margin-top:.85rem;display:flex;flex-direction:column;gap:.6rem}
-    .meter-label-row{display:flex;justify-content:space-between;align-items:baseline;font-family:'Arial Narrow',Helvetica,sans-serif;margin-bottom:.25rem}
-    .meter-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:#aaa295}
-    .meter-pct{font-size:.78rem;font-weight:700}
-    .meter-track{height:5px;background:#3a352c;border-radius:3px;overflow:hidden}
-    .meter-fill{height:100%;border-radius:3px}
-    .confidence-note{margin:.85rem 0 0;padding-top:.7rem;border-top:1px solid #3a352c;font-family:'Arial',Helvetica,sans-serif;font-size:.78rem;line-height:1.45;color:#cbc4b5}
-    .result-strip{margin-top:1.25rem;padding-top:1.1rem;border-top:2px solid var(--ink)}
-    .result-head{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.5rem}
-    .result-badge{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.08em;padding:.25rem .5rem}
-    .result-score{font-family:'Arial',Helvetica,sans-serif;font-size:.92rem;font-weight:600}
-    .predicted-was{font-weight:400;color:#6b6354}
-    .result-writeup,.result-note{font-size:.95rem;margin:.4rem 0 0;color:#2a2620}
-    .ask-toggle{margin-top:1.25rem;font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.02em;background:transparent;color:var(--pitch);border:1.5px solid var(--pitch);padding:.5rem .9rem;cursor:pointer}
-    .ask-toggle:hover{background:var(--pitch);color:#fff}
-    .ask-box{margin-top:1.25rem;background:#e3ddcd;border:1px solid var(--rule)}
-    .ask-head{display:flex;justify-content:space-between;align-items:center;background:var(--pitch);color:#fff;padding:.55rem .9rem;font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;font-size:.82rem}
-    .ask-close{background:transparent;border:none;color:#fff;font-size:1.2rem;cursor:pointer;line-height:1;padding:0 .2rem}
-    .ask-thread{padding:.9rem;display:flex;flex-direction:column;gap:.7rem;max-height:360px;overflow-y:auto}
-    .ask-msg p{margin:.2rem 0 0;font-size:.92rem;color:#2a2620;font-family:'Arial',Helvetica,sans-serif;line-height:1.45}
-    .ask-msg-label{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#847b69}
-    .ask-msg-user .ask-msg-label{color:var(--accent)}
-    .ask-thinking{font-style:italic;color:#847b69}
-    .ask-error{margin:0 .9rem;font-family:'Arial',Helvetica,sans-serif;font-size:.82rem;color:#a3402a}
-    .ask-form{display:flex;gap:.5rem;padding:.75rem .9rem;border-top:1px solid var(--rule)}
-    .ask-form input{flex:1;font-family:'Arial',Helvetica,sans-serif;font-size:.9rem;padding:.5rem .65rem;border:1px solid var(--rule);background:#fff;color:var(--ink)}
-    .ask-form input:focus{outline:2px solid var(--pitch);outline-offset:1px}
-    .ask-form button{font-family:'Arial Narrow',Helvetica,sans-serif;font-weight:700;font-size:.82rem;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0 1.1rem;cursor:pointer}
-    .ask-form button:disabled{background:#c9bfa8;cursor:not-allowed}
-    .bank-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:2rem}
-    @media(max-width:600px){.bank-stats{grid-template-columns:repeat(2,1fr)}}
-    .stat{background:var(--paper-raised);padding:1.1rem .75rem;text-align:center}
-    .stat-num{display:block;font-family:Georgia,serif;font-weight:700;font-size:1.7rem;color:var(--pitch-deep)}
-    .stat-label{display:block;font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:#6b6354;margin-top:.25rem}
-    .bank-empty{color:#6b6354;font-style:italic}
-    .bank-row{background:var(--paper-raised);border:1px solid var(--rule);padding:1.1rem 1.25rem;margin-bottom:1rem}
-    .bank-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
-    .bank-date{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.75rem;color:#847b69}
-    .bank-badge{font-family:'Arial Narrow',Helvetica,sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.08em;padding:.2rem .5rem}
-    .bank-badge-pending{background:#d8d0bc;color:#6b6354}
-    .bank-row-main{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.4rem;margin-bottom:.4rem}
-    .bank-teams{font-weight:700;font-size:1.05rem}
-    .bank-scores{font-family:'Arial',Helvetica,sans-serif;font-size:.85rem;color:#5a5346}
-    .bank-row-conf{display:flex;gap:1.5rem;flex-wrap:wrap;font-family:'Arial',Helvetica,sans-serif;font-size:.82rem;color:#5a5346;margin-bottom:.3rem}
-    .bank-writeup{font-size:.92rem;margin:.5rem 0 0;color:#2a2620;padding-top:.5rem;border-top:1px dashed var(--rule)}
-    .page-footer{max-width:760px;margin:0 auto;padding:1.25rem 1.5rem 2.5rem;font-family:'Arial',Helvetica,sans-serif;font-size:.82rem;color:#847b69;border-top:1px solid var(--rule)}
+    .analysis-block h3{display:flex;align-items:center;gap:0.5rem;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:600;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.45rem}
+    .block-marker{width:6px;height:6px;background:var(--blue);border-radius:1px;flex-shrink:0}
+    .analysis-block p{margin:0;font-size:0.97rem;color:var(--chalk);opacity:0.92}
+
+    /* ── Score slip / scoreboard ── */
+    .slip{position:sticky;top:5rem}
+    .slip-board{
+      background:linear-gradient(165deg, #0a1a10 0%, #060d08 100%);
+      border:1px solid rgba(255,182,39,0.2);
+      border-radius:8px;
+      padding:1rem 1.1rem;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.03), 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .slip-row{display:flex;justify-content:space-between;align-items:center;padding:0.3rem 0}
+    .slip-team{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--chalk-dim)}
+    .slip-score{font-family:'Anton',sans-serif;font-size:1.9rem;color:var(--amber);text-shadow:0 0 16px rgba(255,182,39,0.4);line-height:1}
+    .slip-divider{height:1px;background:rgba(255,182,39,0.15);margin:0.2rem 0}
+
+    .dials{display:flex;justify-content:space-around;margin-top:1.25rem;padding-top:1.1rem;border-top:1px solid var(--rule)}
+    .dial{display:flex;flex-direction:column;align-items:center;gap:0.45rem}
+    .dial-pct{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600}
+    .dial-label{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.08em;color:var(--chalk-dim)}
+
+    .confidence-note{margin:1.1rem 0 0;padding-top:1rem;border-top:1px solid var(--rule);font-size:0.8rem;line-height:1.55;color:var(--chalk-dim);font-style:italic}
+
+    .alternates{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--rule)}
+    .alternates-label{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--chalk-dim);margin:0 0 0.7rem}
+    .alt-row{display:flex;gap:0.65rem;align-items:flex-start;margin-bottom:0.75rem}
+    .alt-row:last-child{margin-bottom:0}
+    .alt-score-tag{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:700;color:var(--chalk);background:rgba(240,237,228,0.06);border:1px solid var(--rule);border-radius:4px;padding:0.2rem 0.45rem;min-width:2.6rem;text-align:center}
+    .alt-body{flex:1;min-width:0}
+    .alt-likelihood{display:block;font-family:'IBM Plex Mono',monospace;font-size:0.66rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--blue);margin-bottom:0.2rem}
+    .alt-body p{margin:0;font-size:0.8rem;line-height:1.5;color:var(--chalk-dim)}
+
+    /* ── Result strip ── */
+    .result-strip{position:relative;z-index:1;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+    .result-head{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.6rem}
+    .result-badge{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;padding:0.3rem 0.65rem;border:1px solid;border-radius:4px}
+    .result-score{font-size:0.92rem;color:var(--chalk-dim)}
+    .result-score strong{color:var(--chalk)}
+    .predicted-was{color:var(--chalk-dim)}
+    .result-writeup,.result-note{font-size:0.95rem;margin:0.5rem 0 0;color:var(--chalk);opacity:0.9}
+
+    /* ── Ask widget ── */
+    .ask-toggle{
+      position:relative;z-index:1;margin-top:1.5rem;
+      display:inline-flex;align-items:center;gap:0.5rem;
+      font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:600;letter-spacing:0.02em;
+      background:transparent;color:var(--blue);border:1px solid rgba(74,158,255,0.4);border-radius:6px;
+      padding:0.55rem 1rem;cursor:pointer;transition:all 0.15s;
+    }
+    .ask-toggle:hover{background:rgba(74,158,255,0.1);border-color:var(--blue)}
+    .ask-toggle-icon{font-size:0.85em}
+
+    .ask-box{position:relative;z-index:1;margin-top:1.5rem;background:#070b07;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+    .ask-head{display:flex;justify-content:space-between;align-items:center;background:var(--pitch-light);color:var(--chalk);padding:0.6rem 1rem;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.78rem}
+    .ask-close{background:transparent;border:none;color:var(--chalk);font-size:1.3rem;cursor:pointer;line-height:1;padding:0 0.2rem;opacity:0.7}
+    .ask-close:hover{opacity:1}
+    .ask-thread{padding:1rem;display:flex;flex-direction:column;gap:0.8rem;max-height:360px;overflow-y:auto}
+    .ask-msg p{margin:0.25rem 0 0;font-size:0.92rem;color:var(--chalk);line-height:1.5}
+    .ask-msg-label{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--chalk-dim)}
+    .ask-msg-user .ask-msg-label{color:var(--amber)}
+    .ask-thinking{font-style:italic;color:var(--chalk-dim)}
+    .ask-error{margin:0 1rem;font-size:0.82rem;color:var(--red)}
+    .ask-form{display:flex;gap:0.5rem;padding:0.8rem 1rem;border-top:1px solid var(--rule)}
+    .ask-form input{flex:1;font-family:'Inter',sans-serif;font-size:0.9rem;padding:0.55rem 0.7rem;border:1px solid var(--rule);background:var(--panel);color:var(--chalk);border-radius:5px}
+    .ask-form input:focus{outline:none;border-color:var(--blue)}
+    .ask-form button{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.78rem;text-transform:uppercase;background:var(--blue);color:#06121f;border:none;padding:0 1.2rem;border-radius:5px;cursor:pointer}
+    .ask-form button:disabled{background:var(--rule);color:var(--chalk-dim);cursor:not-allowed}
+
+    /* ── Prediction Bank ── */
+    .bank-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin-bottom:2.5rem}
+    @media(max-width:640px){.bank-stats{grid-template-columns:repeat(2,1fr)}}
+    .stat{background:var(--panel);padding:1.3rem 0.75rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:0.6rem}
+    .stat-tally{justify-content:center}
+    .stat-num{font-family:'Anton',sans-serif;font-size:1.7rem;color:var(--amber)}
+    .stat-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--chalk-dim);font-family:'IBM Plex Mono',monospace}
+
+    .bank-empty{color:var(--chalk-dim);font-style:italic}
+
+    .bank-row{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:1.25rem 1.4rem;margin-bottom:1rem}
+    .bank-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem}
+    .bank-date{font-size:0.74rem;color:var(--chalk-dim)}
+    .bank-badge{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;padding:0.22rem 0.55rem;border:1px solid;border-radius:4px}
+    .bank-badge-pending{background:transparent;color:var(--chalk-dim);border-color:var(--rule)}
+    .bank-row-main{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.5rem}
+    .bank-teams{font-weight:700;font-size:1.08rem}
+    .bank-vs{font-weight:400;color:var(--chalk-dim);font-size:0.85em}
+    .bank-scores{font-size:0.88rem;color:var(--chalk-dim)}
+    .bank-arrow{color:var(--amber)}
+    .bank-row-conf{display:flex;gap:1.5rem;flex-wrap:wrap;font-size:0.82rem;color:var(--chalk-dim);margin-bottom:0.3rem}
+    .bank-row-conf strong{color:var(--chalk)}
+    .bank-writeup{font-size:0.92rem;margin:0.6rem 0 0;color:var(--chalk);opacity:0.9;padding-top:0.6rem;border-top:1px dashed var(--rule)}
+
+    .page-footer{max-width:800px;margin:0 auto;padding:1.5rem 1.5rem 3rem;font-size:0.82rem;color:var(--chalk-dim);border-top:1px solid var(--rule)}
   `}</style>;
 }
 
