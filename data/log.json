@@ -47,7 +47,8 @@
           "verdict": {
             "outcome": "correct",
             "writeup": "I predicted Brazil 2-1 and that's exactly how it finished. The shape of the game matched the read too: Japan took an early lead through Kaishu Sano in the 29th minute, which is precisely the kind of rattle I flagged as live given their October 2025 win over this squad, but Brazil's central overloads eventually told, with Casemiro breaking the deadlock in the 56th minute before Gabriel Martinelli sealed it in stoppage time. The low score confidence (14%) was honestly earned — the winner call was right, but pinning the exact 2-1 scoreline was always closer to a coin flip than a read."
-          }
+          },
+          "status": "final"
         },
         {
           "id": "germ-para-2026-06-29",
@@ -93,7 +94,8 @@
           "verdict": {
             "outcome": "wrong",
             "writeup": "This is the prediction I got most wrong, and it's worth being direct about why. I gave Germany 88% to win and predicted a comfortable 3-0 — but Julio Enciso, the one player I explicitly flagged as live, scored in the 42nd minute to put Paraguay ahead at the half, and Germany only leveled through Kai Havertz in the 54th. The 'Paraguay have never scored in five knockout matches' stat I leaned on as a structural advantage turned out to describe a drought, not a law — droughts end, and this one ended at the worst possible moment for my prediction. The bigger miss was treating Germany's underlying quality as automatically translating to control on the day; Paraguay then won 4-3 on penalties, which my model never gave any real weight to as an outcome at all. An 88% winner confidence should leave more room for exactly this kind of result than I allowed for."
-          }
+          },
+          "status": "final"
         },
         {
           "id": "neth-moro-2026-06-29",
@@ -139,9 +141,14 @@
           "verdict": {
             "outcome": "wrong",
             "writeup": "I predicted Netherlands 2-1 Morocco with a stated winner confidence of just 48%, which reflects how genuinely uncertain I was — and the draw was a fair outcome that my reasoning actually half-anticipated. I called it correctly that Morocco's defensive discipline would contain the Dutch and that the game would be an arm-wrestle, but I assumed Dutch individual quality would ultimately edge it, and that assumption broke; the Netherlands couldn't find the decisive moment their extra-chance edge implied. The clean result here is that I got the shape of the game right but the wrong outcome, because I underweighted Morocco's ability to not just contain but genuinely match the Dutch even in the closing stages when a winner was needed."
-          }
+          },
+          "status": "final"
         }
-      ]
+      ],
+      "tournamentContext": {
+        "day": 19,
+        "totalDays": 39
+      }
     },
     {
       "date": "2026-06-30",
@@ -183,7 +190,8 @@
           "scoreConfidence": 18,
           "confidenceNote": "While France's superiority is near-certain based on form and the defensive data on Sweden, pinning the exact margin is speculative — France could ease off after going three up, or Sweden could nick more than one on a set piece, making the precise 4-1 line far less reliable than the overall winner call.",
           "result": null,
-          "verdict": null
+          "verdict": null,
+          "status": "upcoming"
         },
         {
           "id": "ivor-norw-2026-06-30",
@@ -226,7 +234,8 @@
           "scoreConfidence": 13,
           "confidenceNote": "While the analytical lean favors Ivory Coast's defensive solidity edging a leaky Norway side, both teams have shown high variance in scorelines — Norway's three-goal swings and Ivory Coast's inconsistent attacking output make the exact score almost impossible to pin down with confidence.",
           "result": null,
-          "verdict": null
+          "verdict": null,
+          "status": "upcoming"
         },
         {
           "id": "mexi-ecua-2026-06-30",
@@ -265,9 +274,14 @@
           "scoreConfidence": 22,
           "confidenceNote": "While Mexico's superiority in form, venue, and defensive solidity makes them clear favorites, knockout football is notoriously unpredictable in exact scorelines, and Ecuador's upset of Germany proves they can produce moments of quality that could complicate any specific margin.",
           "result": null,
-          "verdict": null
+          "verdict": null,
+          "status": "upcoming"
         }
-      ]
+      ],
+      "tournamentContext": {
+        "day": 20,
+        "totalDays": 39
+      }
     }
   ]
 }
