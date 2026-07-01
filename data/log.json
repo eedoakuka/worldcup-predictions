@@ -391,9 +391,16 @@
               "reasoning": "Ecuador beat Germany, which proves they can produce a shock; if Mexico start slowly and the Azteca crowd turns anxious early, a single Ecuador goal on the counter could pin Mexico back and produce one of the tournament's biggest upsets, mirroring Ecuador's Ivory Coast-style smash-and-hold result."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 2,
+            "away": 0,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "correct",
+            "writeup": "I predicted Mexico 2-0 Ecuador with moderate winner confidence and low score confidence, and the result landed exactly right. The two signals that proved out most cleanly were Mexico's defensive cohesion — that zero-goals-conceded group stage wasn't a soft-schedule mirage — and Ecuador's inability to break down organized low-block defenses, which the 0-0 against Curaçao had flagged as a genuine structural weakness. My reasoning about Ecuador's inconsistency being a red flag rather than a fluke held up when their attack was neutralized by the same disciplined Mexican backline. The 22% score confidence still feels honest in retrospect; a 2-0 is always a specific call, but the underlying logic pointed toward exactly this kind of controlled, clean-sheet victory for the hosts."
+          }
         }
       ],
       "tournamentContext": {
@@ -461,9 +468,16 @@
               "reasoning": "England have shown a propensity for drawing matches when they cannot unlock a low block, as illustrated by the Ghana stalemate; if DR Congo defend deep and nick a set-piece or transition goal, extra time becomes a real possibility."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 2,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "close",
+            "writeup": "I predicted England to win, and they did, with the scoreline landing just one goal off — DR Congo did score, pushing it to 2-1 rather than my cleaner 2-0. My reasoning about England's set-piece and structural superiority broadly held, but I underestimated DR Congo's ability to stay dangerous even when being controlled, which is exactly the counter-punching threat I acknowledged but then talked myself into dismissing. The assumption that England's \"physical and technical discipline in midfield would comfortably outmatch\" Congo proved slightly optimistic — Congo found a way through, vindicating the Portugal draw as a genuine signal of quality rather than a fluke. The win confidence at 72% looks reasonable in hindsight; the 2-0 scoreline was the miss."
+          }
         },
         {
           "id": "usa-bosn-2026-07-01",
