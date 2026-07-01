@@ -8,19 +8,18 @@ Runs once a day (via GitHub Actions). On each run it:
   2. Loads data/log.json, the running prediction history.
   3. Grades any of yesterday's predictions whose real result is now known.
   4. Finds today's fixtures and, for any that aren't already predicted,
-     asks the Claude API to write an in-depth prediction (analysis,
-     dual confidence ratings, and two alternate scenarios) grounded in
-     real form data pulled from the same fixture list.
+     fetches betting odds from API-Football, then asks the Claude API to
+     write an in-depth prediction (analysis, dual confidence ratings,
+     two alternate scenarios, and a "going against the market" note when
+     the pick differs from the implied market favourite).
   5. Computes a status (upcoming / final) and tournament context
      (round label, day-of-tournament counter) for every match.
   6. Writes data/log.json back out and regenerates index.html from it.
 
-Designed to fail safely: if the upstream data source has a gap (it's a
-once-a-day "wiki" dataset, not truly live), the script simply finds
-nothing new to grade or predict and exits cleanly — it never invents
-a score or a fixture. Live, in-progress match states are intentionally
-out of scope for now (see README for why) — matches are either
-"upcoming" or "final," nothing in between.
+Designed to fail safely: odds fetching is best-effort — if API-Football
+is unavailable the script continues without odds rather than failing
+entirely. Matches are either "upcoming" or "final"; true in-progress
+live scoring is handled client-side via KickoffAPI.
 """
 
 import json
@@ -34,6 +33,11 @@ from datetime import datetime, timedelta, timezone
 FIXTURES_URL = "https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json"
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_MODEL = "claude-sonnet-4-6"
+
+# OddsPapi — for pre-match betting odds.
+# Free tier: no credit card, key works immediately.
+# Sign up at https://oddspapi.io/signup
+# Set the key as a GitHub secret named ODDS_API_KEY.
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.join(REPO_ROOT, "data", "log.json")
@@ -104,6 +108,134 @@ def call_claude(api_key, system_prompt, user_prompt, max_tokens=2000, retries=MA
             if attempt < retries:
                 time.sleep(RETRY_DELAY_SECONDS)
     raise RuntimeError(f"Claude API call failed after {retries} attempts: {last_err}")
+
+
+# ───────────────────────── betting odds helpers (OddsPapi) ─────────────────────────
+# OddsPapi: free tier, no credit card. Sign up at oddspapi.io
+# API key goes in ?apiKey= query param, not a header.
+# World Cup fixtures: sportId=10 (soccer), tournamentName contains "World Cup"
+
+ODDSPAPI_BASE = "https://api.oddspapi.io/v4"
+ODDSPAPI_MARKET_1X2 = 101  # Full Time Result (1X2)
+
+
+def fetch_oddspapi(api_key, endpoint, params=None):
+    """Call OddsPapi. Returns parsed JSON or None on failure — always fails silently."""
+    if not api_key:
+        return None
+    p = {"apiKey": api_key}
+    if params:
+        p.update(params)
+    url = f"{ODDSPAPI_BASE}/{endpoint}?" + "&".join(f"{k}={v}" for k, v in p.items())
+    try:
+        req = urllib.request.Request(url, headers={"Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"  OddsPapi call failed for {endpoint}: {e}", file=sys.stderr)
+        return None
+
+
+def get_oddspapi_fixture_id(api_key, team1, team2, date_str):
+    """Find the OddsPapi fixture ID for a World Cup match by team names and date."""
+    from_date = date_str
+    to_date = date_str
+    data = fetch_oddspapi(api_key, "fixtures", {
+        "sportId": 10,
+        "from": from_date,
+        "to": to_date,
+    })
+    if not data or not isinstance(data, list):
+        return None
+    for fx in data:
+        # OddsPapi returns participants array with home [0] and away [1]
+        participants = fx.get("participants", [])
+        if len(participants) < 2:
+            continue
+        home = participants[0].get("name", "").lower()
+        away = participants[1].get("name", "").lower()
+        t1, t2 = team1.lower(), team2.lower()
+        if (t1[:4] in home or home[:4] in t1) and (t2[:4] in away or away[:4] in t2):
+            return fx.get("id")
+        if (t2[:4] in home or home[:4] in t2) and (t1[:4] in away or away[:4] in t1):
+            return fx.get("id")
+    return None
+
+
+def fetch_match_odds(api_key, team1, team2, date_str):
+    """Fetch 1X2 pre-match odds via OddsPapi. Returns dict with home/draw/away
+    decimal odds and bookmaker name, or None if unavailable."""
+    fixture_id = get_oddspapi_fixture_id(api_key, team1, team2, date_str)
+    if not fixture_id:
+        print(f"  No OddsPapi fixture ID found for {team1} vs {team2}", file=sys.stderr)
+        return None
+
+    data = fetch_oddspapi(api_key, f"fixtures/{fixture_id}/odds", {
+        "marketId": ODDSPAPI_MARKET_1X2,
+    })
+    if not data:
+        return None
+
+    # OddsPapi returns bookmakerOdds dict keyed by bookmaker slug
+    bookmaker_odds = data.get("bookmakerOdds", {})
+
+    # Prefer Pinnacle (sharpest), fall back to Bet365, then first available
+    preference = ["pinnacle", "bet365", "draftkings", "fanduel"]
+    for slug in preference + list(bookmaker_odds.keys()):
+        if slug not in bookmaker_odds:
+            continue
+        bk = bookmaker_odds[slug]
+        markets = bk.get("markets", {})
+        m = markets.get(str(ODDSPAPI_MARKET_1X2)) or markets.get(ODDSPAPI_MARKET_1X2)
+        if not m:
+            continue
+        outcomes = {o["name"]: float(o["price"]) for o in m.get("outcomes", [])}
+        if "Home" in outcomes and "Draw" in outcomes and "Away" in outcomes:
+            return {
+                "home": outcomes["Home"],
+                "draw": outcomes["Draw"],
+                "away": outcomes["Away"],
+                "bookmaker": bk.get("name", slug.title()),
+                "fixture_id": fixture_id,
+            }
+    print(f"  No 1X2 odds found in OddsPapi response for fixture {fixture_id}", file=sys.stderr)
+    return None
+
+
+def odds_to_implied_prob(decimal_odds):
+    """Convert decimal odds to implied probability percentage."""
+    if not decimal_odds or decimal_odds <= 0:
+        return 0
+    return round((1 / decimal_odds) * 100)
+
+
+def market_favourite(odds):
+    """Return 'home', 'draw', or 'away' — whichever the market favours."""
+    if not odds:
+        return None
+    return min(["home", "draw", "away"], key=lambda k: odds[k])
+
+
+def prediction_vs_market(prediction, odds, home_name, away_name):
+    """Compare a predicted scoreline to the market favourite.
+    Returns a dict with: going_against (bool), market_fav (str),
+    market_fav_name (str), and a summary string."""
+    if not odds:
+        return None
+    pred_diff = prediction["home"] - prediction["away"]
+    pred_outcome = "home" if pred_diff > 0 else "away" if pred_diff < 0 else "draw"
+    fav = market_favourite(odds)
+    going_against = pred_outcome != fav
+    fav_name = home_name if fav == "home" else away_name if fav == "away" else "a draw"
+    return {
+        "going_against": going_against,
+        "predicted_outcome": pred_outcome,
+        "market_favourite": fav,
+        "market_favourite_name": fav_name,
+        "home_implied": odds_to_implied_prob(odds["home"]),
+        "draw_implied": odds_to_implied_prob(odds["draw"]),
+        "away_implied": odds_to_implied_prob(odds["away"]),
+    }
 
 
 # ───────────────────────── fixture data helpers ─────────────────────────
@@ -312,6 +444,8 @@ matching this schema and nothing else (no markdown fences, no preamble):
   "winnerConfidence": <int 0-100, how sure you are of the WINNER/DRAW outcome>,
   "scoreConfidence": <int 0-100, how sure you are of the EXACT scoreline — always much lower than winnerConfidence>,
   "confidenceNote": "one sentence explaining the gap between the two confidence numbers",
+  "goingAgainstMarket": <true if your predicted outcome differs from the market favourite, false if it agrees or no odds available>,
+  "againstMarketReason": "if goingAgainstMarket is true: 2-3 sentences explaining specifically why you think the market is wrong. If false: empty string.",
   "alternates": [
     {
       "prediction": {"home": <int>, "away": <int>},
@@ -326,18 +460,18 @@ matching this schema and nothing else (no markdown fences, no preamble):
   ]
 }
 
-The two alternates must be genuinely different from your main prediction and from each other — not just \
-off-by-one variations. At least one alternate should represent a real, named risk to your main pick (e.g. \
-a different winner entirely, or a draw, if those are plausible outcomes). Ground every claim in the form \
-data and context given to you. Do not invent player injuries, transfers, or statistics not implied by the \
-data provided — reason from team form, goal patterns, and the stage of \
-the tournament instead. Be specific and opinionated, not generic. Output ONLY the JSON object."""
+The two alternates must be genuinely different from your main prediction and from each other. \
+If betting odds are provided, compare your pick against the market and be explicit about whether \
+you agree or disagree with where the money is. When going against the market, explain exactly why — \
+reference specific form data, tactical mismatches, or historical patterns the market may be \
+underweighting. Do not invent player injuries or statistics not in the data provided. \
+Be specific and opinionated. Output ONLY the JSON object."""
 
 
 def validate_prediction_schema(parsed):
-    """Raise a clear error if the parsed prediction is missing required fields.
-    Used to catch incomplete API responses instead of silently shipping them."""
-    required_top = ["analysis", "prediction", "winnerConfidence", "scoreConfidence", "confidenceNote", "alternates"]
+    """Raise a clear error if the parsed prediction is missing required fields."""
+    required_top = ["analysis", "prediction", "winnerConfidence", "scoreConfidence",
+                    "confidenceNote", "alternates", "goingAgainstMarket", "againstMarketReason"]
     missing = [k for k in required_top if k not in parsed]
     if missing:
         raise ValueError(f"Prediction response missing required field(s): {missing}")
@@ -349,19 +483,28 @@ def validate_prediction_schema(parsed):
                 raise ValueError(f"Alternate missing required field '{k}': {alt}")
 
 
-def generate_prediction(api_key, fixture, home_form, away_form, max_attempts=2):
+def generate_prediction(api_key, fixture, home_form, away_form, odds=None, max_attempts=2):
+    odds_line = ""
+    if odds:
+        odds_line = (
+            f"\nBetting market odds (1X2, decimal): "
+            f"{fixture['team1']} {odds['home']} | Draw {odds['draw']} | {fixture['team2']} {odds['away']}"
+            f"\nImplied probabilities: {fixture['team1']} {odds_to_implied_prob(odds['home'])}% | "
+            f"Draw {odds_to_implied_prob(odds['draw'])}% | {fixture['team2']} {odds_to_implied_prob(odds['away'])}%"
+        )
     user_prompt = (
         f"Match: {fixture['team1']} vs {fixture['team2']}\n"
         f"Round: {fixture['round']}\n"
         f"Venue: {fixture['ground']}\n"
         f"Kickoff: {fixture['date']} {fixture['time']}\n"
         f"{fixture['team1']} recent results: {home_form}\n"
-        f"{fixture['team2']} recent results: {away_form}\n"
+        f"{fixture['team2']} recent results: {away_form}"
+        + odds_line
     )
     last_err = None
     for attempt in range(1, max_attempts + 1):
         try:
-            raw = call_claude(api_key, PREDICTION_SYSTEM_PROMPT, user_prompt, max_tokens=1500)
+            raw = call_claude(api_key, PREDICTION_SYSTEM_PROMPT, user_prompt, max_tokens=1800)
             raw = raw.strip()
             if raw.startswith("```"):
                 raw = raw.split("```")[1]
@@ -376,12 +519,9 @@ def generate_prediction(api_key, fixture, home_form, away_form, max_attempts=2):
     raise RuntimeError(f"Could not get a valid prediction after {max_attempts} attempts: {last_err}")
 
 
-def build_todays_predictions(api_key, fixtures, today_str, only_ids=None):
+def build_todays_predictions(api_key, fixtures, today_str, only_ids=None, api_football_key=None):
     """Generate predictions for today's fixtures. If only_ids is given, only
-    fixtures whose match_id is in that set are processed — this lets the
-    caller request just the fixtures that are missing a prediction, rather
-    than redoing ones that already exist (which would waste API calls and
-    could overwrite a result that's already been graded)."""
+    fixtures whose match_id is in that set are processed."""
     todays_fixtures = [f for f in fixtures if f["date"] == today_str]
     if only_ids is not None:
         todays_fixtures = [
@@ -393,12 +533,31 @@ def build_todays_predictions(api_key, fixtures, today_str, only_ids=None):
         mid = match_id(fx["date"], fx["team1"], fx["team2"])
         home_form = team_recent_form(fixtures, fx["team1"], today_str)
         away_form = team_recent_form(fixtures, fx["team2"], today_str)
+
+        # Fetch betting odds — best-effort, None if unavailable
+        odds = None
+        if api_football_key:
+            print(f"  Fetching odds for {fx['team1']} vs {fx['team2']}...")
+            odds = fetch_match_odds(api_football_key, fx["team1"], fx["team2"], today_str)
+            if odds:
+                print(f"    Odds: {fx['team1']} {odds['home']} | Draw {odds['draw']} | {fx['team2']} {odds['away']}")
+
         print(f"  Predicting {fx['team1']} vs {fx['team2']}...")
         try:
-            pred = generate_prediction(api_key, fx, home_form, away_form)
+            pred = generate_prediction(api_key, fx, home_form, away_form, odds=odds)
         except Exception as e:
             print(f"  ERROR generating prediction for {fx['team1']} vs {fx['team2']}: {e}", file=sys.stderr)
             continue
+
+        # Build the market comparison object stored with the match
+        market = None
+        if odds:
+            market = prediction_vs_market(pred["prediction"], odds, fx["team1"], fx["team2"])
+            market["home_odds"] = odds["home"]
+            market["draw_odds"] = odds["draw"]
+            market["away_odds"] = odds["away"]
+            market["bookmaker"] = odds.get("bookmaker", "")
+
         matches.append({
             "id": mid,
             "kickoff": fx["time"] or "Time TBD",
@@ -413,12 +572,16 @@ def build_todays_predictions(api_key, fixtures, today_str, only_ids=None):
             "winnerConfidence": pred["winnerConfidence"],
             "scoreConfidence": pred["scoreConfidence"],
             "confidenceNote": pred["confidenceNote"],
+            "goingAgainstMarket": pred.get("goingAgainstMarket", False),
+            "againstMarketReason": pred.get("againstMarketReason", ""),
+            "market": market,
             "alternates": pred.get("alternates", []),
             "status": match_status(fx["decided"]),
             "result": None,
             "verdict": None,
         })
     return matches
+
 
 
 # ───────────────────────── HTML rendering ─────────────────────────
@@ -440,6 +603,13 @@ def main():
     if not api_key:
         print("ERROR: ANTHROPIC_API_KEY environment variable is not set.", file=sys.stderr)
         sys.exit(1)
+
+    # OddsPapi key is optional — odds fetching is best-effort
+    api_football_key = os.environ.get("ODDS_API_KEY")
+    if api_football_key:
+        print("ODDS_API_KEY found — betting odds will be fetched via OddsPapi.")
+    else:
+        print("No ODDS_API_KEY found — predictions will be written without betting odds.")
 
     now = datetime.now(timezone.utc)
     today_str = now.strftime("%Y-%m-%d")
@@ -478,7 +648,7 @@ def main():
         print(f"Today ({today_str}) already has all {len(all_todays_fixture_ids)} known fixture(s) predicted. Nothing new to generate.")
     else:
         print(f"Today ({today_str}) has {len(missing_ids)} fixture(s) not yet predicted (out of {len(all_todays_fixture_ids)} total). Generating...")
-        new_matches = build_todays_predictions(api_key, fixtures, today_str, only_ids=missing_ids)
+        new_matches = build_todays_predictions(api_key, fixtures, today_str, only_ids=missing_ids, api_football_key=api_football_key)
         if new_matches:
             if existing_today:
                 existing_today["matches"].extend(new_matches)
