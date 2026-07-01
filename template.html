@@ -6,39 +6,30 @@
   <title>The Match Sheet — World Cup 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <style>
-    body { margin: 0; padding: 0; background: #0a0f0a; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f4f2ee; }
     #root { min-height: 100vh; }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
-    }
   </style>
 </head>
 <body>
 <div id="root"></div>
-
-<!--
-  This file is generated automatically by update_sheet.py, which runs daily
-  via GitHub Actions. The line below injects the latest prediction log.
-  Do not hand-edit the MATCH_SHEET_LOG constant — edit data/log.json and
-  re-run the script (or wait for the next scheduled run) instead.
--->
 <script>
   window.MATCH_SHEET_LOG = __MATCH_SHEET_LOG_JSON__;
+  window.KICKOFF_API_KEY = "";
 </script>
-
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
-// ── API key management (only used for the optional in-page "Ask" feature) ──
 function getApiKey() { return localStorage.getItem("wc-api-key") || ""; }
 function setApiKey(k) { localStorage.setItem("wc-api-key", k); }
+function getKickoffKey() { return localStorage.getItem("wc-kickoff-key") || window.KICKOFF_API_KEY || ""; }
+function setKickoffKey(k) { localStorage.setItem("wc-kickoff-key", k); }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 function formatDateLong(iso) {
   return new Date(iso + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
@@ -46,69 +37,117 @@ function formatDateLong(iso) {
 function formatDateShort(iso) {
   return new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
-function confidenceTier(pct) {
-  if (pct >= 70) return { fg: "#5fe89a", glow: "rgba(95,232,154,0.35)" };
-  if (pct >= 40) return { fg: "#ffb627", glow: "rgba(255,182,39,0.35)" };
-  return { fg: "#ff6b5c", glow: "rgba(255,107,92,0.35)" };
+
+// ── Live score fetching (KickoffAPI) ─────────────────────────────────────────
+async function fetchLiveScores(kickoffKey) {
+  if (!kickoffKey) return null;
+  try {
+    const res = await fetch("https://api.kickoffapi.com/v1/fixtures?live=all&league=1&season=2026", {
+      headers: { "Authorization": `Bearer ${kickoffKey}`, "Accept": "application/json" }
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
 }
 
-// ── Pitch-line background motif (signature visual element) ─────────────────
-function PitchLines() {
-  return (
-    <svg className="pitch-lines" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <line x1="600" y1="0" x2="600" y2="800" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="600" cy="400" r="110" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="600" cy="400" r="3" fill="currentColor" />
-      <rect x="0" y="220" width="160" height="360" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="1040" y="220" width="160" height="360" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
+function findLiveScore(liveData, homeTeam, awayTeam) {
+  if (!liveData || !liveData.data) return null;
+  for (const fx of liveData.data) {
+    const h = (fx.home_team?.name || "").toLowerCase();
+    const a = (fx.away_team?.name || "").toLowerCase();
+    const t1 = homeTeam.toLowerCase();
+    const t2 = awayTeam.toLowerCase();
+    if ((t1.includes(h.slice(0,4)) || h.includes(t1.slice(0,4))) &&
+        (t2.includes(a.slice(0,4)) || a.includes(t2.slice(0,4)))) {
+      return {
+        homeScore: fx.score?.home ?? null,
+        awayScore: fx.score?.away ?? null,
+        minute: fx.time?.elapsed ?? null,
+        status: fx.status?.short ?? null,
+      };
+    }
+  }
+  return null;
 }
 
-// ── Radial confidence dial (signature data visualization) ───────────────────
-function ConfidenceDial({ label, pct, size = 88 }) {
-  const { fg, glow } = confidenceTier(pct);
-  const r = (size - 12) / 2;
-  const circumference = 2 * Math.PI * r;
-  const offset = circumference - (pct / 100) * circumference;
+// ── Components ────────────────────────────────────────────────────────────────
+function LiveScoreBanner({ homeTeam, awayTeam, liveData }) {
+  const score = findLiveScore(liveData, homeTeam, awayTeam);
+  if (!score || score.homeScore === null) return null;
+  const isLive = score.status && !["FT","AET","PEN","FT_PEN"].includes(score.status);
   return (
-    <div className="dial" style={{ width: size }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(240,237,228,0.1)" strokeWidth="6" />
-        <circle
-          cx={size / 2} cy={size / 2} r={r} fill="none"
-          stroke={fg} strokeWidth="6" strokeLinecap="round"
-          strokeDasharray={circumference} strokeDashoffset={offset}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-          style={{ filter: `drop-shadow(0 0 6px ${glow})`, transition: "stroke-dashoffset 0.8s ease" }}
-        />
-        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" className="dial-pct" fill={fg}>{pct}</text>
-      </svg>
-      <span className="dial-label">{label}</span>
+    <div className={`live-banner ${isLive ? "live-banner--live" : "live-banner--ft"}`}>
+      {isLive && <span className="live-dot" />}
+      <span className="live-label">{isLive ? `${score.minute}'` : "FT"}</span>
+      <span className="live-score">{homeTeam} {score.homeScore} – {score.awayScore} {awayTeam}</span>
     </div>
   );
 }
 
-function StatusChip({ status }) {
-  if (status === "final") {
-    return <span className="status-chip status-final">FINAL</span>;
-  }
-  return <span className="status-chip status-upcoming">UPCOMING</span>;
+function OddsRow({ market }) {
+  if (!market) return null;
+  const { home_odds, draw_odds, away_odds, bookmaker, home_implied, draw_implied, away_implied } = market;
+  return (
+    <div className="odds-row">
+      <span className="odds-label">Market odds</span>
+      <div className="odds-cells">
+        <div className="odds-cell">
+          <span className="odds-val">{home_odds?.toFixed(2)}</span>
+          <span className="odds-prob">{home_implied}%</span>
+          <span className="odds-tag">Home</span>
+        </div>
+        <div className="odds-cell">
+          <span className="odds-val">{draw_odds?.toFixed(2)}</span>
+          <span className="odds-prob">{draw_implied}%</span>
+          <span className="odds-tag">Draw</span>
+        </div>
+        <div className="odds-cell">
+          <span className="odds-val">{away_odds?.toFixed(2)}</span>
+          <span className="odds-prob">{away_implied}%</span>
+          <span className="odds-tag">Away</span>
+        </div>
+      </div>
+      {bookmaker && <span className="odds-source">via {bookmaker}</span>}
+    </div>
+  );
+}
+
+function AgainstMarketTag({ match }) {
+  if (!match.goingAgainstMarket) return null;
+  return (
+    <div className="against-market">
+      <span className="against-badge">Going against the market</span>
+      {match.againstMarketReason && <p className="against-reason">{match.againstMarketReason}</p>}
+    </div>
+  );
+}
+
+function ConfidenceBar({ label, pct }) {
+  const color = pct >= 70 ? "#1a7a3c" : pct >= 40 ? "#b45309" : "#b91c1c";
+  return (
+    <div className="conf-bar">
+      <div className="conf-bar-header">
+        <span className="conf-bar-label">{label}</span>
+        <span className="conf-bar-pct" style={{ color }}>{pct}%</span>
+      </div>
+      <div className="conf-bar-track">
+        <div className="conf-bar-fill" style={{ width: `${pct}%`, background: color }} />
+      </div>
+    </div>
+  );
 }
 
 function AlternateScenarios({ alternates }) {
   if (!alternates || alternates.length === 0) return null;
   return (
     <div className="alternates">
-      <p className="alternates-label">Other live scenarios</p>
+      <p className="alternates-heading">Other scenarios</p>
       {alternates.map((alt, i) => (
         <div className="alt-row" key={i}>
-          <div className="alt-score-tag">
-            {alt.prediction.home}–{alt.prediction.away}
-          </div>
+          <span className="alt-score">{alt.prediction.home}–{alt.prediction.away}</span>
           <div className="alt-body">
-            <span className="alt-likelihood">{alt.likelihood}</span>
-            <p>{alt.reasoning}</p>
+            <span className="alt-label">{alt.likelihood}</span>
+            <p className="alt-text">{alt.reasoning}</p>
           </div>
         </div>
       ))}
@@ -116,47 +155,21 @@ function AlternateScenarios({ alternates }) {
   );
 }
 
-function ScoreSlip({ match }) {
-  return (
-    <div className="slip">
-      <div className="slip-board">
-        <div className="slip-row">
-          <span className="slip-team">{match.home.name}</span>
-          <span className="slip-score">{match.prediction.home}</span>
-        </div>
-        <div className="slip-divider" />
-        <div className="slip-row">
-          <span className="slip-team">{match.away.name}</span>
-          <span className="slip-score">{match.prediction.away}</span>
-        </div>
-      </div>
-      <div className="dials">
-        <ConfidenceDial label="WINNER" pct={match.winnerConfidence} />
-        <ConfidenceDial label="SCORE" pct={match.scoreConfidence} />
-      </div>
-      {match.confidenceNote && <p className="confidence-note">{match.confidenceNote}</p>}
-      <AlternateScenarios alternates={match.alternates} />
-    </div>
-  );
-}
-
 function buildMatchContext(match) {
   const lines = [
     `Match: ${match.home.name} vs ${match.away.name} (${match.round}, ${match.kickoff}, ${match.venue})`,
-    `Status: ${match.status === "final" ? "Final" : "Upcoming"}`,
-    `${match.home.name} form: ${match.homeForm}`,
-    `${match.away.name} form: ${match.awayForm}`,
     `Predicted: ${match.home.name} ${match.prediction.home}-${match.prediction.away} ${match.away.name}`,
     `Winner confidence: ${match.winnerConfidence}%. Score confidence: ${match.scoreConfidence}%.`,
-    match.confidenceNote ? `Confidence note: ${match.confidenceNote}` : "",
+    match.confidenceNote || "",
+    match.goingAgainstMarket ? `Going against the market. Reason: ${match.againstMarketReason}` : "",
     "Analysis:"
   ];
   match.analysis.forEach(b => lines.push(`- ${b.heading}: ${b.body}`));
-  if (match.alternates && match.alternates.length > 0) {
-    lines.push("Alternate scenarios also considered:");
-    match.alternates.forEach(alt => lines.push(`- ${alt.likelihood} (${alt.prediction.home}-${alt.prediction.away}): ${alt.reasoning}`));
+  if (match.alternates?.length) {
+    lines.push("Alternates:");
+    match.alternates.forEach(a => lines.push(`- ${a.likelihood} (${a.prediction.home}-${a.prediction.away}): ${a.reasoning}`));
   }
-  if (match.result) lines.push(`ACTUAL RESULT: ${match.home.name} ${match.result.home}-${match.result.away} ${match.away.name}.${match.result.note ? " " + match.result.note : ""}`);
+  if (match.result) lines.push(`Actual result: ${match.home.name} ${match.result.home}-${match.result.away} ${match.away.name}.${match.result.note ? " " + match.result.note : ""}`);
   if (match.verdict) lines.push(`Verdict: ${match.verdict.outcome}. ${match.verdict.writeup || ""}`);
   return lines.filter(Boolean).join("\n");
 }
@@ -168,60 +181,57 @@ function MatchChat({ match, apiKey }) {
   const [asking, setAsking] = useState(false);
   const [err, setErr] = useState(null);
   const bottomRef = useRef(null);
-
-  useEffect(() => { if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" }); }, [thread, asking]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [thread, asking]);
 
   async function ask(e) {
     e.preventDefault();
     const q = question.trim();
     if (!q || asking) return;
-    if (!apiKey) { setErr("Add your Anthropic API key at the top of the page to use this feature."); return; }
-    setErr(null);
-    setQuestion("");
-    const nextThread = [...thread, { role: "user", text: q }];
-    setThread(nextThread);
-    setAsking(true);
+    if (!apiKey) { setErr("Add your Anthropic API key above to use this feature."); return; }
+    setErr(null); setQuestion("");
+    const next = [...thread, { role: "user", text: q }];
+    setThread(next); setAsking(true);
     try {
-      const system = `You are the analyst behind a World Cup prediction column called "The Match Sheet." Answer the reader's question about this specific prediction directly — reference the actual reasoning, players, and numbers. Keep answers to 2-4 sentences unless more is genuinely needed. Plain prose only, no markdown headers.\n\n--- MATCH DATA ---\n${buildMatchContext(match)}`;
+      const system = `You are the analyst behind "The Match Sheet", a World Cup prediction column. Answer directly about this specific prediction, referencing the actual reasoning, numbers, and market context. 2–4 sentences unless more is genuinely needed. Plain prose.\n\n${buildMatchContext(match)}`;
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, system, messages: nextThread.map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text })) })
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, system, messages: next.map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text })) })
       });
       if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error?.message || `API error ${res.status}`); }
       const data = await res.json();
       const text = (data.content || []).find(b => b.type === "text")?.text || "No answer returned.";
       setThread(t => [...t, { role: "assistant", text }]);
     } catch (e2) {
-      setErr(e2.message || "Couldn't reach the analyst — try again.");
+      setErr(e2.message || "Couldn't reach the analyst.");
       setThread(t => t.slice(0, -1));
       setQuestion(q);
     } finally { setAsking(false); }
   }
 
-  if (!open) return <button className="ask-toggle" onClick={() => setOpen(true)}>Ask about this prediction →</button>;
+  if (!open) return <button className="ask-toggle" onClick={() => setOpen(true)}>Ask about this prediction</button>;
 
   return (
     <div className="ask-box">
       <div className="ask-head">
         <span>Ask — {match.home.name} vs {match.away.name}</span>
-        <button className="ask-close" onClick={() => setOpen(false)}>×</button>
+        <button className="ask-close" onClick={() => setOpen(false)} aria-label="Close">×</button>
       </div>
       {thread.length > 0 && (
         <div className="ask-thread">
           {thread.map((m, i) => (
-            <div key={i} className={`ask-msg ask-msg-${m.role}`}>
+            <div key={i} className={`ask-msg ${m.role === "user" ? "ask-msg--user" : "ask-msg--analyst"}`}>
               <span className="ask-msg-label">{m.role === "user" ? "You" : "Analyst"}</span>
               <p>{m.text}</p>
             </div>
           ))}
-          {asking && <div className="ask-msg ask-msg-assistant"><span className="ask-msg-label">Analyst</span><p className="ask-thinking">Thinking…</p></div>}
+          {asking && <div className="ask-msg ask-msg--analyst"><span className="ask-msg-label">Analyst</span><p className="ask-thinking">Thinking…</p></div>}
           <div ref={bottomRef} />
         </div>
       )}
       {err && <p className="ask-error">{err}</p>}
       <form className="ask-form" onSubmit={ask}>
-        <input type="text" value={question} onChange={e => setQuestion(e.target.value)} placeholder="e.g. Why isn't your score confidence higher?" disabled={asking} />
+        <input type="text" value={question} onChange={e => setQuestion(e.target.value)} placeholder="Why are you going against the market here?" disabled={asking} />
         <button type="submit" disabled={asking || !question.trim()}>Ask</button>
       </form>
     </div>
@@ -230,15 +240,19 @@ function MatchChat({ match, apiKey }) {
 
 function ResultStrip({ match }) {
   const { result, verdict } = match;
-  const styles = { correct: { bg: "#1a3d2e", fg: "#7fd99a", label: "CALLED IT" }, close: { bg: "#3d3214", fg: "#e8c468", label: "CLOSE" }, wrong: { bg: "#3d1f1a", fg: "#ff6b5c", label: "MISSED" } };
-  const s = styles[verdict?.outcome] || styles.wrong;
+  const cfg = {
+    correct: { cls: "result--correct", label: "Called it" },
+    close:   { cls: "result--close",   label: "Close" },
+    wrong:   { cls: "result--wrong",   label: "Missed" },
+  };
+  const c = cfg[verdict?.outcome] || cfg.wrong;
   return (
-    <div className="result-strip">
+    <div className={`result-strip ${c.cls}`}>
       <div className="result-head">
-        <span className="result-badge" style={{ color: s.fg, borderColor: s.fg }}>{s.label}</span>
+        <span className="result-badge">{c.label}</span>
         <span className="result-score">
-          Final <strong>{match.home.name} {result.home}–{result.away} {match.away.name}</strong>
-          <span className="predicted-was"> · predicted {match.prediction.home}-{match.prediction.away}</span>
+          Final: {match.home.name} {result.home}–{result.away} {match.away.name}
+          <span className="result-predicted"> (predicted {match.prediction.home}–{match.prediction.away})</span>
         </span>
       </div>
       {verdict?.writeup && <p className="result-writeup">{verdict.writeup}</p>}
@@ -247,99 +261,120 @@ function ResultStrip({ match }) {
   );
 }
 
-function MatchCard({ match, apiKey, index }) {
+function StatusChip({ status }) {
+  return status === "final"
+    ? <span className="chip chip--final">Final</span>
+    : <span className="chip chip--upcoming">Upcoming</span>;
+}
+
+function MatchCard({ match, apiKey, liveData, index }) {
   return (
-    <article className="match" style={{ "--delay": `${index * 0.08}s` }}>
-      <header className="match-head">
-        <div className="match-meta-row">
+    <article className="match-card">
+      <header className="match-header">
+        <div className="match-header-top">
           <div className="match-meta">
-            <span className="round-tag">{match.round}</span>
-            <span className="dot">/</span>
-            <span className="mono">{match.kickoff}</span>
-            <span className="dot">/</span>
-            <span className="mono">{match.venue}</span>
+            <span className="match-round">{match.round}</span>
+            <span className="match-sep">·</span>
+            <span className="match-time mono">{match.kickoff}</span>
+            <span className="match-sep">·</span>
+            <span className="match-venue">{match.venue}</span>
           </div>
           <StatusChip status={match.status} />
         </div>
         <h2 className="match-title">
-          <span className="team-name">{match.home.name}</span>
-          <span className="crest">{match.home.code}</span>
-          <span className="vs">VS</span>
-          <span className="crest">{match.away.code}</span>
-          <span className="team-name">{match.away.name}</span>
+          <span className="team">{match.home.name}</span>
+          <span className="match-vs">vs</span>
+          <span className="team">{match.away.name}</span>
         </h2>
-        <div className="form-line">
-          <span><strong>{match.home.name}</strong> <span className="mono">{match.homeForm}</span></span>
-          <span><strong>{match.away.name}</strong> <span className="mono">{match.awayForm}</span></span>
+        <LiveScoreBanner homeTeam={match.home.name} awayTeam={match.away.name} liveData={liveData} />
+        <div className="match-form">
+          <div><strong>{match.home.name}</strong> <span className="mono form-text">{match.homeForm}</span></div>
+          <div><strong>{match.away.name}</strong> <span className="mono form-text">{match.awayForm}</span></div>
         </div>
       </header>
+
       <div className="match-body">
-        <div className="analysis">
+        <div className="analysis-col">
           {match.analysis.map((b, i) => (
             <div className="analysis-block" key={i}>
-              <h3><span className="block-marker" />{b.heading}</h3>
-              <p>{b.body}</p>
+              <h3 className="analysis-heading">{b.heading}</h3>
+              <p className="analysis-body">{b.body}</p>
             </div>
           ))}
         </div>
-        <ScoreSlip match={match} />
+
+        <aside className="prediction-col">
+          <div className="prediction-box">
+            <p className="prediction-label">Prediction</p>
+            <div className="scoreline">
+              <span className="score-team">{match.home.name}</span>
+              <span className="score-digits">{match.prediction.home}–{match.prediction.away}</span>
+              <span className="score-team score-team--right">{match.away.name}</span>
+            </div>
+            <div className="conf-bars">
+              <ConfidenceBar label="Winner" pct={match.winnerConfidence} />
+              <ConfidenceBar label="Exact score" pct={match.scoreConfidence} />
+            </div>
+            {match.confidenceNote && <p className="conf-note">{match.confidenceNote}</p>}
+          </div>
+
+          <OddsRow market={match.market} />
+          <AgainstMarketTag match={match} />
+          <AlternateScenarios alternates={match.alternates} />
+        </aside>
       </div>
+
       {match.result && <ResultStrip match={match} />}
       <MatchChat match={match} apiKey={apiKey} />
     </article>
   );
 }
 
-function DaySection({ entry, apiKey }) {
+function DaySection({ entry, apiKey, liveData }) {
   const isToday = entry.date === todayISO();
   return (
-    <section className="day">
-      <div className="day-head">
-        <div className="day-head-left">
-          <h2>{formatDateLong(entry.date)}</h2>
+    <section className="day-section">
+      <div className="day-header">
+        <div className="day-header-left">
+          <h2 className="day-date">{formatDateLong(entry.date)}</h2>
           {entry.tournamentContext && (
-            <span className="day-counter mono">DAY {entry.tournamentContext.day} OF {entry.tournamentContext.totalDays}</span>
+            <span className="day-counter mono">Day {entry.tournamentContext.day} of {entry.tournamentContext.totalDays}</span>
           )}
         </div>
-        {isToday && <span className="today-flag">● LIVE SLATE</span>}
+        {isToday && <span className="today-badge">Today's slate</span>}
       </div>
-      {entry.matches.map((m, i) => <MatchCard key={m.id} match={m} apiKey={apiKey} index={i} />)}
+      {entry.matches.map((m, i) => <MatchCard key={m.id} match={m} apiKey={apiKey} liveData={liveData} index={i} />)}
     </section>
   );
 }
 
-function allMatchesFlat(entries) {
-  const out = [];
-  entries.forEach((entry) => {
-    entry.matches.forEach((m) => out.push({ ...m, date: entry.date }));
-  });
-  return out;
-}
-
 function BankRow({ match, apiKey }) {
   const graded = !!match.result;
-  const styles = {
-    correct: { fg: "#5fe89a", label: "CALLED IT" },
-    close: { fg: "#ffb627", label: "CLOSE" },
-    wrong: { fg: "#ff6b5c", label: "MISSED" }
+  const cfg = {
+    correct: { cls: "bank-badge--correct", label: "Called it" },
+    close:   { cls: "bank-badge--close",   label: "Close" },
+    wrong:   { cls: "bank-badge--wrong",   label: "Missed" },
   };
-  const s = graded ? (styles[match.verdict?.outcome] || styles.wrong) : null;
+  const c = graded ? (cfg[match.verdict?.outcome] || cfg.wrong) : null;
   return (
     <div className="bank-row">
       <div className="bank-row-top">
         <span className="bank-date mono">{formatDateLong(match.date)}</span>
-        {graded ? <span className="bank-badge" style={{ color: s.fg, borderColor: s.fg }}>{s.label}</span> : <span className="bank-badge bank-badge-pending">PENDING</span>}
+        {graded
+          ? <span className={`bank-badge ${c.cls}`}>{c.label}</span>
+          : <span className="bank-badge bank-badge--pending">Pending</span>}
       </div>
       <div className="bank-row-main">
         <span className="bank-teams">{match.home.name} <span className="bank-vs">vs</span> {match.away.name}</span>
         <span className="bank-scores mono">
-          {match.prediction.home}-{match.prediction.away}
-          {graded && <> <span className="bank-arrow">→</span> {match.result.home}-{match.result.away}</>}
+          {match.prediction.home}–{match.prediction.away}
+          {graded && <> → {match.result.home}–{match.result.away}</>}
         </span>
       </div>
-      <div className="bank-row-conf">
-        <span>Winner <strong className="mono">{match.winnerConfidence}%</strong></span>
-        <span>Score <strong className="mono">{match.scoreConfidence}%</strong></span>
+      <div className="bank-conf">
+        <span>Winner <strong>{match.winnerConfidence}%</strong></span>
+        <span>Score <strong>{match.scoreConfidence}%</strong></span>
+        {match.goingAgainstMarket && <span className="bank-contrarian">Against market</span>}
       </div>
       {graded && match.verdict?.writeup && <p className="bank-writeup">{match.verdict.writeup}</p>}
       <MatchChat match={match} apiKey={apiKey} />
@@ -348,362 +383,401 @@ function BankRow({ match, apiKey }) {
 }
 
 function BankView({ entries, apiKey }) {
-  const flat = allMatchesFlat(entries);
-  const graded = flat.filter((m) => m.result);
-  const correct = graded.filter((m) => m.verdict?.outcome === "correct").length;
-  const close = graded.filter((m) => m.verdict?.outcome === "close").length;
-  const wrong = graded.filter((m) => m.verdict?.outcome === "wrong").length;
-  const exactScores = graded.filter(
-    (m) => m.result.home === m.prediction.home && m.result.away === m.prediction.away
-  ).length;
-  const winnersRight = graded.filter((m) => {
+  const flat = entries.flatMap(e => e.matches.map(m => ({ ...m, date: e.date })));
+  const graded = flat.filter(m => m.result);
+  const correct = graded.filter(m => m.verdict?.outcome === "correct").length;
+  const close = graded.filter(m => m.verdict?.outcome === "close").length;
+  const wrong = graded.filter(m => m.verdict?.outcome === "wrong").length;
+  const exact = graded.filter(m => m.result.home === m.prediction.home && m.result.away === m.prediction.away).length;
+  const winnersRight = graded.filter(m => {
     const po = m.prediction.home > m.prediction.away ? "h" : m.prediction.home < m.prediction.away ? "a" : "d";
     const ao = m.result.home > m.result.away ? "h" : m.result.home < m.result.away ? "a" : "d";
     return po === ao;
   }).length;
-
-  const sorted = [...flat].sort((a, b) => (a.date < b.date ? 1 : -1));
-  const winnerPct = graded.length ? Math.round((winnersRight / graded.length) * 100) : 0;
-  const scorePct = graded.length ? Math.round((exactScores / graded.length) * 100) : 0;
-
+  const sorted = [...flat].sort((a, b) => a.date < b.date ? 1 : -1);
   return (
     <div className="bank">
       <div className="bank-stats">
-        <div className="stat">
-          <ConfidenceDial label="" pct={winnerPct} size={72} />
-          <span className="stat-label">Winner called right</span>
-        </div>
-        <div className="stat">
-          <ConfidenceDial label="" pct={scorePct} size={72} />
-          <span className="stat-label">Exact score hit</span>
-        </div>
-        <div className="stat stat-tally">
-          <span className="stat-num mono">{correct}-{close}-{wrong}</span>
-          <span className="stat-label">Called it / close / missed</span>
-        </div>
-        <div className="stat stat-tally">
-          <span className="stat-num mono">{graded.length}</span>
-          <span className="stat-label">Graded predictions</span>
-        </div>
+        {[
+          { num: graded.length ? `${Math.round(winnersRight/graded.length*100)}%` : "—", label: "Winners right" },
+          { num: graded.length ? `${Math.round(exact/graded.length*100)}%` : "—", label: "Exact scores" },
+          { num: `${correct}–${close}–${wrong}`, label: "Hit / close / miss" },
+          { num: graded.length, label: "Graded" },
+        ].map((s, i) => (
+          <div key={i} className="bank-stat">
+            <span className="bank-stat-num">{s.num}</span>
+            <span className="bank-stat-label">{s.label}</span>
+          </div>
+        ))}
       </div>
-
-      {flat.length === 0 ? (
-        <p className="bank-empty">No predictions logged yet.</p>
-      ) : (
-        sorted.map((m) => <BankRow key={m.id} match={m} apiKey={apiKey} />)
-      )}
+      {flat.length === 0
+        ? <p className="empty-state">No predictions logged yet.</p>
+        : sorted.map(m => <BankRow key={m.id} match={m} apiKey={apiKey} />)}
     </div>
   );
 }
 
-function ApiKeyBanner({ apiKey, onSave }) {
-  const [val, setVal] = useState(apiKey);
+function SettingsBar({ apiKey, onSaveApi, kickoffKey, onSaveKickoff }) {
+  const [apiVal, setApiVal] = useState(apiKey);
+  const [koVal, setKoVal] = useState(kickoffKey);
   const [saved, setSaved] = useState(false);
+
   function save(e) {
     e.preventDefault();
-    onSave(val.trim());
+    onSaveApi(apiVal.trim());
+    onSaveKickoff(koVal.trim());
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
+
   return (
-    <div className="api-banner">
-      <span className="api-label mono">API KEY</span>
-      <form className="api-form" onSubmit={save}>
-        <input type="password" value={val} onChange={e => setVal(e.target.value)} placeholder="sk-ant-…" spellCheck={false} />
-        <button type="submit">{saved ? "✓ SAVED" : "SAVE"}</button>
+    <div className="settings-bar">
+      <form className="settings-form" onSubmit={save}>
+        <div className="settings-field">
+          <label className="settings-label">Anthropic key</label>
+          <input type="password" value={apiVal} onChange={e => setApiVal(e.target.value)} placeholder="sk-ant-…" spellCheck={false} />
+        </div>
+        <div className="settings-field">
+          <label className="settings-label">KickoffAPI key <span className="settings-sublabel">(live scores)</span></label>
+          <input type="password" value={koVal} onChange={e => setKoVal(e.target.value)} placeholder="Your KickoffAPI key…" spellCheck={false} />
+        </div>
+        <button type="submit" className="settings-save">{saved ? "Saved" : "Save"}</button>
       </form>
-      <a className="api-link" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Get a key →</a>
+      <div className="settings-links">
+        <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Get Anthropic key →</a>
+        <a href="https://kickoffapi.com" target="_blank" rel="noopener">Get KickoffAPI key →</a>
+      </div>
     </div>
   );
 }
 
-// ── App ──────────────────────────────────────────────────────────────────────
+// ── App ───────────────────────────────────────────────────────────────────────
 function App() {
   const [tab, setTab] = useState("sheet");
   const [apiKey, setApiKeyState] = useState(getApiKey);
+  const [kickoffKey, setKickoffKeyState] = useState(getKickoffKey);
+  const [liveData, setLiveData] = useState(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const log = window.MATCH_SHEET_LOG || { entries: [] };
 
-  function saveApiKey(k) { setApiKey(k); setApiKeyState(k); }
+  function saveApi(k) { setApiKey(k); setApiKeyState(k); }
+  function saveKickoff(k) { setKickoffKey(k); setKickoffKeyState(k); }
+
+  useEffect(() => {
+    if (!kickoffKey) return;
+    const poll = async () => {
+      const data = await fetchLiveScores(kickoffKey);
+      setLiveData(data);
+    };
+    poll();
+    const interval = setInterval(poll, 60000);
+    return () => clearInterval(interval);
+  }, [kickoffKey]);
 
   const entries = [...log.entries].sort((a, b) => a.date < b.date ? 1 : -1);
-  const lastUpdated = entries.length > 0 ? formatDateShort(entries[0].date) : null;
   const todaysEntry = entries.find(e => e.date === todayISO());
-  const mostRecentEntry = entries[0]; // entries are sorted newest-first
+  const mostRecentEntry = entries[0];
+  const lastUpdated = entries.length > 0 ? formatDateShort(entries[0].date) : null;
 
   return (
     <div className="page">
       <Styles />
+
       <header className="masthead">
-        <PitchLines />
         <div className="masthead-inner">
-          <div className="kicker-row">
-            <p className="kicker">⚽ THE MATCH SHEET</p>
-            {lastUpdated && <span className="kicker-meta mono">UPDATED {lastUpdated}</span>}
+          <div className="masthead-top">
+            <div>
+              <p className="publication-label">The Match Sheet</p>
+              <h1 className="publication-title">World Cup 2026</h1>
+              <p className="publication-sub">Daily predictions, locked in before kickoff. Graded honestly after the final whistle.</p>
+            </div>
+            <div className="masthead-right">
+              {lastUpdated && <p className="last-updated">Updated {lastUpdated}</p>}
+              <button className="settings-toggle" onClick={() => setSettingsOpen(o => !o)} aria-label="Settings">
+                {settingsOpen ? "Close" : "Keys & settings"}
+              </button>
+            </div>
           </div>
-          <h1>World Cup 2026<br/><span className="h1-accent">Predicted Daily</span></h1>
-          <p className="sub">Every matchday gets a full breakdown and a locked-in score before kickoff. Every result gets graded the next day — no quiet edits, no deleted misses.</p>
+          {settingsOpen && <SettingsBar apiKey={apiKey} onSaveApi={saveApi} kickoffKey={kickoffKey} onSaveKickoff={saveKickoff} />}
         </div>
       </header>
 
-      <ApiKeyBanner apiKey={apiKey} onSave={saveApiKey} />
-
-      <nav className="tabs">
-        <div className="tabs-inner">
-          <button className={`tab ${tab === "sheet" ? "tab-active" : ""}`} onClick={() => setTab("sheet")}>Match Sheet</button>
-          <button className={`tab ${tab === "bank" ? "tab-active" : ""}`} onClick={() => setTab("bank")}>Prediction Bank</button>
+      <nav className="tab-nav">
+        <div className="tab-nav-inner">
+          <button className={`tab-btn ${tab === "sheet" ? "tab-btn--active" : ""}`} onClick={() => setTab("sheet")}>Match Sheet</button>
+          <button className={`tab-btn ${tab === "bank" ? "tab-btn--active" : ""}`} onClick={() => setTab("bank")}>Prediction Bank</button>
         </div>
       </nav>
 
-      <main className="content">
+      <main className="page-content">
         {entries.length === 0 ? (
-          <p className="bank-empty">No predictions logged yet — check back after the next scheduled update.</p>
+          <p className="empty-state">No predictions logged yet — check back after the next morning update.</p>
         ) : tab === "sheet" ? (
           todaysEntry ? (
-            <DaySection entry={todaysEntry} apiKey={apiKey} />
+            <DaySection entry={todaysEntry} apiKey={apiKey} liveData={liveData} />
           ) : mostRecentEntry ? (
-            <div>
-              <p className="stale-notice">
-                Today's slate hasn't been generated yet — showing the most recent matchday instead.
-              </p>
-              <DaySection entry={mostRecentEntry} apiKey={apiKey} />
-            </div>
-          ) : (
-            <p className="bank-empty">No predictions logged yet — check back after the next scheduled update.</p>
-          )
+            <>
+              <p className="stale-notice">Today's predictions haven't been generated yet. Showing the most recent matchday.</p>
+              <DaySection entry={mostRecentEntry} apiKey={apiKey} liveData={liveData} />
+            </>
+          ) : null
         ) : (
           <BankView entries={entries} apiKey={apiKey} />
         )}
       </main>
 
       <footer className="page-footer">
-        <p>This page rebuilds itself automatically every morning via GitHub Actions — no manual updates needed. The Match Sheet always shows today's slate; once a matchday is finished, it moves into the Prediction Bank for the full track record. Use "Ask about this prediction" on any match to question the reasoning directly.</p>
+        <p>Rebuilds automatically every morning via GitHub Actions. Match Sheet shows today only; everything finished moves to the Prediction Bank.</p>
       </footer>
     </div>
   );
 }
 
-// ── Styles ───────────────────────────────────────────────────────────────────
 function Styles() {
   return <style>{`
-    *{box-sizing:border-box}
-    .page{
-      --ink:#0a0f0a;
-      --pitch:#0d2818;
-      --pitch-light:#143824;
-      --panel:#11201a;
-      --panel-raised:#162a22;
-      --chalk:#f0ede4;
-      --chalk-dim:#a8b0a8;
-      --rule:rgba(240,237,228,0.12);
-      --amber:#ffb627;
-      --blue:#4a9eff;
-      --green:#5fe89a;
-      --red:#ff6b5c;
-      font-family:'Inter',-apple-system,sans-serif;
-      background:var(--ink);
-      color:var(--chalk);
-      min-height:100vh;
-      line-height:1.55;
+    .page {
+      --green: #1a7a3c;
+      --green-light: #dcf0e4;
+      --green-dark: #145e2e;
+      --red: #b91c1c;
+      --red-light: #fee2e2;
+      --amber: #b45309;
+      --amber-light: #fef3c7;
+      --ink: #111827;
+      --ink-2: #374151;
+      --ink-3: #6b7280;
+      --rule: #e5e7eb;
+      --rule-strong: #d1d5db;
+      --bg: #f4f2ee;
+      --bg-card: #ffffff;
+      --bg-card-2: #f9f8f6;
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.6;
+      font-size: 16px;
     }
-    .mono{font-family:'IBM Plex Mono',monospace}
-
-    .pitch-lines{position:absolute;inset:0;width:100%;height:100%;color:var(--chalk);opacity:0.08;pointer-events:none;z-index:0}
+    .mono { font-family: 'JetBrains Mono', 'Courier New', monospace; }
 
     /* ── Masthead ── */
-    .masthead{
-      position:relative;
-      overflow:hidden;
-      background:radial-gradient(ellipse 120% 100% at 50% -20%, var(--pitch-light) 0%, var(--pitch) 45%, var(--ink) 100%);
-      padding:3.5rem 1.5rem 2.5rem;
-      border-bottom:1px solid var(--rule);
+    .masthead {
+      background: var(--bg-card);
+      border-bottom: 3px solid var(--green);
+      padding: 2rem 1.5rem 0;
     }
-    .masthead-inner{position:relative;z-index:1;max-width:800px;margin:0 auto}
-    .kicker-row{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.1rem}
-    .kicker{font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:0.22em;font-size:0.72rem;color:var(--amber);margin:0;text-transform:uppercase}
-    .kicker-meta{font-size:0.68rem;color:var(--chalk-dim);letter-spacing:0.08em}
-    .masthead h1{
-      font-family:'Anton',sans-serif;
-      font-weight:400;
-      font-size:clamp(2.6rem,8vw,4.5rem);
-      margin:0 0 1rem;
-      letter-spacing:0.01em;
-      line-height:0.95;
-      text-transform:uppercase;
+    .masthead-inner { max-width: 860px; margin: 0 auto; }
+    .masthead-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; padding-bottom: 1.5rem; }
+    .masthead-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+    .publication-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.4rem;
     }
-    .h1-accent{color:var(--amber);text-shadow:0 0 40px rgba(255,182,39,0.35)}
-    .masthead .sub{font-size:1rem;color:var(--chalk-dim);max-width:54ch;margin:0;font-weight:400}
+    .publication-title {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .publication-sub {
+      font-size: 1rem;
+      color: var(--ink-3);
+      max-width: 48ch;
+      font-style: italic;
+    }
+    .last-updated { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--ink-3); }
+    .settings-toggle {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      background: transparent;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.35rem 0.8rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .settings-toggle:hover { background: var(--green-light); }
 
-    /* ── API banner ── */
-    .api-banner{background:#070b07;padding:0.65rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
-    .api-label{font-size:0.68rem;font-weight:600;letter-spacing:0.1em;color:var(--chalk-dim);white-space:nowrap}
-    .api-form{display:flex;gap:0.4rem;flex:1;min-width:0}
-    .api-form input{flex:1;min-width:0;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;padding:0.4rem 0.65rem;border:1px solid var(--rule);background:var(--panel);color:var(--chalk);border-radius:3px}
-    .api-form input:focus{outline:none;border-color:var(--amber)}
-    .api-form button{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.7rem;letter-spacing:0.06em;background:var(--pitch-light);color:var(--green);border:1px solid var(--rule);padding:0.4rem 0.8rem;cursor:pointer;white-space:nowrap;border-radius:3px}
-    .api-form button:hover{border-color:var(--green)}
-    .api-link{font-size:0.78rem;color:var(--blue);text-decoration:none;white-space:nowrap}
-    .api-link:hover{text-decoration:underline}
+    /* ── Settings bar ── */
+    .settings-bar { border-top: 1px solid var(--rule); padding: 1rem 0 1.5rem; }
+    .settings-form { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 0.5rem; }
+    .settings-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 200px; }
+    .settings-label { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; color: var(--ink-2); }
+    .settings-sublabel { font-weight: 400; color: var(--ink-3); }
+    .settings-field input { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; padding: 0.4rem 0.65rem; border: 1px solid var(--rule-strong); border-radius: 4px; background: var(--bg); color: var(--ink); }
+    .settings-field input:focus { outline: 2px solid var(--green); outline-offset: 1px; }
+    .settings-save { font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 600; background: var(--green); color: #fff; border: none; padding: 0.45rem 1rem; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+    .settings-save:hover { background: var(--green-dark); }
+    .settings-links { display: flex; gap: 1.5rem; }
+    .settings-links a { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--green); text-decoration: none; }
+    .settings-links a:hover { text-decoration: underline; }
 
-    /* ── Tabs ── */
-    .tabs{background:var(--ink);border-bottom:3px solid var(--accent, var(--amber))}
-    .tabs-inner{max-width:800px;margin:0 auto;padding:0 1.5rem;display:flex;gap:0.25rem}
-    .tab{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:0.82rem;letter-spacing:0.04em;text-transform:uppercase;background:transparent;color:var(--chalk-dim);border:none;padding:0.85rem 1rem;cursor:pointer;transition:color 0.15s}
-    .tab:hover{color:var(--chalk)}
-    .tab-active{color:var(--amber);position:relative}
-    .tab-active::after{content:"";position:absolute;bottom:-3px;left:0;right:0;height:3px;background:var(--amber)}
+    /* ── Tab nav ── */
+    .tab-nav { background: var(--bg-card); border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 10; }
+    .tab-nav-inner { max-width: 860px; margin: 0 auto; padding: 0 1.5rem; display: flex; gap: 0; }
+    .tab-btn { font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 500; background: transparent; color: var(--ink-3); border: none; border-bottom: 2px solid transparent; padding: 0.85rem 1.25rem; cursor: pointer; margin-bottom: -1px; }
+    .tab-btn:hover { color: var(--ink); }
+    .tab-btn--active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
 
-    .content{max-width:800px;margin:0 auto;padding:2.5rem 1.5rem 3rem}
+    /* ── Page content ── */
+    .page-content { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
-    .day{margin-bottom:3.5rem}
-    .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:0.75rem;padding-bottom:0.75rem;margin-bottom:1.75rem;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
-    .day-head-left{display:flex;align-items:baseline;gap:0.85rem;flex-wrap:wrap}
-    .day-head h2{font-family:'Anton',sans-serif;font-weight:400;font-size:1.6rem;margin:0;letter-spacing:0.01em;text-transform:uppercase}
-    .day-counter{font-size:0.68rem;color:var(--chalk-dim);letter-spacing:0.06em;opacity:0.8}
-    .today-flag{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;letter-spacing:0.1em;color:var(--green);text-shadow:0 0 12px rgba(95,232,154,0.5)}
+    /* ── Day section ── */
+    .day-section { margin-bottom: 3rem; }
+    .day-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.75rem; padding-bottom: 0.75rem; margin-bottom: 2rem; border-bottom: 2px solid var(--ink); }
+    .day-header-left { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+    .day-date { font-family: 'Anton', sans-serif; font-size: 1.5rem; font-weight: 400; letter-spacing: 0.01em; text-transform: uppercase; }
+    .day-counter { font-size: 0.72rem; color: var(--ink-3); letter-spacing: 0.04em; }
+    .today-badge { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: var(--green); color: #fff; padding: 0.25rem 0.6rem; border-radius: 3px; }
 
     /* ── Match card ── */
-    .match{
-      position:relative;
-      background:var(--panel);
-      border:1px solid var(--rule);
-      border-radius:10px;
-      margin-bottom:1.75rem;
-      padding:1.75rem;
-      overflow:hidden;
-      animation:rise 0.5s ease backwards;
-      animation-delay:var(--delay,0s);
-    }
-    @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-    @media(prefers-reduced-motion:reduce){.match{animation:none}}
+    .match-card { background: var(--bg-card); border: 1px solid var(--rule); border-left: 4px solid var(--green); margin-bottom: 2rem; padding: 1.75rem; }
+    .match-header { margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--rule); }
+    .match-header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .match-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--ink-3); }
+    .match-round { font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.04em; }
+    .match-sep { color: var(--rule-strong); }
+    .match-time { font-size: 0.72rem; }
+    .match-venue { font-size: 0.72rem; }
+    .match-title { font-family: 'Anton', sans-serif; font-size: clamp(1.3rem, 4vw, 1.9rem); font-weight: 400; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .team { color: var(--ink); }
+    .match-vs { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: var(--ink-3); letter-spacing: 0.05em; }
+    .match-form { font-family: 'Inter', sans-serif; font-size: 0.82rem; color: var(--ink-3); display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.75rem; }
+    .match-form strong { color: var(--ink-2); }
+    .form-text { font-size: 0.75rem; }
 
-    .match-head{position:relative;z-index:1}
-    .match-meta-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.9rem}
-    .match-meta{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--chalk-dim);display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center}
-    .round-tag{font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:0.04em}
-    .dot{color:var(--rule)}
+    /* ── Live score banner ── */
+    .live-banner { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.75rem; padding: 0.5rem 0.75rem; background: var(--green-light); border-left: 3px solid var(--green); font-family: 'Inter', sans-serif; font-size: 0.85rem; }
+    .live-banner--ft { background: #f3f4f6; border-left-color: var(--ink-3); }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .live-label { font-weight: 700; font-size: 0.72rem; letter-spacing: 0.04em; color: var(--green); }
+    .live-banner--ft .live-label { color: var(--ink-3); }
+    .live-score { font-weight: 600; color: var(--ink); }
 
-    .status-chip{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;padding:0.22rem 0.55rem;border-radius:4px;border:1px solid;white-space:nowrap}
-    .status-upcoming{color:var(--blue);border-color:rgba(74,158,255,0.4);background:rgba(74,158,255,0.08)}
-    .status-final{color:var(--chalk-dim);border-color:var(--rule);background:transparent}
+    /* ── Status chip ── */
+    .chip { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.22rem 0.55rem; border-radius: 3px; border: 1px solid; }
+    .chip--upcoming { color: var(--green); border-color: var(--green); background: var(--green-light); }
+    .chip--final { color: var(--ink-3); border-color: var(--rule-strong); background: transparent; }
 
-    .match-title{font-size:clamp(1.1rem,4vw,1.6rem);margin:0 0 1rem;display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;font-weight:800}
-    .team-name{flex:0 1 auto}
-    .crest{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:600;background:var(--pitch-light);color:var(--chalk-dim);padding:0.25rem 0.5rem;border-radius:4px;letter-spacing:0.03em;border:1px solid var(--rule)}
-    .vs{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--chalk-dim);font-weight:600;letter-spacing:0.1em}
+    /* ── Match body ── */
+    .match-body { display: grid; grid-template-columns: 1fr 260px; gap: 2rem; align-items: start; }
+    @media (max-width: 680px) { .match-body { grid-template-columns: 1fr; } }
 
-    .form-line{font-size:0.86rem;color:var(--chalk-dim);display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1.4rem;padding-bottom:1.1rem;border-bottom:1px dashed var(--rule)}
-    .form-line strong{color:var(--chalk);font-weight:600}
-    .form-line .mono{font-size:0.8rem}
+    /* ── Analysis ── */
+    .analysis-block { margin-bottom: 1.25rem; }
+    .analysis-block:last-child { margin-bottom: 0; }
+    .analysis-heading { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+    .analysis-body { font-size: 0.97rem; color: var(--ink-2); line-height: 1.65; }
 
-    .match-body{position:relative;z-index:1;display:grid;grid-template-columns:1fr 220px;gap:1.75rem;align-items:start}
-    @media(max-width:640px){.match-body{grid-template-columns:1fr}}
+    /* ── Prediction column ── */
+    .prediction-col { display: flex; flex-direction: column; gap: 1.25rem; }
+    .prediction-box { background: var(--bg-card-2); border: 1px solid var(--rule); padding: 1.1rem 1.2rem; }
+    .prediction-label { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); margin-bottom: 0.75rem; }
+    .scoreline { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 1.1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--rule); }
+    .score-team { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-2); flex: 1; }
+    .score-team--right { text-align: right; }
+    .score-digits { font-family: 'Anton', sans-serif; font-size: 2rem; font-weight: 400; color: var(--ink); letter-spacing: 0.02em; white-space: nowrap; }
+    .conf-bars { display: flex; flex-direction: column; gap: 0.65rem; }
+    .conf-bar { }
+    .conf-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem; }
+    .conf-bar-label { font-family: 'Inter', sans-serif; font-size: 0.68rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .conf-bar-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; }
+    .conf-bar-track { height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+    .conf-bar-fill { height: 100%; border-radius: 2px; }
+    .conf-note { font-family: 'Inter', sans-serif; font-size: 0.78rem; font-style: italic; color: var(--ink-3); margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--rule); line-height: 1.5; }
 
-    .analysis-block{margin-bottom:1.25rem}
-    .analysis-block:last-child{margin-bottom:0}
-    .analysis-block h3{display:flex;align-items:center;gap:0.5rem;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:600;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.45rem}
-    .block-marker{width:6px;height:6px;background:var(--blue);border-radius:1px;flex-shrink:0}
-    .analysis-block p{margin:0;font-size:0.97rem;color:var(--chalk);opacity:0.92}
+    /* ── Odds ── */
+    .odds-row { padding: 0.85rem 1rem; background: var(--bg-card-2); border: 1px solid var(--rule); }
+    .odds-label { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); display: block; margin-bottom: 0.65rem; }
+    .odds-cells { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; }
+    .odds-cell { display: flex; flex-direction: column; align-items: center; padding: 0.5rem 0.3rem; background: var(--bg-card); border: 1px solid var(--rule); }
+    .odds-val { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+    .odds-prob { font-family: 'Inter', sans-serif; font-size: 0.68rem; color: var(--ink-3); }
+    .odds-tag { font-family: 'Inter', sans-serif; font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); margin-top: 0.15rem; }
+    .odds-source { font-family: 'Inter', sans-serif; font-size: 0.65rem; color: var(--ink-3); display: block; margin-top: 0.4rem; }
 
-    /* ── Score slip / scoreboard ── */
-    .slip{position:sticky;top:5rem}
-    .slip-board{
-      background:linear-gradient(165deg, #0a1a10 0%, #060d08 100%);
-      border:1px solid rgba(255,182,39,0.2);
-      border-radius:8px;
-      padding:1rem 1.1rem;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,0.03), 0 4px 20px rgba(0,0,0,0.4);
-    }
-    .slip-row{display:flex;justify-content:space-between;align-items:center;padding:0.3rem 0}
-    .slip-team{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--chalk-dim)}
-    .slip-score{font-family:'Anton',sans-serif;font-size:1.9rem;color:var(--amber);text-shadow:0 0 16px rgba(255,182,39,0.4);line-height:1}
-    .slip-divider{height:1px;background:rgba(255,182,39,0.15);margin:0.2rem 0}
+    /* ── Against market ── */
+    .against-market { padding: 0.85rem 1rem; background: #fffbeb; border: 1px solid #fcd34d; border-left: 3px solid var(--amber); }
+    .against-badge { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--amber); display: block; margin-bottom: 0.4rem; }
+    .against-reason { font-size: 0.82rem; color: #78350f; line-height: 1.5; }
 
-    .dials{display:flex;justify-content:space-around;margin-top:1.25rem;padding-top:1.1rem;border-top:1px solid var(--rule)}
-    .dial{display:flex;flex-direction:column;align-items:center;gap:0.45rem}
-    .dial-pct{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600}
-    .dial-label{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.08em;color:var(--chalk-dim)}
-
-    .confidence-note{margin:1.1rem 0 0;padding-top:1rem;border-top:1px solid var(--rule);font-size:0.8rem;line-height:1.55;color:var(--chalk-dim);font-style:italic}
-
-    .alternates{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--rule)}
-    .alternates-label{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--chalk-dim);margin:0 0 0.7rem}
-    .alt-row{display:flex;gap:0.65rem;align-items:flex-start;margin-bottom:0.75rem}
-    .alt-row:last-child{margin-bottom:0}
-    .alt-score-tag{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:700;color:var(--chalk);background:rgba(240,237,228,0.06);border:1px solid var(--rule);border-radius:4px;padding:0.2rem 0.45rem;min-width:2.6rem;text-align:center}
-    .alt-body{flex:1;min-width:0}
-    .alt-likelihood{display:block;font-family:'IBM Plex Mono',monospace;font-size:0.66rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--blue);margin-bottom:0.2rem}
-    .alt-body p{margin:0;font-size:0.8rem;line-height:1.5;color:var(--chalk-dim)}
+    /* ── Alternates ── */
+    .alternates { padding: 0.85rem 1rem; background: var(--bg-card-2); border: 1px solid var(--rule); }
+    .alternates-heading { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: 0.65rem; }
+    .alt-row { display: flex; gap: 0.65rem; align-items: flex-start; margin-bottom: 0.65rem; }
+    .alt-row:last-child { margin-bottom: 0; }
+    .alt-score { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 600; background: var(--bg-card); border: 1px solid var(--rule-strong); padding: 0.2rem 0.45rem; min-width: 2.8rem; text-align: center; flex-shrink: 0; color: var(--ink); }
+    .alt-label { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); display: block; margin-bottom: 0.15rem; }
+    .alt-text { font-size: 0.8rem; color: var(--ink-3); line-height: 1.45; margin: 0; }
 
     /* ── Result strip ── */
-    .result-strip{position:relative;z-index:1;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
-    .result-head{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.6rem}
-    .result-badge{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;padding:0.3rem 0.65rem;border:1px solid;border-radius:4px}
-    .result-score{font-size:0.92rem;color:var(--chalk-dim)}
-    .result-score strong{color:var(--chalk)}
-    .predicted-was{color:var(--chalk-dim)}
-    .result-writeup,.result-note{font-size:0.95rem;margin:0.5rem 0 0;color:var(--chalk);opacity:0.9}
+    .result-strip { margin-top: 1.5rem; padding: 1rem 1.25rem; border-top: 1px solid var(--rule); }
+    .result--correct { background: #f0fdf4; border-left: 3px solid var(--green); }
+    .result--close { background: var(--amber-light); border-left: 3px solid var(--amber); }
+    .result--wrong { background: var(--red-light); border-left: 3px solid var(--red); }
+    .result-head { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+    .result-badge { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .result--correct .result-badge { color: var(--green); }
+    .result--close .result-badge { color: var(--amber); }
+    .result--wrong .result-badge { color: var(--red); }
+    .result-score { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--ink); }
+    .result-predicted { font-weight: 400; color: var(--ink-3); }
+    .result-writeup, .result-note { font-size: 0.92rem; margin-top: 0.4rem; color: var(--ink-2); line-height: 1.6; }
 
     /* ── Ask widget ── */
-    .ask-toggle{
-      position:relative;z-index:1;margin-top:1.5rem;
-      display:inline-flex;align-items:center;gap:0.5rem;
-      font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:600;letter-spacing:0.02em;
-      background:transparent;color:var(--blue);border:1px solid rgba(74,158,255,0.4);border-radius:6px;
-      padding:0.55rem 1rem;cursor:pointer;transition:all 0.15s;
-    }
-    .ask-toggle:hover{background:rgba(74,158,255,0.1);border-color:var(--blue)}
-
-    .ask-box{position:relative;z-index:1;margin-top:1.5rem;background:#070b07;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
-    .ask-head{display:flex;justify-content:space-between;align-items:center;background:var(--pitch-light);color:var(--chalk);padding:0.6rem 1rem;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.78rem}
-    .ask-close{background:transparent;border:none;color:var(--chalk);font-size:1.3rem;cursor:pointer;line-height:1;padding:0 0.2rem;opacity:0.7}
-    .ask-close:hover{opacity:1}
-    .ask-thread{padding:1rem;display:flex;flex-direction:column;gap:0.8rem;max-height:360px;overflow-y:auto}
-    .ask-msg p{margin:0.25rem 0 0;font-size:0.92rem;color:var(--chalk);line-height:1.5}
-    .ask-msg-label{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--chalk-dim)}
-    .ask-msg-user .ask-msg-label{color:var(--amber)}
-    .ask-thinking{font-style:italic;color:var(--chalk-dim)}
-    .ask-error{margin:0 1rem;font-size:0.82rem;color:var(--red)}
-    .ask-form{display:flex;gap:0.5rem;padding:0.8rem 1rem;border-top:1px solid var(--rule)}
-    .ask-form input{flex:1;font-family:'Inter',sans-serif;font-size:0.9rem;padding:0.55rem 0.7rem;border:1px solid var(--rule);background:var(--panel);color:var(--chalk);border-radius:5px}
-    .ask-form input:focus{outline:none;border-color:var(--blue)}
-    .ask-form button{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.78rem;text-transform:uppercase;background:var(--blue);color:#06121f;border:none;padding:0 1.2rem;border-radius:5px;cursor:pointer}
-    .ask-form button:disabled{background:var(--rule);color:var(--chalk-dim);cursor:not-allowed}
+    .ask-toggle { margin-top: 1.25rem; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; color: var(--green); background: transparent; border: 1px solid var(--green); padding: 0.45rem 0.9rem; cursor: pointer; }
+    .ask-toggle:hover { background: var(--green-light); }
+    .ask-box { margin-top: 1.25rem; border: 1px solid var(--rule); background: var(--bg-card); }
+    .ask-head { display: flex; justify-content: space-between; align-items: center; background: var(--green); color: #fff; padding: 0.55rem 1rem; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600; }
+    .ask-close { background: transparent; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; padding: 0 0.2rem; }
+    .ask-thread { padding: 1rem; display: flex; flex-direction: column; gap: 0.85rem; max-height: 360px; overflow-y: auto; }
+    .ask-msg p { margin: 0.2rem 0 0; font-size: 0.92rem; line-height: 1.55; }
+    .ask-msg-label { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+    .ask-msg--user .ask-msg-label { color: var(--green); }
+    .ask-thinking { font-style: italic; color: var(--ink-3); }
+    .ask-error { margin: 0 1rem; font-family: 'Inter', sans-serif; font-size: 0.82rem; color: var(--red); padding: 0.5rem 0; }
+    .ask-form { display: flex; gap: 0; border-top: 1px solid var(--rule); }
+    .ask-form input { flex: 1; font-family: 'Source Serif 4', serif; font-size: 0.9rem; padding: 0.6rem 0.9rem; border: none; outline: none; background: var(--bg-card); color: var(--ink); }
+    .ask-form button { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; background: var(--green); color: #fff; border: none; padding: 0 1.2rem; cursor: pointer; }
+    .ask-form button:disabled { background: var(--rule-strong); cursor: not-allowed; }
 
     /* ── Prediction Bank ── */
-    .bank-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin-bottom:2.5rem}
-    @media(max-width:640px){.bank-stats{grid-template-columns:repeat(2,1fr)}}
-    .stat{background:var(--panel);padding:1.3rem 0.75rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:0.6rem}
-    .stat-tally{justify-content:center}
-    .stat-num{font-family:'Anton',sans-serif;font-size:1.7rem;color:var(--amber)}
-    .stat-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--chalk-dim);font-family:'IBM Plex Mono',monospace}
+    .bank-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 2rem; }
+    @media (max-width: 560px) { .bank-stats { grid-template-columns: repeat(2, 1fr); } }
+    .bank-stat { background: var(--bg-card); padding: 1.25rem 1rem; text-align: center; }
+    .bank-stat-num { display: block; font-family: 'Anton', sans-serif; font-size: 1.6rem; font-weight: 400; color: var(--green); margin-bottom: 0.25rem; }
+    .bank-stat-label { display: block; font-family: 'Inter', sans-serif; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); }
+    .bank-row { background: var(--bg-card); border: 1px solid var(--rule); border-left: 4px solid var(--rule-strong); padding: 1.1rem 1.25rem; margin-bottom: 1rem; }
+    .bank-row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+    .bank-date { font-size: 0.72rem; color: var(--ink-3); }
+    .bank-badge { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.22rem 0.55rem; border: 1px solid; }
+    .bank-badge--correct { color: var(--green); border-color: var(--green); background: var(--green-light); }
+    .bank-badge--close { color: var(--amber); border-color: #fbbf24; background: var(--amber-light); }
+    .bank-badge--wrong { color: var(--red); border-color: #fca5a5; background: var(--red-light); }
+    .bank-badge--pending { color: var(--ink-3); border-color: var(--rule-strong); }
+    .bank-row-main { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.4rem; }
+    .bank-teams { font-weight: 700; font-size: 1.05rem; }
+    .bank-vs { font-weight: 400; color: var(--ink-3); font-size: 0.9em; }
+    .bank-scores { font-size: 0.88rem; color: var(--ink-3); }
+    .bank-conf { display: flex; gap: 1.25rem; flex-wrap: wrap; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--ink-3); margin-bottom: 0.3rem; }
+    .bank-conf strong { color: var(--ink-2); font-family: 'JetBrains Mono', monospace; }
+    .bank-contrarian { color: var(--amber); font-weight: 600; font-family: 'Inter', sans-serif; }
+    .bank-writeup { font-size: 0.9rem; margin-top: 0.6rem; color: var(--ink-2); padding-top: 0.6rem; border-top: 1px solid var(--rule); line-height: 1.6; }
 
-    .bank-empty{color:var(--chalk-dim);font-style:italic}
-    .stale-notice{
-      font-family:'IBM Plex Mono',monospace;
-      font-size:0.78rem;
-      color:var(--amber);
-      background:rgba(255,182,39,0.08);
-      border:1px solid rgba(255,182,39,0.3);
-      border-radius:6px;
-      padding:0.75rem 1rem;
-      margin-bottom:1.5rem;
-    }
-
-    .bank-row{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:1.1rem 1.25rem;margin-bottom:1rem}
-    .bank-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
-    .bank-date{font-size:0.75rem;color:var(--chalk-dim)}
-    .bank-badge{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;padding:0.2rem 0.5rem;border:1px solid;border-radius:4px}
-    .bank-badge-pending{background:transparent;color:var(--chalk-dim);border-color:var(--rule)}
-    .bank-row-main{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.4rem}
-    .bank-teams{font-weight:700;font-size:1.05rem}
-    .bank-vs{font-weight:400;color:var(--chalk-dim);font-size:0.85em}
-    .bank-scores{font-size:0.88rem;color:var(--chalk-dim)}
-    .bank-arrow{color:var(--amber)}
-    .bank-row-conf{display:flex;gap:1.5rem;flex-wrap:wrap;font-size:0.82rem;color:var(--chalk-dim);margin-bottom:0.3rem}
-    .bank-row-conf strong{color:var(--chalk)}
-    .bank-writeup{font-size:0.92rem;margin:0.6rem 0 0;color:var(--chalk);opacity:0.9;padding-top:0.6rem;border-top:1px dashed var(--rule)}
-
-    .page-footer{max-width:800px;margin:0 auto;padding:1.5rem 1.5rem 3rem;font-size:0.82rem;color:var(--chalk-dim);border-top:1px solid var(--rule)}
+    /* ── Misc ── */
+    .empty-state { color: var(--ink-3); font-style: italic; }
+    .stale-notice { font-family: 'Inter', sans-serif; font-size: 0.82rem; color: var(--amber); background: var(--amber-light); border: 1px solid #fcd34d; padding: 0.75rem 1rem; margin-bottom: 1.5rem; }
+    .page-footer { max-width: 860px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; font-family: 'Inter', sans-serif; font-size: 0.78rem; color: var(--ink-3); border-top: 1px solid var(--rule); }
   `}</style>;
 }
 
