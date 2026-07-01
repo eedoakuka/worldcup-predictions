@@ -1,0 +1,41 @@
+name: Update The Match Sheet
+
+# Runs every day at 11:00 UTC, which is roughly:
+#   7:00 AM US Eastern (summer / EDT)
+#   4:00 AM US Pacific (summer / PDT)
+# Adjust the cron line below if you want a different local time —
+# GitHub Actions schedules always run in UTC.
+"on":
+  schedule:
+    - cron: "0 11 * * *"
+  workflow_dispatch: {}   # lets you also trigger it manually from the Actions tab
+
+permissions:
+  contents: write   # needed so the workflow can commit the updated site back to the repo
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run the daily update script
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python update_sheet.py
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "match-sheet-bot"
+          git config user.email "actions@github.com"
+          git add index.html data/log.json
+          git diff --cached --quiet && echo "No changes to commit." && exit 0
+          git commit -m "Daily update: $(date -u +'%Y-%m-%d')"
+          git push

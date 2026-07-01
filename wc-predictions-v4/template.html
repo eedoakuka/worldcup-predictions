@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Match Sheet — World Cup 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f4f2ee; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+  window.MATCH_SHEET_LOG = __MATCH_SHEET_LOG_JSON__;
+  window.KICKOFF_API_KEY = "";
+</script>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+function getApiKey() { return localStorage.getItem("wc-api-key") || ""; }
+function setApiKey(k) { localStorage.setItem("wc-api-key", k); }
+function getKickoffKey() { return localStorage.getItem("wc-kickoff-key") || window.KICKOFF_API_KEY || ""; }
+function setKickoffKey(k) { localStorage.setItem("wc-kickoff-key", k); }
+
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+function formatDateLong(iso) {
+  return new Date(iso + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+}
+function formatDateShort(iso) {
+  return new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+// ── Live score fetching (KickoffAPI) ─────────────────────────────────────────
+async function fetchLiveScores(kickoffKey) {
+  if (!kickoffKey) return null;
+  try {
+    const res = await fetch("https://api.kickoffapi.com/v1/fixtures?live=all&league=1&season=2026", {
+      headers: { "Authorization": `Bearer ${kickoffKey}`, "Accept": "application/json" }
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+
+function findLiveScore(liveData, homeTeam, awayTeam) {
+  if (!liveData || !liveData.data) return null;
+  for (const fx of liveData.data) {
+    const h = (fx.home_team?.name || "").toLowerCase();
+    const a = (fx.away_team?.name || "").toLowerCase();
+    const t1 = homeTeam.toLowerCase();
+    const t2 = awayTeam.toLowerCase();
+    if ((t1.includes(h.slice(0,4)) || h.includes(t1.slice(0,4))) &&
+        (t2.includes(a.slice(0,4)) || a.includes(t2.slice(0,4)))) {
+      return {
+        homeScore: fx.score?.home ?? null,
+        awayScore: fx.score?.away ?? null,
+        minute: fx.time?.elapsed ?? null,
+        status: fx.status?.short ?? null,
+      };
+    }
+  }
+  return null;
+}
+
+// ── Components ────────────────────────────────────────────────────────────────
+function LiveScoreBanner({ homeTeam, awayTeam, liveData }) {
+  const score = findLiveScore(liveData, homeTeam, awayTeam);
+  if (!score || score.homeScore === null) return null;
+  const isLive = score.status && !["FT","AET","PEN","FT_PEN"].includes(score.status);
+  return (
+    <div className={`live-banner ${isLive ? "live-banner--live" : "live-banner--ft"}`}>
+      {isLive && <span className="live-dot" />}
+      <span className="live-label">{isLive ? `${score.minute}'` : "FT"}</span>
+      <span className="live-score">{homeTeam} {score.homeScore} – {score.awayScore} {awayTeam}</span>
+    </div>
+  );
+}
+
+function OddsRow({ market }) {
+  if (!market) return null;
+  const { home_odds, draw_odds, away_odds, bookmaker, home_implied, draw_implied, away_implied } = market;
+  return (
+    <div className="odds-row">
+      <span className="odds-label">Market odds</span>
+      <div className="odds-cells">
+        <div className="odds-cell">
+          <span className="odds-val">{home_odds?.toFixed(2)}</span>
+          <span className="odds-prob">{home_implied}%</span>
+          <span className="odds-tag">Home</span>
+        </div>
+        <div className="odds-cell">
+          <span className="odds-val">{draw_odds?.toFixed(2)}</span>
+          <span className="odds-prob">{draw_implied}%</span>
+          <span className="odds-tag">Draw</span>
+        </div>
+        <div className="odds-cell">
+          <span className="odds-val">{away_odds?.toFixed(2)}</span>
+          <span className="odds-prob">{away_implied}%</span>
+          <span className="odds-tag">Away</span>
+        </div>
+      </div>
+      {bookmaker && <span className="odds-source">via {bookmaker}</span>}
+    </div>
+  );
+}
+
+function AgainstMarketTag({ match }) {
+  if (!match.goingAgainstMarket) return null;
+  return (
+    <div className="against-market">
+      <span className="against-badge">Going against the market</span>
+      {match.againstMarketReason && <p className="against-reason">{match.againstMarketReason}</p>}
+    </div>
+  );
+}
+
+function ConfidenceBar({ label, pct }) {
+  const color = pct >= 70 ? "#1a7a3c" : pct >= 40 ? "#b45309" : "#b91c1c";
+  return (
+    <div className="conf-bar">
+      <div className="conf-bar-header">
+        <span className="conf-bar-label">{label}</span>
+        <span className="conf-bar-pct" style={{ color }}>{pct}%</span>
+      </div>
+      <div className="conf-bar-track">
+        <div className="conf-bar-fill" style={{ width: `${pct}%`, background: color }} />
+      </div>
+    </div>
+  );
+}
+
+function AlternateScenarios({ alternates }) {
+  if (!alternates || alternates.length === 0) return null;
+  return (
+    <div className="alternates">
+      <p className="alternates-heading">Other scenarios</p>
+      {alternates.map((alt, i) => (
+        <div className="alt-row" key={i}>
+          <span className="alt-score">{alt.prediction.home}–{alt.prediction.away}</span>
+          <div className="alt-body">
+            <span className="alt-label">{alt.likelihood}</span>
+            <p className="alt-text">{alt.reasoning}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function buildMatchContext(match) {
+  const lines = [
+    `Match: ${match.home.name} vs ${match.away.name} (${match.round}, ${match.kickoff}, ${match.venue})`,
+    `Predicted: ${match.home.name} ${match.prediction.home}-${match.prediction.away} ${match.away.name}`,
+    `Winner confidence: ${match.winnerConfidence}%. Score confidence: ${match.scoreConfidence}%.`,
+    match.confidenceNote || "",
+    match.goingAgainstMarket ? `Going against the market. Reason: ${match.againstMarketReason}` : "",
+    "Analysis:"
+  ];
+  match.analysis.forEach(b => lines.push(`- ${b.heading}: ${b.body}`));
+  if (match.alternates?.length) {
+    lines.push("Alternates:");
+    match.alternates.forEach(a => lines.push(`- ${a.likelihood} (${a.prediction.home}-${a.prediction.away}): ${a.reasoning}`));
+  }
+  if (match.result) lines.push(`Actual result: ${match.home.name} ${match.result.home}-${match.result.away} ${match.away.name}.${match.result.note ? " " + match.result.note : ""}`);
+  if (match.verdict) lines.push(`Verdict: ${match.verdict.outcome}. ${match.verdict.writeup || ""}`);
+  return lines.filter(Boolean).join("\n");
+}
+
+function MatchChat({ match, apiKey }) {
+  const [open, setOpen] = useState(false);
+  const [question, setQuestion] = useState("");
+  const [thread, setThread] = useState([]);
+  const [asking, setAsking] = useState(false);
+  const [err, setErr] = useState(null);
+  const bottomRef = useRef(null);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [thread, asking]);
+
+  async function ask(e) {
+    e.preventDefault();
+    const q = question.trim();
+    if (!q || asking) return;
+    if (!apiKey) { setErr("Add your Anthropic API key above to use this feature."); return; }
+    setErr(null); setQuestion("");
+    const next = [...thread, { role: "user", text: q }];
+    setThread(next); setAsking(true);
+    try {
+      const system = `You are the analyst behind "The Match Sheet", a World Cup prediction column. Answer directly about this specific prediction, referencing the actual reasoning, numbers, and market context. 2–4 sentences unless more is genuinely needed. Plain prose.\n\n${buildMatchContext(match)}`;
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, system, messages: next.map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text })) })
+      });
+      if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error?.message || `API error ${res.status}`); }
+      const data = await res.json();
+      const text = (data.content || []).find(b => b.type === "text")?.text || "No answer returned.";
+      setThread(t => [...t, { role: "assistant", text }]);
+    } catch (e2) {
+      setErr(e2.message || "Couldn't reach the analyst.");
+      setThread(t => t.slice(0, -1));
+      setQuestion(q);
+    } finally { setAsking(false); }
+  }
+
+  if (!open) return <button className="ask-toggle" onClick={() => setOpen(true)}>Ask about this prediction</button>;
+
+  return (
+    <div className="ask-box">
+      <div className="ask-head">
+        <span>Ask — {match.home.name} vs {match.away.name}</span>
+        <button className="ask-close" onClick={() => setOpen(false)} aria-label="Close">×</button>
+      </div>
+      {thread.length > 0 && (
+        <div className="ask-thread">
+          {thread.map((m, i) => (
+            <div key={i} className={`ask-msg ${m.role === "user" ? "ask-msg--user" : "ask-msg--analyst"}`}>
+              <span className="ask-msg-label">{m.role === "user" ? "You" : "Analyst"}</span>
+              <p>{m.text}</p>
+            </div>
+          ))}
+          {asking && <div className="ask-msg ask-msg--analyst"><span className="ask-msg-label">Analyst</span><p className="ask-thinking">Thinking…</p></div>}
+          <div ref={bottomRef} />
+        </div>
+      )}
+      {err && <p className="ask-error">{err}</p>}
+      <form className="ask-form" onSubmit={ask}>
+        <input type="text" value={question} onChange={e => setQuestion(e.target.value)} placeholder="Why are you going against the market here?" disabled={asking} />
+        <button type="submit" disabled={asking || !question.trim()}>Ask</button>
+      </form>
+    </div>
+  );
+}
+
+function ResultStrip({ match }) {
+  const { result, verdict } = match;
+  const cfg = {
+    correct: { cls: "result--correct", label: "Called it" },
+    close:   { cls: "result--close",   label: "Close" },
+    wrong:   { cls: "result--wrong",   label: "Missed" },
+  };
+  const c = cfg[verdict?.outcome] || cfg.wrong;
+  return (
+    <div className={`result-strip ${c.cls}`}>
+      <div className="result-head">
+        <span className="result-badge">{c.label}</span>
+        <span className="result-score">
+          Final: {match.home.name} {result.home}–{result.away} {match.away.name}
+          <span className="result-predicted"> (predicted {match.prediction.home}–{match.prediction.away})</span>
+        </span>
+      </div>
+      {verdict?.writeup && <p className="result-writeup">{verdict.writeup}</p>}
+      {result.note && <p className="result-note">{result.note}</p>}
+    </div>
+  );
+}
+
+function StatusChip({ status }) {
+  return status === "final"
+    ? <span className="chip chip--final">Final</span>
+    : <span className="chip chip--upcoming">Upcoming</span>;
+}
+
+function MatchCard({ match, apiKey, liveData, index }) {
+  return (
+    <article className="match-card">
+      <header className="match-header">
+        <div className="match-header-top">
+          <div className="match-meta">
+            <span className="match-round">{match.round}</span>
+            <span className="match-sep">·</span>
+            <span className="match-time mono">{match.kickoff}</span>
+            <span className="match-sep">·</span>
+            <span className="match-venue">{match.venue}</span>
+          </div>
+          <StatusChip status={match.status} />
+        </div>
+        <h2 className="match-title">
+          <span className="team">{match.home.name}</span>
+          <span className="match-vs">vs</span>
+          <span className="team">{match.away.name}</span>
+        </h2>
+        <LiveScoreBanner homeTeam={match.home.name} awayTeam={match.away.name} liveData={liveData} />
+        <div className="match-form">
+          <div><strong>{match.home.name}</strong> <span className="mono form-text">{match.homeForm}</span></div>
+          <div><strong>{match.away.name}</strong> <span className="mono form-text">{match.awayForm}</span></div>
+        </div>
+      </header>
+
+      <div className="match-body">
+        <div className="analysis-col">
+          {match.analysis.map((b, i) => (
+            <div className="analysis-block" key={i}>
+              <h3 className="analysis-heading">{b.heading}</h3>
+              <p className="analysis-body">{b.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <aside className="prediction-col">
+          <div className="prediction-box">
+            <p className="prediction-label">Prediction</p>
+            <div className="scoreline">
+              <span className="score-team">{match.home.name}</span>
+              <span className="score-digits">{match.prediction.home}–{match.prediction.away}</span>
+              <span className="score-team score-team--right">{match.away.name}</span>
+            </div>
+            <div className="conf-bars">
+              <ConfidenceBar label="Winner" pct={match.winnerConfidence} />
+              <ConfidenceBar label="Exact score" pct={match.scoreConfidence} />
+            </div>
+            {match.confidenceNote && <p className="conf-note">{match.confidenceNote}</p>}
+          </div>
+
+          <OddsRow market={match.market} />
+          <AgainstMarketTag match={match} />
+          <AlternateScenarios alternates={match.alternates} />
+        </aside>
+      </div>
+
+      {match.result && <ResultStrip match={match} />}
+      <MatchChat match={match} apiKey={apiKey} />
+    </article>
+  );
+}
+
+function DaySection({ entry, apiKey, liveData }) {
+  const isToday = entry.date === todayISO();
+  return (
+    <section className="day-section">
+      <div className="day-header">
+        <div className="day-header-left">
+          <h2 className="day-date">{formatDateLong(entry.date)}</h2>
+          {entry.tournamentContext && (
+            <span className="day-counter mono">Day {entry.tournamentContext.day} of {entry.tournamentContext.totalDays}</span>
+          )}
+        </div>
+        {isToday && <span className="today-badge">Today's slate</span>}
+      </div>
+      {entry.matches.map((m, i) => <MatchCard key={m.id} match={m} apiKey={apiKey} liveData={liveData} index={i} />)}
+    </section>
+  );
+}
+
+function BankRow({ match, apiKey }) {
+  const graded = !!match.result;
+  const cfg = {
+    correct: { cls: "bank-badge--correct", label: "Called it" },
+    close:   { cls: "bank-badge--close",   label: "Close" },
+    wrong:   { cls: "bank-badge--wrong",   label: "Missed" },
+  };
+  const c = graded ? (cfg[match.verdict?.outcome] || cfg.wrong) : null;
+  return (
+    <div className="bank-row">
+      <div className="bank-row-top">
+        <span className="bank-date mono">{formatDateLong(match.date)}</span>
+        {graded
+          ? <span className={`bank-badge ${c.cls}`}>{c.label}</span>
+          : <span className="bank-badge bank-badge--pending">Pending</span>}
+      </div>
+      <div className="bank-row-main">
+        <span className="bank-teams">{match.home.name} <span className="bank-vs">vs</span> {match.away.name}</span>
+        <span className="bank-scores mono">
+          {match.prediction.home}–{match.prediction.away}
+          {graded && <> → {match.result.home}–{match.result.away}</>}
+        </span>
+      </div>
+      <div className="bank-conf">
+        <span>Winner <strong>{match.winnerConfidence}%</strong></span>
+        <span>Score <strong>{match.scoreConfidence}%</strong></span>
+        {match.goingAgainstMarket && <span className="bank-contrarian">Against market</span>}
+      </div>
+      {graded && match.verdict?.writeup && <p className="bank-writeup">{match.verdict.writeup}</p>}
+      <MatchChat match={match} apiKey={apiKey} />
+    </div>
+  );
+}
+
+function BankView({ entries, apiKey }) {
+  const flat = entries.flatMap(e => e.matches.map(m => ({ ...m, date: e.date })));
+  const graded = flat.filter(m => m.result);
+  const correct = graded.filter(m => m.verdict?.outcome === "correct").length;
+  const close = graded.filter(m => m.verdict?.outcome === "close").length;
+  const wrong = graded.filter(m => m.verdict?.outcome === "wrong").length;
+  const exact = graded.filter(m => m.result.home === m.prediction.home && m.result.away === m.prediction.away).length;
+  const winnersRight = graded.filter(m => {
+    const po = m.prediction.home > m.prediction.away ? "h" : m.prediction.home < m.prediction.away ? "a" : "d";
+    const ao = m.result.home > m.result.away ? "h" : m.result.home < m.result.away ? "a" : "d";
+    return po === ao;
+  }).length;
+  const sorted = [...flat].sort((a, b) => a.date < b.date ? 1 : -1);
+  return (
+    <div className="bank">
+      <div className="bank-stats">
+        {[
+          { num: graded.length ? `${Math.round(winnersRight/graded.length*100)}%` : "—", label: "Winners right" },
+          { num: graded.length ? `${Math.round(exact/graded.length*100)}%` : "—", label: "Exact scores" },
+          { num: `${correct}–${close}–${wrong}`, label: "Hit / close / miss" },
+          { num: graded.length, label: "Graded" },
+        ].map((s, i) => (
+          <div key={i} className="bank-stat">
+            <span className="bank-stat-num">{s.num}</span>
+            <span className="bank-stat-label">{s.label}</span>
+          </div>
+        ))}
+      </div>
+      {flat.length === 0
+        ? <p className="empty-state">No predictions logged yet.</p>
+        : sorted.map(m => <BankRow key={m.id} match={m} apiKey={apiKey} />)}
+    </div>
+  );
+}
+
+function SettingsBar({ apiKey, onSaveApi, kickoffKey, onSaveKickoff }) {
+  const [apiVal, setApiVal] = useState(apiKey);
+  const [koVal, setKoVal] = useState(kickoffKey);
+  const [saved, setSaved] = useState(false);
+
+  function save(e) {
+    e.preventDefault();
+    onSaveApi(apiVal.trim());
+    onSaveKickoff(koVal.trim());
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
+
+  return (
+    <div className="settings-bar">
+      <form className="settings-form" onSubmit={save}>
+        <div className="settings-field">
+          <label className="settings-label">Anthropic key</label>
+          <input type="password" value={apiVal} onChange={e => setApiVal(e.target.value)} placeholder="sk-ant-…" spellCheck={false} />
+        </div>
+        <div className="settings-field">
+          <label className="settings-label">KickoffAPI key <span className="settings-sublabel">(live scores)</span></label>
+          <input type="password" value={koVal} onChange={e => setKoVal(e.target.value)} placeholder="Your KickoffAPI key…" spellCheck={false} />
+        </div>
+        <button type="submit" className="settings-save">{saved ? "Saved" : "Save"}</button>
+      </form>
+      <div className="settings-links">
+        <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Get Anthropic key →</a>
+        <a href="https://kickoffapi.com" target="_blank" rel="noopener">Get KickoffAPI key →</a>
+      </div>
+    </div>
+  );
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
+function App() {
+  const [tab, setTab] = useState("sheet");
+  const [apiKey, setApiKeyState] = useState(getApiKey);
+  const [kickoffKey, setKickoffKeyState] = useState(getKickoffKey);
+  const [liveData, setLiveData] = useState(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const log = window.MATCH_SHEET_LOG || { entries: [] };
+
+  function saveApi(k) { setApiKey(k); setApiKeyState(k); }
+  function saveKickoff(k) { setKickoffKey(k); setKickoffKeyState(k); }
+
+  useEffect(() => {
+    if (!kickoffKey) return;
+    const poll = async () => {
+      const data = await fetchLiveScores(kickoffKey);
+      setLiveData(data);
+    };
+    poll();
+    const interval = setInterval(poll, 60000);
+    return () => clearInterval(interval);
+  }, [kickoffKey]);
+
+  const entries = [...log.entries].sort((a, b) => a.date < b.date ? 1 : -1);
+  const todaysEntry = entries.find(e => e.date === todayISO());
+  const mostRecentEntry = entries[0];
+  const lastUpdated = entries.length > 0 ? formatDateShort(entries[0].date) : null;
+
+  return (
+    <div className="page">
+      <Styles />
+
+      <header className="masthead">
+        <div className="masthead-inner">
+          <div className="masthead-top">
+            <div>
+              <p className="publication-label">The Match Sheet</p>
+              <h1 className="publication-title">World Cup 2026</h1>
+              <p className="publication-sub">Daily predictions, locked in before kickoff. Graded honestly after the final whistle.</p>
+            </div>
+            <div className="masthead-right">
+              {lastUpdated && <p className="last-updated">Updated {lastUpdated}</p>}
+              <button className="settings-toggle" onClick={() => setSettingsOpen(o => !o)} aria-label="Settings">
+                {settingsOpen ? "Close" : "Keys & settings"}
+              </button>
+            </div>
+          </div>
+          {settingsOpen && <SettingsBar apiKey={apiKey} onSaveApi={saveApi} kickoffKey={kickoffKey} onSaveKickoff={saveKickoff} />}
+        </div>
+      </header>
+
+      <nav className="tab-nav">
+        <div className="tab-nav-inner">
+          <button className={`tab-btn ${tab === "sheet" ? "tab-btn--active" : ""}`} onClick={() => setTab("sheet")}>Match Sheet</button>
+          <button className={`tab-btn ${tab === "bank" ? "tab-btn--active" : ""}`} onClick={() => setTab("bank")}>Prediction Bank</button>
+        </div>
+      </nav>
+
+      <main className="page-content">
+        {entries.length === 0 ? (
+          <p className="empty-state">No predictions logged yet — check back after the next morning update.</p>
+        ) : tab === "sheet" ? (
+          todaysEntry ? (
+            <DaySection entry={todaysEntry} apiKey={apiKey} liveData={liveData} />
+          ) : mostRecentEntry ? (
+            <>
+              <p className="stale-notice">Today's predictions haven't been generated yet. Showing the most recent matchday.</p>
+              <DaySection entry={mostRecentEntry} apiKey={apiKey} liveData={liveData} />
+            </>
+          ) : null
+        ) : (
+          <BankView entries={entries} apiKey={apiKey} />
+        )}
+      </main>
+
+      <footer className="page-footer">
+        <p>Rebuilds automatically every morning via GitHub Actions. Match Sheet shows today only; everything finished moves to the Prediction Bank.</p>
+      </footer>
+    </div>
+  );
+}
+
+function Styles() {
+  return <style>{`
+    .page {
+      --green: #1a7a3c;
+      --green-light: #dcf0e4;
+      --green-dark: #145e2e;
+      --red: #b91c1c;
+      --red-light: #fee2e2;
+      --amber: #b45309;
+      --amber-light: #fef3c7;
+      --ink: #111827;
+      --ink-2: #374151;
+      --ink-3: #6b7280;
+      --rule: #e5e7eb;
+      --rule-strong: #d1d5db;
+      --bg: #f4f2ee;
+      --bg-card: #ffffff;
+      --bg-card-2: #f9f8f6;
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    .mono { font-family: 'JetBrains Mono', 'Courier New', monospace; }
+
+    /* ── Masthead ── */
+    .masthead {
+      background: var(--bg-card);
+      border-bottom: 3px solid var(--green);
+      padding: 2rem 1.5rem 0;
+    }
+    .masthead-inner { max-width: 860px; margin: 0 auto; }
+    .masthead-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; padding-bottom: 1.5rem; }
+    .masthead-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+    .publication-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.4rem;
+    }
+    .publication-title {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .publication-sub {
+      font-size: 1rem;
+      color: var(--ink-3);
+      max-width: 48ch;
+      font-style: italic;
+    }
+    .last-updated { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--ink-3); }
+    .settings-toggle {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      background: transparent;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.35rem 0.8rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .settings-toggle:hover { background: var(--green-light); }
+
+    /* ── Settings bar ── */
+    .settings-bar { border-top: 1px solid var(--rule); padding: 1rem 0 1.5rem; }
+    .settings-form { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 0.5rem; }
+    .settings-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 200px; }
+    .settings-label { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; color: var(--ink-2); }
+    .settings-sublabel { font-weight: 400; color: var(--ink-3); }
+    .settings-field input { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; padding: 0.4rem 0.65rem; border: 1px solid var(--rule-strong); border-radius: 4px; background: var(--bg); color: var(--ink); }
+    .settings-field input:focus { outline: 2px solid var(--green); outline-offset: 1px; }
+    .settings-save { font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 600; background: var(--green); color: #fff; border: none; padding: 0.45rem 1rem; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+    .settings-save:hover { background: var(--green-dark); }
+    .settings-links { display: flex; gap: 1.5rem; }
+    .settings-links a { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--green); text-decoration: none; }
+    .settings-links a:hover { text-decoration: underline; }
+
+    /* ── Tab nav ── */
+    .tab-nav { background: var(--bg-card); border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 10; }
+    .tab-nav-inner { max-width: 860px; margin: 0 auto; padding: 0 1.5rem; display: flex; gap: 0; }
+    .tab-btn { font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 500; background: transparent; color: var(--ink-3); border: none; border-bottom: 2px solid transparent; padding: 0.85rem 1.25rem; cursor: pointer; margin-bottom: -1px; }
+    .tab-btn:hover { color: var(--ink); }
+    .tab-btn--active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
+
+    /* ── Page content ── */
+    .page-content { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+    /* ── Day section ── */
+    .day-section { margin-bottom: 3rem; }
+    .day-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.75rem; padding-bottom: 0.75rem; margin-bottom: 2rem; border-bottom: 2px solid var(--ink); }
+    .day-header-left { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+    .day-date { font-family: 'Anton', sans-serif; font-size: 1.5rem; font-weight: 400; letter-spacing: 0.01em; text-transform: uppercase; }
+    .day-counter { font-size: 0.72rem; color: var(--ink-3); letter-spacing: 0.04em; }
+    .today-badge { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: var(--green); color: #fff; padding: 0.25rem 0.6rem; border-radius: 3px; }
+
+    /* ── Match card ── */
+    .match-card { background: var(--bg-card); border: 1px solid var(--rule); border-left: 4px solid var(--green); margin-bottom: 2rem; padding: 1.75rem; }
+    .match-header { margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--rule); }
+    .match-header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .match-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--ink-3); }
+    .match-round { font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.04em; }
+    .match-sep { color: var(--rule-strong); }
+    .match-time { font-size: 0.72rem; }
+    .match-venue { font-size: 0.72rem; }
+    .match-title { font-family: 'Anton', sans-serif; font-size: clamp(1.3rem, 4vw, 1.9rem); font-weight: 400; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .team { color: var(--ink); }
+    .match-vs { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: var(--ink-3); letter-spacing: 0.05em; }
+    .match-form { font-family: 'Inter', sans-serif; font-size: 0.82rem; color: var(--ink-3); display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.75rem; }
+    .match-form strong { color: var(--ink-2); }
+    .form-text { font-size: 0.75rem; }
+
+    /* ── Live score banner ── */
+    .live-banner { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.75rem; padding: 0.5rem 0.75rem; background: var(--green-light); border-left: 3px solid var(--green); font-family: 'Inter', sans-serif; font-size: 0.85rem; }
+    .live-banner--ft { background: #f3f4f6; border-left-color: var(--ink-3); }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .live-label { font-weight: 700; font-size: 0.72rem; letter-spacing: 0.04em; color: var(--green); }
+    .live-banner--ft .live-label { color: var(--ink-3); }
+    .live-score { font-weight: 600; color: var(--ink); }
+
+    /* ── Status chip ── */
+    .chip { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.22rem 0.55rem; border-radius: 3px; border: 1px solid; }
+    .chip--upcoming { color: var(--green); border-color: var(--green); background: var(--green-light); }
+    .chip--final { color: var(--ink-3); border-color: var(--rule-strong); background: transparent; }
+
+    /* ── Match body ── */
+    .match-body { display: grid; grid-template-columns: 1fr 260px; gap: 2rem; align-items: start; }
+    @media (max-width: 680px) { .match-body { grid-template-columns: 1fr; } }
+
+    /* ── Analysis ── */
+    .analysis-block { margin-bottom: 1.25rem; }
+    .analysis-block:last-child { margin-bottom: 0; }
+    .analysis-heading { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+    .analysis-body { font-size: 0.97rem; color: var(--ink-2); line-height: 1.65; }
+
+    /* ── Prediction column ── */
+    .prediction-col { display: flex; flex-direction: column; gap: 1.25rem; }
+    .prediction-box { background: var(--bg-card-2); border: 1px solid var(--rule); padding: 1.1rem 1.2rem; }
+    .prediction-label { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); margin-bottom: 0.75rem; }
+    .scoreline { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 1.1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--rule); }
+    .score-team { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-2); flex: 1; }
+    .score-team--right { text-align: right; }
+    .score-digits { font-family: 'Anton', sans-serif; font-size: 2rem; font-weight: 400; color: var(--ink); letter-spacing: 0.02em; white-space: nowrap; }
+    .conf-bars { display: flex; flex-direction: column; gap: 0.65rem; }
+    .conf-bar { }
+    .conf-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem; }
+    .conf-bar-label { font-family: 'Inter', sans-serif; font-size: 0.68rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .conf-bar-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; }
+    .conf-bar-track { height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+    .conf-bar-fill { height: 100%; border-radius: 2px; }
+    .conf-note { font-family: 'Inter', sans-serif; font-size: 0.78rem; font-style: italic; color: var(--ink-3); margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--rule); line-height: 1.5; }
+
+    /* ── Odds ── */
+    .odds-row { padding: 0.85rem 1rem; background: var(--bg-card-2); border: 1px solid var(--rule); }
+    .odds-label { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); display: block; margin-bottom: 0.65rem; }
+    .odds-cells { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; }
+    .odds-cell { display: flex; flex-direction: column; align-items: center; padding: 0.5rem 0.3rem; background: var(--bg-card); border: 1px solid var(--rule); }
+    .odds-val { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+    .odds-prob { font-family: 'Inter', sans-serif; font-size: 0.68rem; color: var(--ink-3); }
+    .odds-tag { font-family: 'Inter', sans-serif; font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); margin-top: 0.15rem; }
+    .odds-source { font-family: 'Inter', sans-serif; font-size: 0.65rem; color: var(--ink-3); display: block; margin-top: 0.4rem; }
+
+    /* ── Against market ── */
+    .against-market { padding: 0.85rem 1rem; background: #fffbeb; border: 1px solid #fcd34d; border-left: 3px solid var(--amber); }
+    .against-badge { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--amber); display: block; margin-bottom: 0.4rem; }
+    .against-reason { font-size: 0.82rem; color: #78350f; line-height: 1.5; }
+
+    /* ── Alternates ── */
+    .alternates { padding: 0.85rem 1rem; background: var(--bg-card-2); border: 1px solid var(--rule); }
+    .alternates-heading { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: 0.65rem; }
+    .alt-row { display: flex; gap: 0.65rem; align-items: flex-start; margin-bottom: 0.65rem; }
+    .alt-row:last-child { margin-bottom: 0; }
+    .alt-score { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 600; background: var(--bg-card); border: 1px solid var(--rule-strong); padding: 0.2rem 0.45rem; min-width: 2.8rem; text-align: center; flex-shrink: 0; color: var(--ink); }
+    .alt-label { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); display: block; margin-bottom: 0.15rem; }
+    .alt-text { font-size: 0.8rem; color: var(--ink-3); line-height: 1.45; margin: 0; }
+
+    /* ── Result strip ── */
+    .result-strip { margin-top: 1.5rem; padding: 1rem 1.25rem; border-top: 1px solid var(--rule); }
+    .result--correct { background: #f0fdf4; border-left: 3px solid var(--green); }
+    .result--close { background: var(--amber-light); border-left: 3px solid var(--amber); }
+    .result--wrong { background: var(--red-light); border-left: 3px solid var(--red); }
+    .result-head { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+    .result-badge { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .result--correct .result-badge { color: var(--green); }
+    .result--close .result-badge { color: var(--amber); }
+    .result--wrong .result-badge { color: var(--red); }
+    .result-score { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--ink); }
+    .result-predicted { font-weight: 400; color: var(--ink-3); }
+    .result-writeup, .result-note { font-size: 0.92rem; margin-top: 0.4rem; color: var(--ink-2); line-height: 1.6; }
+
+    /* ── Ask widget ── */
+    .ask-toggle { margin-top: 1.25rem; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; color: var(--green); background: transparent; border: 1px solid var(--green); padding: 0.45rem 0.9rem; cursor: pointer; }
+    .ask-toggle:hover { background: var(--green-light); }
+    .ask-box { margin-top: 1.25rem; border: 1px solid var(--rule); background: var(--bg-card); }
+    .ask-head { display: flex; justify-content: space-between; align-items: center; background: var(--green); color: #fff; padding: 0.55rem 1rem; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600; }
+    .ask-close { background: transparent; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; padding: 0 0.2rem; }
+    .ask-thread { padding: 1rem; display: flex; flex-direction: column; gap: 0.85rem; max-height: 360px; overflow-y: auto; }
+    .ask-msg p { margin: 0.2rem 0 0; font-size: 0.92rem; line-height: 1.55; }
+    .ask-msg-label { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+    .ask-msg--user .ask-msg-label { color: var(--green); }
+    .ask-thinking { font-style: italic; color: var(--ink-3); }
+    .ask-error { margin: 0 1rem; font-family: 'Inter', sans-serif; font-size: 0.82rem; color: var(--red); padding: 0.5rem 0; }
+    .ask-form { display: flex; gap: 0; border-top: 1px solid var(--rule); }
+    .ask-form input { flex: 1; font-family: 'Source Serif 4', serif; font-size: 0.9rem; padding: 0.6rem 0.9rem; border: none; outline: none; background: var(--bg-card); color: var(--ink); }
+    .ask-form button { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; background: var(--green); color: #fff; border: none; padding: 0 1.2rem; cursor: pointer; }
+    .ask-form button:disabled { background: var(--rule-strong); cursor: not-allowed; }
+
+    /* ── Prediction Bank ── */
+    .bank-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 2rem; }
+    @media (max-width: 560px) { .bank-stats { grid-template-columns: repeat(2, 1fr); } }
+    .bank-stat { background: var(--bg-card); padding: 1.25rem 1rem; text-align: center; }
+    .bank-stat-num { display: block; font-family: 'Anton', sans-serif; font-size: 1.6rem; font-weight: 400; color: var(--green); margin-bottom: 0.25rem; }
+    .bank-stat-label { display: block; font-family: 'Inter', sans-serif; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); }
+    .bank-row { background: var(--bg-card); border: 1px solid var(--rule); border-left: 4px solid var(--rule-strong); padding: 1.1rem 1.25rem; margin-bottom: 1rem; }
+    .bank-row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+    .bank-date { font-size: 0.72rem; color: var(--ink-3); }
+    .bank-badge { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.22rem 0.55rem; border: 1px solid; }
+    .bank-badge--correct { color: var(--green); border-color: var(--green); background: var(--green-light); }
+    .bank-badge--close { color: var(--amber); border-color: #fbbf24; background: var(--amber-light); }
+    .bank-badge--wrong { color: var(--red); border-color: #fca5a5; background: var(--red-light); }
+    .bank-badge--pending { color: var(--ink-3); border-color: var(--rule-strong); }
+    .bank-row-main { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.4rem; }
+    .bank-teams { font-weight: 700; font-size: 1.05rem; }
+    .bank-vs { font-weight: 400; color: var(--ink-3); font-size: 0.9em; }
+    .bank-scores { font-size: 0.88rem; color: var(--ink-3); }
+    .bank-conf { display: flex; gap: 1.25rem; flex-wrap: wrap; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--ink-3); margin-bottom: 0.3rem; }
+    .bank-conf strong { color: var(--ink-2); font-family: 'JetBrains Mono', monospace; }
+    .bank-contrarian { color: var(--amber); font-weight: 600; font-family: 'Inter', sans-serif; }
+    .bank-writeup { font-size: 0.9rem; margin-top: 0.6rem; color: var(--ink-2); padding-top: 0.6rem; border-top: 1px solid var(--rule); line-height: 1.6; }
+
+    /* ── Misc ── */
+    .empty-state { color: var(--ink-3); font-style: italic; }
+    .stale-notice { font-family: 'Inter', sans-serif; font-size: 0.82rem; color: var(--amber); background: var(--amber-light); border: 1px solid #fcd34d; padding: 0.75rem 1rem; margin-bottom: 1.5rem; }
+    .page-footer { max-width: 860px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; font-family: 'Inter', sans-serif; font-size: 0.78rem; color: var(--ink-3); border-top: 1px solid var(--rule); }
+  `}</style>;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
