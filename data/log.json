@@ -536,9 +536,16 @@
               "reasoning": "Should Bosnia replicate their Switzerland-beater mentality and the USA's midfield is similarly disrupted as it was against Turkey, Bosnia's pacey forwards could punish USA on the counter and produce the round's biggest upset."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 2,
+            "away": 0,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "close",
+            "writeup": "I predicted USA to win, which proved correct, and the defensive fragility I identified in Bosnia did materialise — they were kept off the scoresheet entirely, vindicating the concern about their ability to absorb sustained American pressure. However, I overestimated USA's attacking output, calling 3-1 when the actual result was a tighter 2-0, meaning my assumption about Bosnia threatening on the counter never bore out either, but neither did the USA's \"genuine attacking depth\" I cited producing a third goal. The scoreline suggests this was a more controlled, professional win than the open, high-tempo affair I envisioned — Bosnia's midfield, which I predicted would be \"under immense strain,\" may have been more disciplined than their group stage suggested, keeping the game tighter even in defeat. The 'close' grade feels right: I got the winner and the direction of the match, but my specific score was off and the tactical picture was somewhat flatter than my preview implied."
+          }
         },
         {
           "id": "belg-sene-2026-07-01",
@@ -597,13 +604,212 @@
               "reasoning": "If Senegal's pacey forwards get in behind Belgium's high defensive line early and punish them on the counter — as both France and Norway managed against this same Senegal side — the Belgians could find themselves chasing the game and vulnerable to a second on the break."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 2,
+            "away": 2,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted Belgium would edge it narrowly, and for most of the match that logic seemed to hold — Belgium's experience and De Bruyne's influence looked like they'd be enough to manage a controlled win. But the assumption that broke was my confidence in Belgium's defensive solidity: I leaned on their group-stage numbers (only two goals conceded) as evidence of structural soundness, when in fact those numbers masked the fragility I'd already flagged in their midfield transitions. Senegal found exactly the counter-punch danger I identified but then discounted, equalising late to deny Belgium the win. I got the shape of the game roughly right but talked myself out of the defensive vulnerability evidence that was sitting right in front of me."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 21,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-02",
+      "matches": [
+        {
+          "id": "port-croa-2026-07-02",
+          "kickoff": "19:00 UTC-4",
+          "venue": "Toronto",
+          "round": "Round of 32",
+          "home": {
+            "name": "Portugal",
+            "code": "POR"
+          },
+          "away": {
+            "name": "Croatia",
+            "code": "CRO"
+          },
+          "homeForm": "D 1-1 vs DR Congo; W 5-0 vs Uzbekistan; D 0-0 vs Colombia",
+          "awayForm": "L 2-4 vs England; W 1-0 vs Panama; W 2-1 vs Ghana",
+          "analysis": [
+            {
+              "heading": "Portugal's Muted Group Stage Form",
+              "body": "Portugal's group stage was a tale of two matches — a routine demolition of Uzbekistan bookending two deeply underwhelming displays against DR Congo and Colombia. The 0-0 draw with Colombia in particular raised questions about their creative output when facing a compact, defensively organised side. Croatia, despite their heavy loss to England, are exactly that kind of disciplined, shape-based opponent, which means Portugal cannot simply assume their attacking quality will translate automatically. Ronaldo's influence at the tournament level remains a factor, but Portugal's reliance on individual moments over systemic creation is a genuine vulnerability here."
+            },
+            {
+              "heading": "Croatia's Resilience vs. England Outlier",
+              "body": "The 4-2 loss to England looks alarming on paper but should be contextualised carefully — Croatia were chasing the game from an early deficit and left spaces that England ruthlessly exploited on the counter. Against Panama and Ghana, Croatia demonstrated exactly what they do best: compact defensive structure, controlled transitions, and clinical finishing from set pieces and limited chances. Modric and Kovacic remain capable of dictating central tempo even against Portugal's press, and Gvardiol's defensive solidity at left-back is one of the best individual assets on either sheet. Croatia will not be blown open the way they were vs England."
+            },
+            {
+              "heading": "Tactical Mismatch Favours Portugal, But Narrowly",
+              "body": "Portugal's wide overloads through Cancelo and Mendes should create numerical advantages down the flanks against Croatia's narrower defensive mid-block. However, Croatia's 4-2-3-1 transition into a 4-4-2 low block has historically been difficult to break down in knockout football — ask Spain in 2018 and 2021. Portugal are the better side on current squad quality and should edge this, but expect a cagey affair. The most likely outcome is a 2-1 Portugal win where Croatia score from a set piece or transition moment but ultimately lack the individual quality to match Portugal's attacking depth across 90 minutes."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 1
+          },
+          "winnerConfidence": 62,
+          "scoreConfidence": 18,
+          "confidenceNote": "While Portugal's superior squad quality makes them the logical winner, Croatia's defensive resilience and history of grinding knockout games makes the exact scoreline highly unpredictable — they could win 1-0, 3-1, or lose in extra time.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Portugal again struggle to break down a low-block as they did against Colombia, Croatia could nick a goal from a set piece and hold on through the final whistle, forcing extra time. Croatia's disciplined defensive shape is their primary weapon and Portugal have already shown once this tournament they cannot unlock it."
+            },
+            {
+              "prediction": {
+                "home": 3,
+                "away": 1
+              },
+              "likelihood": "Bigger margin",
+              "reasoning": "If Portugal's front line clicks early and Croatia are forced to open up chasing the game, Portugal's attacking depth — particularly through Bruno Fernandes and the wide backs — could produce a more emphatic scoreline. Croatia's vulnerability when behind was brutally exposed against England."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        },
+        {
+          "id": "spai-aust-2026-07-02",
+          "kickoff": "12:00 UTC-7",
+          "venue": "Los Angeles (Inglewood)",
+          "round": "Round of 32",
+          "home": {
+            "name": "Spain",
+            "code": "SPA"
+          },
+          "away": {
+            "name": "Austria",
+            "code": "AUS"
+          },
+          "homeForm": "D 0-0 vs Cape Verde; W 4-0 vs Saudi Arabia; W 1-0 vs Uruguay",
+          "awayForm": "W 3-1 vs Jordan; L 0-2 vs Argentina; D 3-3 vs Algeria",
+          "analysis": [
+            {
+              "heading": "Spain's Group Stage Concerns",
+              "body": "Spain navigated their group with a degree of comfort on paper — six points from three games — but the performances were far from convincing. The 0-0 draw against Cape Verde signals a vulnerability against well-organised, defensively compact sides, which Austria will almost certainly emulate. The 4-0 win over Saudi Arabia flatters a team that has looked pedestrian in possession at times, and the 1-0 win over Uruguay was grinding rather than dominant. Spain still retain their structural excellence under their high defensive line and press, but the cutting edge has been inconsistent without sustained combinations clicking in the final third."
+            },
+            {
+              "heading": "Austria's Mixed Signals",
+              "body": "Austria's campaign has been a study in contradictions. The 3-1 win over Jordan gave them confidence but proved little, while the 0-2 defeat to Argentina exposed their vulnerability against elite pressing and transitional speed — a concern when facing Spain's midfield intensity. Most intriguing is the 3-3 with Algeria: Austria clearly have goalscoring capacity and are willing to commit bodies forward, but they also leak goals when stretched. Ralf Rangnick's high-press system will create some chaos against Spain's build-up, but sustaining that press for 90 minutes at altitude-adjacent conditions in LA in July is a major physical ask."
+            },
+            {
+              "heading": "Tactical Matchup — Press vs Possession",
+              "body": "This is fundamentally a clash of philosophies: Spain's patient positional play versus Austria's counter-pressing aggression. Spain's midfield — deep, technically superior — should eventually find ways through Austria's press as it fades, particularly in the second half. Austria's best route to success is a fast start, disrupting Spain's rhythm in the opening 20-30 minutes before legs tire. Spain's width and ability to overload halfspaces should create enough quality chances to win comfortably, though Austria's willingness to attack means this is unlikely to be a clean sheet scenario for either side. Expect Spain to control large portions of the match but concede on the break at least once."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 1
+          },
+          "winnerConfidence": 68,
+          "scoreConfidence": 18,
+          "confidenceNote": "While Spain are clear favourites and the outcome feels likely, Austria's attacking threat means multiple scorelines (2-0, 3-1, 1-0, 2-2) are all genuinely in play, making the exact scoreline highly speculative.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 2,
+                "away": 0
+              },
+              "likelihood": "Tighter margin",
+              "reasoning": "If Spain's defensive organisation is sharper and Austria's forward runners are successfully neutralised by Spain's high line, the Austrians fail to convert their counter-attacking moments and Spain seal a clean-sheet knockout win."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Austria's press disrupts Spain's build-up sufficiently in the first half and they score early, Spain may struggle to break down a defensively committed Austrian side and the match ends level before extra time or penalties — echoing Spain's unconvincing 0-0 group stage draw."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        },
+        {
+          "id": "swit-alge-2026-07-02",
+          "kickoff": "20:00 UTC-7",
+          "venue": "Vancouver",
+          "round": "Round of 32",
+          "home": {
+            "name": "Switzerland",
+            "code": "SWI"
+          },
+          "away": {
+            "name": "Algeria",
+            "code": "ALG"
+          },
+          "homeForm": "D 1-1 vs Qatar; W 4-1 vs Bosnia & Herzegovina; W 2-1 vs Canada",
+          "awayForm": "L 0-3 vs Argentina; W 2-1 vs Jordan; D 3-3 vs Austria",
+          "analysis": [
+            {
+              "heading": "Switzerland's Solid Group Stage Form",
+              "body": "Switzerland navigated their group with characteristic efficiency, picking up seven points from three games including an impressive 4-1 dismantling of Bosnia & Herzegovina and a nervy but important 2-1 win over host nation Canada. The draw against Qatar was the only blemish, suggesting occasional lapses in concentration against technically inferior opposition. Murat Yakin's side are built on defensive compactness and rapid transitions, and their ability to grind out results in high-pressure environments is well-documented from recent tournament cycles. They arrive in the Round of 32 as a cohesive, battle-tested unit."
+            },
+            {
+              "heading": "Algeria's Dangerous but Inconsistent Profile",
+              "body": "Algeria's group stage was a rollercoaster: a 0-3 capitulation against Argentina exposed serious defensive vulnerabilities, but a 2-1 win over Jordan and a thrilling 3-3 draw with Austria showed they are capable of both scoring goals and conceding them at will. The 3-3 against Austria in particular illustrates an attacking threat that should not be dismissed — their wide players and directness on the counter can unsettle structured European defenses. However, the same game exposes their defensive fragility, conceding three to an Austria side that is respectable but not elite. This unpredictability makes Algeria a dangerous but ultimately flawed opponent."
+            },
+            {
+              "heading": "Tactical Matchup Favours Switzerland",
+              "body": "Switzerland's defensive midfield discipline, anchored by the likes of Freuler and Sow, will be critical in neutralizing Algeria's counter-attacking threat. The Swiss press with purpose and rarely allow opponents sustained rhythm through the middle, which is precisely how Algeria prefer to build. Yakin's back four has the individual quality to handle Algeria's forwards, and the Swiss are more likely to control possession and tempo in a knockout environment. Algeria will need a near-perfect defensive performance to shut Switzerland out, and based on their group stage record that seems unlikely."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 0
+          },
+          "winnerConfidence": 72,
+          "scoreConfidence": 18,
+          "confidenceNote": "While Switzerland's superiority makes a Swiss victory quite likely, the exact scoreline depends heavily on whether Algeria's attack can find any foothold — a 1-0, 2-1, or 3-0 are all plausible within the same likely winner outcome.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Algeria's attack fires early and Switzerland's defense suffers a lapse similar to their Qatar draw, the game could level out and head toward extra time. Algeria's ability to score three against Austria shows they have the firepower to grab a point if Switzerland are not clinical."
+            },
+            {
+              "prediction": {
+                "home": 2,
+                "away": 1
+              },
+              "likelihood": "Tighter margin",
+              "reasoning": "Algeria's counter-attacking speed could earn them a consolation or equalizer if Switzerland push forward at 1-0, mirroring the pattern of conceding late goals seen in Algeria's group games where games opened up after the first goal."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 21,
+        "day": 22,
         "totalDays": 39
       }
     }
