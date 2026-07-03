@@ -681,9 +681,16 @@
               "reasoning": "If Portugal's front line clicks early and Croatia are forced to open up chasing the game, Portugal's attacking depth — particularly through Bruno Fernandes and the wide backs — could produce a more emphatic scoreline. Croatia's vulnerability when behind was brutally exposed against England."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 2,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "correct",
+            "writeup": "I predicted Portugal 2-1 Croatia and got the scoreline exactly right, but I want to be honest that an 18% score confidence means this landing precisely carries a meaningful luck component. The core structural read held up — Portugal's wide overloads creating the margin, Croatia scoring from a set piece or transition moment as I specifically anticipated, and the game staying tight rather than opening into a blowout. What proved out most clearly was the Croatia-vs-England contextualisation: they did defend with far more discipline here than that 4-2 result suggested they would, which kept Portugal from pulling away comfortably. The one thing I'd flag as slightly off is that I underweighted how much Portugal's individual quality would still be the decisive factor despite their systemic limitations — the game probably followed the script more cleanly than my hedging on their creative vulnerabilities implied it would."
+          }
         },
         {
           "id": "spai-aust-2026-07-02",
@@ -742,9 +749,16 @@
               "reasoning": "If Austria's press disrupts Spain's build-up sufficiently in the first half and they score early, Spain may struggle to break down a defensively committed Austrian side and the match ends level before extra time or penalties — echoing Spain's unconvincing 0-0 group stage draw."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 3,
+            "away": 0,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "close",
+            "writeup": "I predicted Spain to win, which proved correct, but I overcomplicated the scoreline by insisting Austria's attacking instincts would guarantee them a goal — that assumption simply didn't hold, as Rangnick's press never got enough foothold to create the transitional moments I envisioned, and Spain's defensive line held firm throughout. My reasoning that Austria would \"commit bodies forward\" and \"leak goals when stretched\" applied only in one direction here: Spain exploited the space Austria vacated, but Austria never genuinely threatened in the other direction. The 3-0 margin also suggests Spain's cutting edge was sharper than my somewhat skeptical read of their group stage performances warranted — the pedestrian possession I noted apparently clicked into something more clinical on the day. Credit where it's due on the winner, but I was wrong to anchor so firmly on Austria finding the net."
+          }
         },
         {
           "id": "swit-alge-2026-07-02",
@@ -803,13 +817,212 @@
               "reasoning": "Algeria's counter-attacking speed could earn them a consolation or equalizer if Switzerland push forward at 1-0, mirroring the pattern of conceding late goals seen in Algeria's group games where games opened up after the first goal."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 2,
+            "away": 0,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "correct",
+            "writeup": "I predicted Switzerland 2-0 Algeria and nailed both the winner and the exact scoreline, though with a score confidence of only 18% I'd be dishonest if I claimed I saw this coming with precision. The core tactical read proved out: Switzerland's defensive midfield discipline did neutralize Algeria's counter-attacking threat, and Algeria's defensive fragility — which I flagged explicitly from that 3-3 against Austria — was exposed again when it mattered most. The clean sheet vindicated my confidence in Yakin's backline handling Algeria's forwards, and the two-goal margin reflected exactly the controlled, structured performance I anticipated rather than anything more dramatic. Credit where it's due on the analysis, but the scoreline landing on my exact call owes something to fortune as much as foresight."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 22,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-03",
+      "matches": [
+        {
+          "id": "arge-cape-2026-07-03",
+          "kickoff": "18:00 UTC-4",
+          "venue": "Miami (Miami Gardens)",
+          "round": "Round of 32",
+          "home": {
+            "name": "Argentina",
+            "code": "ARG"
+          },
+          "away": {
+            "name": "Cape Verde",
+            "code": "CAP"
+          },
+          "homeForm": "W 3-0 vs Algeria; W 2-0 vs Austria; W 3-1 vs Jordan",
+          "awayForm": "D 0-0 vs Spain; D 2-2 vs Uruguay; D 0-0 vs Saudi Arabia",
+          "analysis": [
+            {
+              "heading": "Argentina's clinical form vs Cape Verde's draw merchants",
+              "body": "Argentina have been ruthlessly efficient in the group stage, putting away Algeria, Austria, and Jordan with a combined 8 goals scored and only 1 conceded. Their attack is functioning at peak capacity with creative combinations through the midfield unlocking defenses consistently. Cape Verde, by contrast, have drawn all three of their group matches — including a creditable 0-0 against Spain and a 2-2 against Uruguay — suggesting a side built to frustrate rather than dominate. That draw-heavy pattern tells you everything: Cape Verde will set up compactly, absorb pressure, and look for moments on the counter. Against Argentina's quality, that approach is tactically brave but ultimately insufficient."
+            },
+            {
+              "heading": "Tactical mismatch in the final third",
+              "body": "Argentina's pressing triggers and vertical speed in transition are precisely the kind of attacking structure that punishes low-block sides who lack the individual quality to sustain 90 minutes of defensive organization at this level. Cape Verde conceded twice to Uruguay from set situations and transition moments, revealing that their defensive shape can be broken when they are asked to defend for long, sustained stretches. Argentina will be patient in possession, stretch the Cape Verde block horizontally, and create overloads in wide areas — they have the personnel to exploit the halfspaces on both flanks. Expect the deadlock to break before the hour mark as defensive fatigue sets in for the Blue Sharks."
+            },
+            {
+              "heading": "Cape Verde's ceiling and a potential consolation",
+              "body": "Cape Verde are not without threat — their 2-2 with Uruguay shows they can be dangerous on set pieces and direct runs into the channel. Argentina's defense, while solid, has shown moments of vulnerability at dead balls. A Cape Verde goal is entirely plausible, particularly if Argentina rotate personnel or ease off with a lead. However, the structural quality gap simply does not allow for a Cape Verde win or even a draw against this Argentina side at full intensity. The most realistic scenario is Argentina win comfortably, with the margin potentially tightening slightly if a Cape Verde set piece finds a way through."
+            }
+          ],
+          "prediction": {
+            "home": 3,
+            "away": 1
+          },
+          "winnerConfidence": 88,
+          "scoreConfidence": 18,
+          "confidenceNote": "Argentina winning is highly predictable given the talent and form gap, but exact scorelines in knockout football are inherently volatile — Cape Verde could keep it tighter or Argentina could add a fourth, making the precise 3-1 one of several plausible winning margins.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 2,
+                "away": 0
+              },
+              "likelihood": "Tighter margin",
+              "reasoning": "If Cape Verde deploy an ultra-disciplined low block and deny Argentina space consistently, the match may stay goalless until a single decisive moment — Argentina win but fail to cut loose, keeping it to a narrow clean-sheet victory."
+            },
+            {
+              "prediction": {
+                "home": 4,
+                "away": 1
+              },
+              "likelihood": "Bigger margin",
+              "reasoning": "If Argentina find early rhythm and Cape Verde are forced to open up chasing the game, the defensive transitions that hurt them against Uruguay could be exploited repeatedly, pushing the tally higher and reflecting the full class difference on the night."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        },
+        {
+          "id": "colo-ghan-2026-07-03",
+          "kickoff": "20:30 UTC-5",
+          "venue": "Kansas City",
+          "round": "Round of 32",
+          "home": {
+            "name": "Colombia",
+            "code": "COL"
+          },
+          "away": {
+            "name": "Ghana",
+            "code": "GHA"
+          },
+          "homeForm": "W 3-1 vs Uzbekistan; W 1-0 vs DR Congo; D 0-0 vs Portugal",
+          "awayForm": "W 1-0 vs Panama; D 0-0 vs England; L 1-2 vs Croatia",
+          "analysis": [
+            {
+              "heading": "Colombia's tournament momentum",
+              "body": "Colombia arrive at the Round of 32 with a largely positive group stage, beating Uzbekistan comfortably and edging DR Congo, before a goalless draw with Portugal that demonstrated genuine defensive discipline rather than passive survival. James Rodríguez and the creative midfield axis have shown the ability to control tempo and create in transition, which will be a key weapon against Ghana's high defensive line. The 3-1 win over Uzbekistan in particular showed Colombia's attacking depth, with multiple contributors beyond their recognized stars. Their only concern is whether the Portugal draw reveals a ceiling against high-press opponents, something Ghana could attempt to replicate."
+            },
+            {
+              "heading": "Ghana's fragile defensive record",
+              "body": "Ghana's group stage told a tale of two halves: disciplined resilience against Panama and England bookended a damaging 1-2 defeat to Croatia that exposed their vulnerability on the counter-attack and from set pieces. The Black Stars conceded twice against Croatia in a game they were arguably level with for long stretches, suggesting their defensive structure breaks down under sustained pressure. Against a Colombia side that transitions quickly through midfield, Ghana's centre-backs will be tested repeatedly. Their 0-0 with England does show they can frustrate, but Colombia's movement off the ball is more varied and technically superior to England's in that particular group stage showing."
+            },
+            {
+              "heading": "Tactical matchup and key battleground",
+              "body": "The central midfield battle will define this contest. Colombia's ability to recycle possession through their midfield and then burst forward through the halfspaces should exploit Ghana's tendency to sit in a compact mid-block that can be stretched with lateral movement. Ghana will likely look to hit on the counter through their pacy wide forwards, which means Colombia's fullbacks must be disciplined. Kansas City's heat and humidity in early July could favour the physically imposing Ghana unit in a potential second half — but Colombia's squad depth and technical quality should see them manage the game professionally. A 2-1 Colombia win feels like the most natural outcome given the gap in tournament pedigree and current form."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 1
+          },
+          "winnerConfidence": 68,
+          "scoreConfidence": 19,
+          "confidenceNote": "While Colombia's superiority makes them clear favourites, the exact 2-1 scoreline is one of many plausible outcomes in a knockout game where Ghana can certainly threaten once and Colombia's margin may vary by one goal in either direction.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Ghana set up as defensively compact as they did against England and Colombia struggle to convert their chances in the heat, a draw forcing extra time is live. Ghana showed against England they can absorb pressure for 90 minutes and threaten on the break."
+            },
+            {
+              "prediction": {
+                "home": 3,
+                "away": 0
+              },
+              "likelihood": "Bigger margin",
+              "reasoning": "If Colombia's midfield dominance is as total as it was against Uzbekistan and Ghana's defensive structure fragments early after conceding, Colombia have the attacking quality to punish repeatedly. A comfortable three-goal win becomes realistic if an early Ghana red card or injury disrupts their defensive shape."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        },
+        {
+          "id": "aust-egyp-2026-07-03",
+          "kickoff": "13:00 UTC-5",
+          "venue": "Dallas (Arlington)",
+          "round": "Round of 32",
+          "home": {
+            "name": "Australia",
+            "code": "AUS"
+          },
+          "away": {
+            "name": "Egypt",
+            "code": "EGY"
+          },
+          "homeForm": "W 2-0 vs Turkey; L 0-2 vs USA; D 0-0 vs Paraguay",
+          "awayForm": "D 1-1 vs Belgium; W 3-1 vs New Zealand; D 1-1 vs Iran",
+          "analysis": [
+            {
+              "heading": "Australia's Defensive Solidity vs. Attacking Limitations",
+              "body": "The Socceroos arrive at this knockout tie with a mixed but functional group stage campaign — beating Turkey, drawing a blank against Paraguay, and suffering a 2-0 defeat to the USA. Their defensive shape has generally been disciplined, conceding only twice in three matches, but the attacking output is a genuine concern. That 0-0 against Paraguay and the shutout against the USA suggest Australia struggle to create against organized, defensively compact opposition, and Egypt are exactly that kind of team. Tony Popovic will need to unlock something more adventurous going forward if they are to progress."
+            },
+            {
+              "heading": "Egypt's Pragmatic Efficiency and Set-Piece Threat",
+              "body": "Egypt have been a classically pragmatic side throughout the group stage — drawing with Belgium and Iran while dispatching New Zealand 3-1. Their 1-1s are not signs of weakness but of controlled, organized football that limits opponents' chances while staying dangerous on the counter and from dead-ball situations. Mostafa Mohamed and Omar Marmoush provide genuine pace and physicality in attack, and Egypt ranked among the top sides at this tournament for aerial duels won. The Dallas heat at 1PM local time in July will suit a counter-attacking, physically direct Egyptian side more than an Australian team that prefers to build through phases."
+            },
+            {
+              "heading": "Tactical Matchup Favors Egypt's Transition Game",
+              "body": "Australia tend to push their full-backs forward, which creates exposure in behind — precisely the space Egypt's wide attackers will target on the break. Egypt's compact 4-2-3-1 or 4-3-3 block will invite Australia possession but deny them the central corridors, forcing crosses into areas where Egypt's aerial defenders are strongest. The brutal afternoon heat in Arlington historically depresses high-pressing intensity, which diminishes one of Australia's key strengths and levels the physical playing field. Egypt have won or drawn every competitive knockout-style high-stakes fixture in their recent qualifying cycle, showing the temperament to grind out crucial results."
+            }
+          ],
+          "prediction": {
+            "home": 1,
+            "away": 2
+          },
+          "winnerConfidence": 54,
+          "scoreConfidence": 16,
+          "confidenceNote": "While Egypt's tactical profile and transition threat give them a discernible edge, both teams have shown they can play to tight margins in tournament football — pinning down an exact scoreline in a nervy knockout tie with limited attacking firepower on both sides is inherently speculative.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 0,
+                "away": 1
+              },
+              "likelihood": "Tighter margin",
+              "reasoning": "If Australia's defensive organization holds firm and the game stays cagey, a single counter-attacking goal from Egypt — the kind of outcome their 1-1 draws suggest they can engineer — is highly plausible without Australia finding a response."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "Australia have shown resilience and drew 0-0 against Paraguay in a similarly cautious encounter; if they score first and Egypt equalize from a set piece, both sides may settle for extra time, especially with knockout fatigue a factor in summer heat."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 22,
+        "day": 23,
         "totalDays": 39
       }
     }
