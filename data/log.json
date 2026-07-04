@@ -894,9 +894,16 @@
               "reasoning": "If Argentina find early rhythm and Cape Verde are forced to open up chasing the game, the defensive transitions that hurt them against Uruguay could be exploited repeatedly, pushing the tally higher and reflecting the full class difference on the night."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 1,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted Argentina would break Cape Verde down through sustained possession and attacking quality, but the core assumption that proved wrong was that Cape Verde's defensive organisation would eventually crack under sustained pressure — it didn't, and Argentina only managed a single goal. My reasoning around \"defensive fatigue\" and Argentina's ability to create overloads was overconfident given that I actually identified Cape Verde's draw-heavy tendencies myself, which in hindsight was a signal toward exactly this result rather than evidence of a side ripe to be picked apart. I was right that Cape Verde would threaten from set pieces — that consolation goal I anticipated did materialise — but I wrongly treated it as a footnote when it ended up being half the scoreline. The 88% winner confidence was plainly too high for a side I'd already described as expert frustrators against a team that had yet to face a genuinely deep defensive block in this tournament."
+          }
         },
         {
           "id": "colo-ghan-2026-07-03",
@@ -955,9 +962,16 @@
               "reasoning": "If Colombia's midfield dominance is as total as it was against Uzbekistan and Ghana's defensive structure fragments early after conceding, Colombia have the attacking quality to punish repeatedly. A comfortable three-goal win becomes realistic if an early Ghana red card or injury disrupts their defensive shape."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 1,
+            "away": 0,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "close",
+            "writeup": "I predicted Colombia to win, which was correct, but the 2-1 scoreline overestimated the attacking output — Colombia managed just the single goal and Ghana never found the equalizer my reasoning implied they might threaten. My read on Ghana's defensive fragility was too aggressive; the same resilience they showed against Panama and England held largely firm here, and Colombia didn't create the kind of sustained pressure that breaks compact mid-blocks repeatedly. The game validated my central argument about Colombia's defensive discipline and tournament quality being the decisive edge, but I was wrong to project a more open, multi-goal contest — it was tighter and more controlled than I anticipated, closer to the Colombia-Portugal dynamic I'd actually identified as a ceiling concern."
+          }
         },
         {
           "id": "aust-egyp-2026-07-03",
@@ -1016,13 +1030,151 @@
               "reasoning": "Australia have shown resilience and drew 0-0 against Paraguay in a similarly cautious encounter; if they score first and Egypt equalize from a set piece, both sides may settle for extra time, especially with knockout fatigue a factor in summer heat."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 1,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted Egypt to win 1-2, and they didn't — the match finished 1-1, which earns a wrong grade despite the scoreline being relatively close. The core assumption that broke was Egypt's ability to hold a lead or nick a winner; the pragmatic efficiency I cited cuts both ways, and a side that draws controlled 1-1s in the group stage evidently does exactly that in the knockouts too. I was right that both teams would score and that Australia's attacking limitations would keep the margin tight, but I overcounted Egypt's counter-attacking threat converting into an actual victory rather than another measured stalemate. The heat, the tactical matchup, the set-piece danger — all plausible, but none of it translated into the Egyptian winning goal I expected."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 23,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-04",
+      "matches": [
+        {
+          "id": "para-fran-2026-07-04",
+          "kickoff": "17:00 UTC-4",
+          "venue": "Philadelphia",
+          "round": "Round of 16",
+          "home": {
+            "name": "Paraguay",
+            "code": "PAR"
+          },
+          "away": {
+            "name": "France",
+            "code": "FRA"
+          },
+          "homeForm": "W 1-0 vs Turkey; D 0-0 vs Australia; D 1-1 vs Germany",
+          "awayForm": "W 3-0 vs Iraq; W 4-1 vs Norway; W 3-0 vs Sweden",
+          "analysis": [
+            {
+              "heading": "France's Attacking Machine vs Paraguay's Fortress",
+              "body": "France arrive in Philadelphia having dismantled three opponents with a cumulative 10-1 scoreline, showcasing a fluid, high-tempo attack that has consistently broken defensive blocs. Paraguay, by contrast, have conceded just two goals across three matches, including a creditable draw with Germany, built on a low defensive block and disciplined shape. The tactical clash is stark: France want to press high and exploit space in behind, while Paraguay will sit deep, compress the midfield, and look to hit on the counter. The key question is whether Paraguay's resolute structure can absorb France's movement and creativity for long enough to steal a result."
+            },
+            {
+              "heading": "Paraguay's Counter-Attacking Threat",
+              "body": "Paraguay's 1-0 win over Turkey demonstrated their ability to grind out results through defensive solidity and one clinical moment, and that template will be their game plan here. Their wide forwards have shown willingness to run in behind on transitions, and France's attacking fullbacks leave spaces that a disciplined Paraguayan counter could exploit. France historically can be vulnerable to set-pieces and direct play when opponents successfully absorb their pressing. However, Paraguay's goal output is dangerously low — one goal in three games — which makes their task of taking something from this match extremely difficult against a France side conceding almost nothing."
+            },
+            {
+              "heading": "Philadelphia Conditions and Tournament Context",
+              "body": "The July heat in Philadelphia adds a physical dimension that could marginally favour Paraguay's conservative, energy-efficient approach over France's high-energy press. France have the depth and rotation to manage fatigue, but a compact Paraguay side might stay in the match longer than expected in the opening hour. France, however, have too much quality across the pitch — particularly in the final third — to be held for 90 minutes. We expect France to find the breakthrough before the hour mark and manage the game home from there, ultimately cruising into the quarterfinals. A 2-0 scoreline reflects France's control without over-inflating their margin."
+            }
+          ],
+          "prediction": {
+            "home": 0,
+            "away": 2
+          },
+          "winnerConfidence": 82,
+          "scoreConfidence": 22,
+          "confidenceNote": "While France winning feels near-certain given the quality and form gap, exact scorelines in knockout football are notoriously volatile — Paraguay could concede one or three depending on how long their defensive shape holds.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 0,
+                "away": 3
+              },
+              "likelihood": "Bigger margin",
+              "reasoning": "If Paraguay's defensive discipline cracks early — through a set-piece or a quick France goal forcing them to open up — France could exploit the space ruthlessly and run to a three-goal winning margin as Paraguay chase the game."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Live underdog",
+              "reasoning": "If Paraguay score first on a counter-attack and successfully lower the tempo, France could be forced into a nervy equaliser and fail to find a winner, sending the match to extra time — a genuine threat given France's historical vulnerability when chasing in knockout matches."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        },
+        {
+          "id": "cana-moro-2026-07-04",
+          "kickoff": "12:00 UTC-5",
+          "venue": "Houston",
+          "round": "Round of 16",
+          "home": {
+            "name": "Canada",
+            "code": "CAN"
+          },
+          "away": {
+            "name": "Morocco",
+            "code": "MOR"
+          },
+          "homeForm": "W 6-0 vs Qatar; L 1-2 vs Switzerland; W 1-0 vs South Africa",
+          "awayForm": "W 1-0 vs Scotland; W 4-2 vs Haiti; D 1-1 vs Netherlands",
+          "analysis": [
+            {
+              "heading": "Canada's Group Stage Identity",
+              "body": "Canada emerged from their group with a mixed but ultimately encouraging set of results. The 6-0 demolition of Qatar flatters slightly given the opponent's quality, but the 1-0 win over South Africa showed grit and defensive organization when it mattered. The loss to Switzerland revealed vulnerabilities against compact, technically superior opposition — exactly the profile Morocco presents. Canada will look to press high and exploit transitions, but they must be cautious of being caught on the counter by Morocco's rapid wide attackers."
+            },
+            {
+              "heading": "Morocco's Controlled Progression",
+              "body": "Morocco navigated their group with characteristic pragmatism — wins over Scotland and Haiti bookending a respectable draw with the Netherlands. The 4-2 against Haiti showed attacking flair and depth, while the Netherlands draw demonstrated that Walid Regragui's side can absorb pressure and remain dangerous on the break. Their defensive structure remains elite from the 2022 Qatar tournament template, and they have added more goal threat in the final third. The experience of a World Cup semifinal run two years prior is an enormous psychological advantage in knockout football."
+            },
+            {
+              "heading": "Tactical Mismatch and Knockout Dynamics",
+              "body": "This match hinges on whether Canada's pressing system can disrupt Morocco's composed build-up play or whether Morocco simply play through and around it as Switzerland did. In a Round of 16 knockout game on a hot July afternoon in Houston, Regragui's side are likely to be disciplined and wait for their moments. Canada's front line is energetic but can be isolated when the midfield press is bypassed. Morocco have the tactical experience and personnel to control the tempo and nick a goal from a set piece or transitional moment, making them the more reliable pick at this stage."
+            }
+          ],
+          "prediction": {
+            "home": 0,
+            "away": 1
+          },
+          "winnerConfidence": 62,
+          "scoreConfidence": 22,
+          "confidenceNote": "While Morocco are the more likely winner based on tactical depth and knockout experience, scorelines in tightly contested Round of 16 games are notoriously difficult to nail — extra time, own goals, or a Canadian counter-attack could easily shift the exact outcome.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw, extra time",
+              "reasoning": "If Canada's high press disrupts Morocco's rhythm and an early Canadian goal forces Morocco to open up, the game could become more chaotic and level at the end of 90 minutes, pushing it to extra time where the fresher Canadian legs could be a factor."
+            },
+            {
+              "prediction": {
+                "home": 0,
+                "away": 2
+              },
+              "likelihood": "Bigger Morocco margin",
+              "reasoning": "If Morocco exploit Canada's defensive shape as Switzerland did — particularly with quick combinations through the lines — a second goal on the break in the second half becomes very achievable, reflecting Morocco's true quality gap at the knockout stage."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 23,
+        "day": 24,
         "totalDays": 39
       }
     }
