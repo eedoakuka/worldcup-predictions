@@ -1107,9 +1107,16 @@
               "reasoning": "If Paraguay score first on a counter-attack and successfully lower the tempo, France could be forced into a nervy equaliser and fail to find a winner, sending the match to extra time — a genuine threat given France's historical vulnerability when chasing in knockout matches."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 0,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "close",
+            "writeup": "I predicted France to win comfortably and they did, but the 2-0 scoreline proved one goal too many — Paraguay's defensive fortress held firm enough to concede only once rather than twice, which is exactly the scenario my own reasoning flagged as a risk when I noted their \"disciplined shape\" and low defensive block. The core tactical read was sound: France controlled the match and found the breakthrough, but I underestimated Paraguay's capacity to limit damage even in defeat, and the single goal suggests France never fully \"cruised\" in the way I anticipated. My assumption that France's quality in the final third would yield a second goal broke against a side that had conceded just two goals in three group games — that defensive resilience was real, and I should have weighted it more heavily in the scoreline even while backing France to win."
+          }
         },
         {
           "id": "cana-moro-2026-07-04",
@@ -1168,13 +1175,151 @@
               "reasoning": "If Morocco exploit Canada's defensive shape as Switzerland did — particularly with quick combinations through the lines — a second goal on the break in the second half becomes very achievable, reflecting Morocco's true quality gap at the knockout stage."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 0,
+            "away": 3,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "close",
+            "writeup": "I predicted the winner correctly and got the clean sheet right, but the 0-3 scoreline exposed how much I underestimated Morocco's attacking intent — my framing of them as a patient, counter-punching side waiting to \"nick a goal\" didn't account for the degree to which they'd actually overrun Canada's press rather than merely bypassing it. The Switzerland comparison proved directionally right in that Canada's pressing system was nullified, but where I saw Morocco controlling tempo and grinding out one goal, they were genuinely dominant and ruthless in front of goal. The 'close' grade is fair — the winner and defensive logic held, but I was too conservative about Morocco's margin of victory, anchoring too heavily on their 2022 template of defensive pragmatism rather than crediting how much attacking threat they'd added."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 24,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-05",
+      "matches": [
+        {
+          "id": "braz-norw-2026-07-05",
+          "kickoff": "16:00 UTC-4",
+          "venue": "New York/New Jersey (East Rutherford)",
+          "round": "Round of 16",
+          "home": {
+            "name": "Brazil",
+            "code": "BRA"
+          },
+          "away": {
+            "name": "Norway",
+            "code": "NOR"
+          },
+          "homeForm": "W 3-0 vs Haiti; W 3-0 vs Scotland; W 2-1 vs Japan",
+          "awayForm": "W 3-2 vs Senegal; L 1-4 vs France; W 2-1 vs Ivory Coast",
+          "analysis": [
+            {
+              "heading": "Brazil's Group Stage Dominance",
+              "body": "Brazil arrived at this World Cup looking every bit the tournament favourite, dispatching Haiti and Scotland 3-0 before grinding out a 2-1 win over Japan in their toughest group test. The Seleção have shown variety — clinical in front of goal, technically superior in midfield, and disciplined enough to manage games when they need to. Eight goals scored, one conceded across three matches is the profile of a team operating at a high level. Heading into a knockout game at MetLife Stadium with that kind of momentum is a significant advantage."
+            },
+            {
+              "heading": "Norway's Inconsistency is a Major Red Flag",
+              "body": "Norway's route through the group stage tells a complicated story. Beating Senegal 3-2 and Ivory Coast 2-1 shows they have attacking punch — Haaland and their wide threats are capable of hurting anyone — but the 4-1 demolition at the hands of France exposed serious structural vulnerabilities at the back. France tore through Norway's high defensive line with pace and direct running, which is precisely the kind of threat Brazil also possesses in abundance. Norway's backline cannot afford to set such a high line against Brazilian pace on the counter."
+            },
+            {
+              "heading": "Tactical Mismatch Favours Brazil",
+              "body": "Norway's typical shape — aggressive press, high line, direct balls in behind — is tailor-made for a Brazilian side that loves to play quick combinations out of pressure and exploit space in transition. Brazil's full-backs will push high, stretching Norway's wide midfielders, while the Brazilian number 10 will have freedom in pockets. Norway will likely concede set-piece danger too given Brazil's height and delivery quality from dead balls. Expect Brazil to be patient early, absorb Norway's initial intensity, and then punish them with quality in the second half when Norway's legs go."
+            }
+          ],
+          "prediction": {
+            "home": 3,
+            "away": 1
+          },
+          "winnerConfidence": 82,
+          "scoreConfidence": 18,
+          "confidenceNote": "While Brazil winning this fixture feels close to a near-certainty given the quality gap and Norway's defensive exposure, pinning down the exact scoreline across 90+ minutes of knockout football — where a Norwegian goal from Haaland at any moment changes dynamics — makes the precise 3-1 call inherently fragile.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 2,
+                "away": 1
+              },
+              "likelihood": "Tighter margin",
+              "reasoning": "If Haaland converts an early goal and Norway park defensively behind the ball, Brazil may struggle to find a second or third and end up grinding out a nervy 2-1. Norway have shown they can score in every game, so a closer contest is genuinely plausible."
+            },
+            {
+              "prediction": {
+                "home": 4,
+                "away": 0
+              },
+              "likelihood": "Bigger margin",
+              "reasoning": "If Norway again set a reckless high line as they did against France and Brazil's attack finds its rhythm early with a goal in the first 20 minutes, the Seleção could ruthlessly expose them for a historic knockout-round hammering, especially if Haaland is isolated without supply."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        },
+        {
+          "id": "mexi-engl-2026-07-05",
+          "kickoff": "18:00 UTC-6",
+          "venue": "Mexico City",
+          "round": "Round of 16",
+          "home": {
+            "name": "Mexico",
+            "code": "MEX"
+          },
+          "away": {
+            "name": "England",
+            "code": "ENG"
+          },
+          "homeForm": "W 1-0 vs South Korea; W 3-0 vs Czech Republic; W 2-0 vs Ecuador",
+          "awayForm": "D 0-0 vs Ghana; W 2-0 vs Panama; W 2-1 vs DR Congo",
+          "analysis": [
+            {
+              "heading": "Azteca Fortress Effect",
+              "body": "Mexico playing at the Estadio Azteca — or a Mexican venue at altitude — is one of the most significant home advantages in international football, and England have a historically wretched record in Mexico City. The atmosphere, altitude, and crowd noise create a genuine psychological and physical burden on visiting sides, and England's group stage performances showed a team that still struggles to impose itself consistently. Mexico's 3-0 win over Czech Republic and 2-0 win over Ecuador showed genuine attacking fluency under their current setup, and the home crowd will amplify every moment of pressure they generate."
+            },
+            {
+              "heading": "Mexico's Form vs England's Inconsistency",
+              "body": "Mexico enter this knockout tie on a perfect three-from-three group record, conceding zero goals — that defensive solidity is the most important number here. England, by contrast, drew 0-0 with Ghana and only beat DR Congo 2-1, suggesting their attack can be frustrated by organized, deep-sitting opposition. Mexico's pressing triggers and quick transitions on the counter are precisely the tactical approach that has historically caused England's relatively slow center-back pairing problems. The market may be slightly overweighting England's name recognition versus their actual displayed form in this tournament."
+            },
+            {
+              "heading": "Tactical Mismatch in Midfield",
+              "body": "Mexico's midfield has shown energy, compactness, and vertical passing lanes that England's midfield tends to allow when pressed high. England's 2-0 win over Panama was the most comfortable performance but Panama are a lower-tier side — DR Congo exposed England's transitional vulnerabilities. Mexico will likely sit in a mid-block, invite England forward, and exploit spaces in behind with their pacy forwards. This is a tactical blueprint England have repeatedly struggled to counter in big international moments, and a knockout game on Mexican soil raises the stakes of every misplaced pass."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 1
+          },
+          "winnerConfidence": 58,
+          "scoreConfidence": 14,
+          "confidenceNote": "While I back Mexico to win with moderate conviction given home advantage, altitude, and form, knockout football is inherently volatile and the exact scoreline across 90+ minutes could take dozens of shapes — a narrow Mexico win feels right but 2-1 is just one of many possible winning scorelines.",
+          "goingAgainstMarket": true,
+          "againstMarketReason": "England will likely be marginal favourites or near-even money given their global ranking and squad depth, but the market tends to underweight the Azteca altitude factor and Mexico's perfect defensive record in the group stage. England's attack was blunted by Ghana's organized defense (0-0) and only narrowly beat DR Congo, suggesting they are vulnerable to exactly the low-block, counter-pressing approach Mexico will deploy. This specific venue, opponent, and tactical combination historically overperforms against English sides in ways raw squad quality metrics do not capture.",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw — extra time",
+              "reasoning": "If England's defensive organization neutralizes Mexico's press and Gareth Southgate's successor sets up to frustrate rather than attack, this could be a cagey, tight match that goes level and requires extra time or penalties — a scenario England historically have improved in recently."
+            },
+            {
+              "prediction": {
+                "home": 0,
+                "away": 2
+              },
+              "likelihood": "England clinical upset",
+              "reasoning": "If England's forward line finds its rhythm early and punishes Mexico on the counter — the one scenario where England's quality on the break can override home-crowd pressure — a commanding away win becomes possible, particularly if Mexico chase the game after going behind."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 24,
+        "day": 25,
         "totalDays": 39
       }
     }
