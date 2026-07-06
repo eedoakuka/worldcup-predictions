@@ -1252,9 +1252,16 @@
               "reasoning": "If Norway again set a reckless high line as they did against France and Brazil's attack finds its rhythm early with a goal in the first 20 minutes, the Seleção could ruthlessly expose them for a historic knockout-round hammering, especially if Haaland is isolated without supply."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 1,
+            "away": 2,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted Brazil to win comfortably and they lost, so the core call was wrong. The assumption that broke hardest was my read on Norway's vulnerability — I argued their high line and structural weaknesses would be ruthlessly exposed by Brazilian pace and transition play, but it was actually Brazil who were punished on the counter, suggesting Norway either adjusted their defensive shape or Brazil were far less incisive in transition than their group stage form implied. I got the direction of one argument right — that Norway's attacking threat was real — but completely discounted it as a decisive factor, instead treating it as a footnote to Brazil's dominance. The 82% winner confidence looks particularly poor in hindsight given I had identified with my own pen exactly the kind of vulnerabilities Norway could exploit."
+          }
         },
         {
           "id": "mexi-engl-2026-07-05",
@@ -1313,13 +1320,151 @@
               "reasoning": "If England's forward line finds its rhythm early and punishes Mexico on the counter — the one scenario where England's quality on the break can override home-crowd pressure — a commanding away win becomes possible, particularly if Mexico chase the game after going behind."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 2,
+            "away": 3,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted Mexico to win at home and got the result wrong, though the scoreline was at least in the right ballpark — Mexico did score twice, which partially validated my read on their attacking fluency and the Azteca's amplifying effect. The core assumption that broke was Mexico's defensive solidity: I leaned heavily on their perfect group-stage record and zero goals conceded as evidence of structural resilience, but England scored three times, suggesting that record was more a product of weaker opposition than genuine defensive quality against a tournament-level attack. I also underestimated England's ability to impose themselves in exactly the high-pressure, transitional knockout environment I claimed would expose them — the \"slow center-back pairing\" vulnerability I cited apparently ran both ways, and Mexico's own defensive transitions were the ones that cracked."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 25,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-06",
+      "matches": [
+        {
+          "id": "port-spai-2026-07-06",
+          "kickoff": "14:00 UTC-5",
+          "venue": "Dallas (Arlington)",
+          "round": "Round of 16",
+          "home": {
+            "name": "Portugal",
+            "code": "POR"
+          },
+          "away": {
+            "name": "Spain",
+            "code": "SPA"
+          },
+          "homeForm": "W 5-0 vs Uzbekistan; D 0-0 vs Colombia; W 2-1 vs Croatia",
+          "awayForm": "W 4-0 vs Saudi Arabia; W 1-0 vs Uruguay; W 3-0 vs Austria",
+          "analysis": [
+            {
+              "heading": "Spain's Relentless Structure",
+              "body": "Spain have been the most convincing team in the tournament so far, posting a perfect 3-0-0 group stage record with 8 goals scored and zero conceded. Their positional play has been immaculate — high press, rapid short combinations through midfield, and a defensive line that has looked unbreachable. Their control-based game plan will be specifically difficult for Portugal, who tend to rely on individual moments of brilliance rather than systemic dominance. La Roja arrive as the form team of the competition."
+            },
+            {
+              "heading": "Portugal's Inconsistency Problem",
+              "body": "Portugal's group stage was a tale of two performances: a ruthless 5-0 opener against Uzbekistan inflated confidence, but the 0-0 draw with Colombia and a nervy 2-1 win over Croatia revealed genuine structural vulnerabilities, particularly in midfield transition and defensive organisation without the ball. When Portugal cannot build through Bernardo Silva and are pressed high, they become overly reliant on Ronaldo's individual inspiration — which at this stage of the tournament against elite opposition carries diminishing returns. Spain will specifically target Portugal's right side in transition."
+            },
+            {
+              "heading": "The Iberian Derby Wildcard",
+              "body": "Historical Iberian derbies are notoriously tight, low-scoring affairs driven by mutual familiarity, tactical respect, and the weight of occasion. The two nations know each other intimately at all levels — club and international — which typically suppresses the kind of open spaces Spain's forwards thrive in. Portugal are not without weapons: Bruno Fernandes can dictate tempo and Rafael Leão offers direct pace on the counter. A competitive, close contest is the expected shape of this game, but Spain's superior cohesion and defensive record makes them slight favourites to edge it."
+            }
+          ],
+          "prediction": {
+            "home": 0,
+            "away": 1
+          },
+          "winnerConfidence": 54,
+          "scoreConfidence": 18,
+          "confidenceNote": "While Spain are the more coherent team and marginally favoured to win, Iberian derbies are historically low-margin affairs where a single moment decides the outcome, making the exact scoreline extremely difficult to pin down.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Portugal's defensive organisation improves and Bruno Fernandes controls the midfield battle, this becomes a mutual stalemate requiring extra time — a realistic outcome given the historical pattern of tight Iberian derbies."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 2
+              },
+              "likelihood": "Bigger margin",
+              "reasoning": "If Spain's press forces Portugal into errors early and a red card or early goal opens space for Spain's forwards, a two-goal winning margin becomes achievable — Spain's attack is sharp enough to punish any disorganisation."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        },
+        {
+          "id": "usa-belg-2026-07-06",
+          "kickoff": "17:00 UTC-7",
+          "venue": "Seattle",
+          "round": "Round of 16",
+          "home": {
+            "name": "USA",
+            "code": "USA"
+          },
+          "away": {
+            "name": "Belgium",
+            "code": "BEL"
+          },
+          "homeForm": "W 2-0 vs Australia; L 2-3 vs Turkey; W 2-0 vs Bosnia & Herzegovina",
+          "awayForm": "D 0-0 vs Iran; W 5-1 vs New Zealand; D 2-2 vs Senegal",
+          "analysis": [
+            {
+              "heading": "USA's Home Soil Advantage",
+              "body": "Playing in Seattle at Lumen Field gives the United States a significant psychological and logistical edge, with a predominantly partisan crowd that has historically energized this squad in major tournaments. The USA showed real attacking intent in wins over Australia and Bosnia, bookending a shaky 3-2 defeat to Turkey that exposed some defensive fragility, particularly in transition. Seattle's atmosphere in a knockout game should amplify the hosts' pressing intensity, which is their most dangerous tactical weapon. Gregg Berhalter's side will look to press high and exploit Belgium's occasionally sluggish build-up, something Senegal managed to exploit in the group stage draw."
+            },
+            {
+              "heading": "Belgium's Inconsistency Is a Red Flag",
+              "body": "Belgium's group stage campaign was deeply uneven — a goalless draw against Iran is a damning data point, suggesting their creative engine misfired badly against a disciplined low block. The 5-1 demolition of New Zealand flatters them given the opposition's quality, and the 2-2 with Senegal showed defensive vulnerability at set pieces and in behind. De Bruyne and company can be electrifying when the game opens up, but their inability to break down compact defenses in Seattle's high-pressure environment is a genuine concern. The aging core of this Belgian generation may also find the physical demands of a knockout match in a hostile stadium a step too far."
+            },
+            {
+              "heading": "Tactical Battleground: USA's Press vs Belgium's Midfield",
+              "body": "The critical duel is between the USA's high-energy pressing unit and Belgium's ability to play through pressure via De Bruyne dropping deep. If the USA can win the ball in Belgium's half repeatedly, their front runners have the pace to punish a Belgian backline that gave up two goals to Senegal. However, Belgium's class in midfield means if they find their rhythm, they can carve open the USA's defense — as Turkey demonstrated in the group stage, this US side can be caught with quick vertical passes. Expect a tight, physical contest where set pieces and transitions determine the outcome. The USA's two clean sheets in wins suggest defensive organization improves in must-win scenarios, and a 2-1 victory feels like the most logical conclusion."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 1
+          },
+          "winnerConfidence": 58,
+          "scoreConfidence": 18,
+          "confidenceNote": "While there are clear reasons to favor the USA at home in a knockout match, Belgium's individual quality means the game could easily swing either way, and pinning down the exact scoreline in a tightly contested Round of 16 tie is inherently low-probability.",
+          "goingAgainstMarket": true,
+          "againstMarketReason": "The market likely leans toward Belgium given their nominal pedigree and De Bruyne's star power, but it may be underweighting the USA's genuine home advantage in Seattle and Belgium's troubling inability to break down organized defenses — evidenced by the 0-0 against Iran. Belgium's defensive record in the group stage also showed real vulnerability that a pacy, pressing USA side is specifically positioned to exploit.",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 2
+              },
+              "likelihood": "Belgium quality shines",
+              "reasoning": "If De Bruyne dictates tempo from the outset and Belgium's wide players find space behind the USA's high defensive line — the same vulnerability Turkey exposed — Belgium could steal this on the counter. A dominant Belgian midfield performance would replicate what Turkey did to the USA in the group stage."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Cagey draw, extra time",
+              "reasoning": "Both sides' shared tendency toward defensive solidity in high-stakes moments — USA's two clean-sheet wins and Belgium's 0-0 with Iran — could produce a cautious, canceling-out affair that goes to extra time or penalties. If USA's attacking cohesion falters again as it did against Turkey, neither side may have the finishing quality to force a winner in 90 minutes."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 25,
+        "day": 26,
         "totalDays": 39
       }
     }
