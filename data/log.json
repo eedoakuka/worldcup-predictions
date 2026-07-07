@@ -1397,9 +1397,16 @@
               "reasoning": "If Spain's press forces Portugal into errors early and a red card or early goal opens space for Spain's forwards, a two-goal winning margin becomes achievable — Spain's attack is sharp enough to punish any disorganisation."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 0,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "correct",
+            "writeup": "I predicted Portugal 0-1 Spain and got the result exactly right, though with only 54% winner confidence and 18% score confidence I was hardly sticking my neck out. The core signal that proved out was Spain's structural superiority — their control-based game plan did indeed neutralize Portugal's reliance on individual moments, and the defensive cohesion I highlighted held firm through ninety minutes. My concern about the Iberian derby dynamic suppressing open space was also validated; this was precisely the tight, low-scoring affair I anticipated rather than a showcase for Spain's attacking firepower. The one element I flagged that didn't materialize was Spain targeting Portugal's right side in transition as a decisive weapon — the winning margin came from Spain's overall dominance rather than that specific tactical exploit."
+          }
         },
         {
           "id": "usa-belg-2026-07-06",
@@ -1458,13 +1465,155 @@
               "reasoning": "Both sides' shared tendency toward defensive solidity in high-stakes moments — USA's two clean-sheet wins and Belgium's 0-0 with Iran — could produce a cautious, canceling-out affair that goes to extra time or penalties. If USA's attacking cohesion falters again as it did against Turkey, neither side may have the finishing quality to force a winner in 90 minutes."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 1,
+            "away": 4,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted a 2-1 USA win on the logic that home atmosphere, pressing intensity, and Belgian inconsistency would combine to overwhelm an aging squad — every one of those pillars collapsed. The 4-1 scoreline exposed the core flaw in my reasoning: I leaned too hard on Belgium's group stage wobbles against lesser opposition while dismissing just how dangerous De Bruyne and company could be when a game opened up, which is exactly what happened once Belgium went ahead and the USA had to chase the match. My own pre-match caveat — that Turkey showed this US side could be carved open with quick vertical passes — turned out to be the most predictive thing I wrote, and I buried it. I was right that transitions would matter; I just had the wrong team benefiting from them."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 26,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-07",
+      "matches": [
+        {
+          "id": "arge-egyp-2026-07-07",
+          "kickoff": "12:00 UTC-4",
+          "venue": "Atlanta",
+          "round": "Round of 16",
+          "home": {
+            "name": "Argentina",
+            "code": "ARG"
+          },
+          "away": {
+            "name": "Egypt",
+            "code": "EGY"
+          },
+          "homeForm": "W 2-0 vs Austria; W 3-1 vs Jordan; D 1-1 vs Cape Verde",
+          "awayForm": "W 3-1 vs New Zealand; D 1-1 vs Iran; D 1-1 vs Australia",
+          "analysis": [
+            {
+              "heading": "Argentina's Group Stage Wobble",
+              "body": "Argentina entered this tournament as reigning world champions but their group stage form has been uneven. Two wins bookend a draw against Cape Verde, which is a result that would have raised eyebrows in Buenos Aires. The 3-1 victory over Jordan flatters a side that has not looked convincingly dominant, and the 2-0 against Austria suggests defensive solidity more than attacking fluency. Scaloni's side will need to sharpen considerably in the knockout rounds, but the quality gap between Argentina and Egypt at the individual level remains enormous."
+            },
+            {
+              "heading": "Egypt's Resolute but Limited Campaign",
+              "body": "Egypt qualified from a competitive group by drawing twice — against Iran and Australia — and beating New Zealand 3-1. The draws reveal a team that competes hard but struggles to impose itself against sides with genuine defensive organisation. Salah's form and influence will be the critical variable; if he is on song, Egypt can hurt anyone on the counter. However, their inability to break down Iran and Australia suggests a tactical ceiling that Argentina's press and midfield creativity should be able to exploit once the game opens up."
+            },
+            {
+              "heading": "Tactical Matchup and Venue Factor",
+              "body": "Atlanta's heat and humidity in early July could be a leveller, slowing Argentina's high-press game and favouring Egypt's deeper, more conservative setup. Egypt will almost certainly sit in a compact mid-block, inviting Argentina to break them down, and hope to hit on transitions through Salah's pace. Argentina's midfield three — anchored by De Paul and Mac Allister — is experienced enough to rotate the ball patiently and create overloads wide. The key question is whether Argentina can score first, because once Egypt are chasing the game their defensive shape crumbles."
+            },
+            {
+              "heading": "Market Alignment and Prediction Rationale",
+              "body": "The market heavily favours Argentina, and for once the market is correct. The reigning champions, despite their inconsistency, possess far superior depth, tournament pedigree, and individual quality. Egypt's draws suggest they are competitive but not dangerous enough to cause a genuine upset against this level of opposition. A 2-0 Argentina win reflects a controlled, professional knockout-round performance — not spectacular, but enough — with Egypt managing to keep it tight for long periods before the class difference tells in the final quarter."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 0
+          },
+          "winnerConfidence": 78,
+          "scoreConfidence": 22,
+          "confidenceNote": "While Argentina winning feels highly probable given the quality gap, Egypt's defensive discipline and Salah's counter-attacking threat make the exact margin genuinely unpredictable — they could equalise or Argentina could break loose for three.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Salah catches Argentina on the counter early and Egypt score first, Scaloni's side — having shown a propensity to drop concentration in this tournament — could be held to a draw that forces extra time, especially if Atlanta's heat drains Argentina's high-press energy."
+            },
+            {
+              "prediction": {
+                "home": 3,
+                "away": 1
+              },
+              "likelihood": "Bigger margin",
+              "reasoning": "If Messi starts at peak sharpness and Argentina score inside 20 minutes, Egypt's defensive shape will be forced to open up and Argentina's attacking depth — Alvarez, Di Maria, Dybala — could run riot, with Egypt grabbing a consolation from a Salah set piece or late transition."
+            }
+          ],
+          "status": "final",
+          "result": null,
+          "verdict": null
+        },
+        {
+          "id": "swit-colo-2026-07-07",
+          "kickoff": "13:00 UTC-7",
+          "venue": "Vancouver",
+          "round": "Round of 16",
+          "home": {
+            "name": "Switzerland",
+            "code": "SWI"
+          },
+          "away": {
+            "name": "Colombia",
+            "code": "COL"
+          },
+          "homeForm": "W 4-1 vs Bosnia & Herzegovina; W 2-1 vs Canada; W 2-0 vs Algeria",
+          "awayForm": "W 1-0 vs DR Congo; D 0-0 vs Portugal; W 1-0 vs Ghana",
+          "analysis": [
+            {
+              "heading": "Switzerland's Clinical Group Stage Form",
+              "body": "Switzerland were the standout team in their group, posting three wins and conceding just two goals while scoring eight. Their 4-1 demolition of Bosnia and Herzegovina showed genuine attacking depth, and the 2-0 win over Algeria demonstrated the ability to control matches without necessarily being spectacular. Murat Yakin's side appear tactically disciplined and versatile, capable of pressing high or sitting in a compact mid-block depending on the opponent. This flexibility will be crucial against a Colombian side that relies on tempo and creativity in transition. Switzerland arrive here as arguably the form team of the knockout round field."
+            },
+            {
+              "heading": "Colombia's Pragmatic but Toothless Attack",
+              "body": "Colombia scraped through the group stage with two narrow 1-0 wins and a goalless draw against Portugal, suggesting their defensive structure is solid but their attacking output is a genuine concern. Only two goals scored across three matches, with the Portugal stalemate revealing an inability to break down organized defenses. James Rodríguez, if fit and influential, can unlock compact blocks, but Colombia have looked overly cautious and predictable in the final third. Their reliance on moments of individual quality rather than systemic creativity could be brutally exposed by Switzerland's well-organized defensive line."
+            },
+            {
+              "heading": "Tactical Mismatch Favors the Swiss",
+              "body": "Switzerland's high-energy pressing and structured build-up play should dominate the midfield battle against a Colombian midfield that looked pedestrian in the group stage. Switzerland's wide players have been effective in delivering from advanced positions, and Granit Xhaka's ability to dictate tempo will be central. Colombia typically want to play on the counter, but Switzerland have shown they can control possession and dictate rhythm, which removes Colombia's preferred mode of operating. The Vancouver pitch and afternoon kickoff should not significantly favor either side, but Switzerland's collective cohesion over Colombia's fragile attacking confidence tips this clearly."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 0
+          },
+          "winnerConfidence": 68,
+          "scoreConfidence": 18,
+          "confidenceNote": "While Switzerland's superiority across form, tactical discipline, and attacking output strongly suggests a win, the exact scoreline is highly unpredictable given Colombia's defensive resilience and the low-scoring knockout-round context.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Colombia's defensive organization frustrates Switzerland for long stretches and James Rodríguez finds a moment of brilliance to equalize, a tense draw leading to extra time is plausible — Colombia's disciplined 0-0 against Portugal shows they can contain higher-quality opponents."
+            },
+            {
+              "prediction": {
+                "home": 3,
+                "away": 1
+              },
+              "likelihood": "Bigger Swiss margin",
+              "reasoning": "Should Colombia commit men forward chasing the game after conceding first, Switzerland's devastating counter-attacking ability — showcased against Bosnia — could rip them apart and produce an emphatic victory."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 26,
+        "day": 27,
         "totalDays": 39
       }
     }
