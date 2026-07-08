@@ -1547,8 +1547,15 @@
             }
           ],
           "status": "final",
-          "result": null,
-          "verdict": null
+          "result": {
+            "home": 3,
+            "away": 2,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "close",
+            "writeup": "I predicted a controlled Argentine win and got the winner right, but the game was far messier than my \"professional, measured\" framing suggested — a 3-2 scoreline is the opposite of the clean sheet I built my score prediction around. The assumption that broke was my tactical ceiling argument for Egypt: I wrote that their defensive shape crumbles when chasing, but they were evidently able to score twice against an Argentina side I expected to be far more defensively solid. I also underweighted the Atlanta heat factor I raised myself — it likely did slow Argentina's press and create the transitional chaos that let Egypt back into the game repeatedly, rather than Argentina simply controlling territory and closing it out professionally."
+          }
         },
         {
           "id": "swit-colo-2026-07-07",
@@ -1607,9 +1614,16 @@
               "reasoning": "Should Colombia commit men forward chasing the game after conceding first, Switzerland's devastating counter-attacking ability — showcased against Bosnia — could rip them apart and produce an emphatic victory."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 0,
+            "away": 0,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted Switzerland would dominate possession and press Colombia into submission, but the match was a sterile 0-0 that exposed the central flaw in my reasoning: I dismissed Colombia's defensive solidity while underestimating how effectively they could neutralize Switzerland's attacking patterns when defending deep and organized. My entire case for a Swiss win rested on Colombia being \"toothless\" offensively while being vulnerable defensively, but what actually happened was that Colombia's defensive discipline — the very trait I acknowledged — proved the dominant factor, and Switzerland couldn't find a way through it any more than Portugal could. I effectively identified Colombia's strength, then argued it wouldn't matter, which was the assumption that broke. The 0-0 was arguably more consistent with my own evidence than my actual prediction was."
+          }
         }
       ],
       "tournamentContext": {
