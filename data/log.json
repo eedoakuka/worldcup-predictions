@@ -1630,6 +1630,76 @@
         "day": 27,
         "totalDays": 39
       }
+    },
+    {
+      "date": "2026-07-09",
+      "matches": [
+        {
+          "id": "fran-moro-2026-07-09",
+          "kickoff": "16:00 UTC-4",
+          "venue": "Boston (Foxborough)",
+          "round": "Quarter-final",
+          "home": {
+            "name": "France",
+            "code": "FRA"
+          },
+          "away": {
+            "name": "Morocco",
+            "code": "MOR"
+          },
+          "homeForm": "W 4-1 vs Norway; W 3-0 vs Sweden; W 1-0 vs Paraguay",
+          "awayForm": "W 4-2 vs Haiti; D 1-1 vs Netherlands; W 3-0 vs Canada",
+          "analysis": [
+            {
+              "heading": "France's clinical efficiency",
+              "body": "France have been in devastating form through the group stage and into the knockouts, averaging over 2.6 goals per game while conceding just one. The 4-1 demolition of Norway and the controlled 3-0 win over Sweden demonstrated both attacking firepower and defensive discipline. With Mbappé dictating pace on the left flank and a midfield built around pressing intensity, France look every bit the tournament favourite. Their one close call — a 1-0 win over Paraguay — suggests they can also grind out results when the game demands it."
+            },
+            {
+              "heading": "Morocco's resolute defensive structure",
+              "body": "Morocco have shown they are no pushovers, with a compact 4-3-3 defensive block that frustrated the Netherlands enough to earn a draw. The Atlas Lions conceded 4 against Haiti which is misleading — that was a high-line game they controlled for long periods — and they shut out Canada with ease. Their strength lies in defensive organisation and sharp counter-attacks, which mirrors exactly the challenge they posed France in the 2022 Qatar World Cup semi-final. That semifinal experience will give this group confidence they can hurt France on the break."
+            },
+            {
+              "heading": "Tactical mismatch and the semi-final echo",
+              "body": "The 2022 semi-final in Qatar is the defining reference point here: France edged Morocco 2-0 in a tight, tense affair where Morocco were competitive for long stretches. France are a better, more experienced team in 2026, but Morocco's defensive shape under their coaching staff remains elite at tournament level. France will likely dominate possession and territory, but Morocco's low block and disciplined backline will make this anything but comfortable. Expect France to break through eventually — likely through set pieces or individual brilliance — but Morocco will stay in it for long stretches."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 0
+          },
+          "winnerConfidence": 68,
+          "scoreConfidence": 18,
+          "confidenceNote": "While France winning feels like the most probable outcome given their superior squad depth and form, the exact scoreline is highly volatile against a Morocco side that can absorb pressure and make games ugly for extended periods.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Morocco's defensive discipline holds through 70+ minutes and they score on one of their trademark counter-attacks, France could find themselves level and unable to break the block — forcing extra time. Morocco pulled this off against the Netherlands and nearly did so against France in 2022."
+            },
+            {
+              "prediction": {
+                "home": 3,
+                "away": 1
+              },
+              "likelihood": "Bigger French margin",
+              "reasoning": "If France score an early goal and Morocco are forced to open up, the pace and technical quality of the French attack could expose them repeatedly. An open, end-to-end game heavily favours France's individual talent differential."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        }
+      ],
+      "tournamentContext": {
+        "day": 29,
+        "totalDays": 39
+      }
     }
   ]
 }
