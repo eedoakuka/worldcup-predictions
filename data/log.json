@@ -1691,13 +1691,90 @@
               "reasoning": "If France score an early goal and Morocco are forced to open up, the pace and technical quality of the French attack could expose them repeatedly. An open, end-to-end game heavily favours France's individual talent differential."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 2,
+            "away": 0,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "correct",
+            "writeup": "I predicted France 2-0 Morocco and got the result exactly right, which feels satisfying but I want to be clear-eyed about what that means given an 18% score confidence. The core tactical read proved sound: France's clinical efficiency eventually breaking through a disciplined Moroccan defensive block, much as it did in the 2022 semi-final, was the right framework, and the \"set pieces or individual brilliance\" pathway to goals aligned with how France actually scored. What I was most uncertain about — whether Morocco's counter-attacking threat might nick a goal and shift the scoreline — didn't materialise, vindicating the defensive discipline I flagged but also meaning the clean sheet came through rather than despite Morocco's attacking ambition. The 2022 semi-final echo I leaned on turned out to be a genuinely predictive signal, not just lazy pattern-matching."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 29,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-10",
+      "matches": [
+        {
+          "id": "spai-belg-2026-07-10",
+          "kickoff": "12:00 UTC-7",
+          "venue": "Los Angeles (Inglewood)",
+          "round": "Quarter-final",
+          "home": {
+            "name": "Spain",
+            "code": "SPA"
+          },
+          "away": {
+            "name": "Belgium",
+            "code": "BEL"
+          },
+          "homeForm": "W 1-0 vs Uruguay; W 3-0 vs Austria; W 1-0 vs Portugal",
+          "awayForm": "W 5-1 vs New Zealand; D 2-2 vs Senegal; W 4-1 vs USA",
+          "analysis": [
+            {
+              "heading": "Spain's Suffocating Structure",
+              "body": "Spain have been the most cohesive unit at this tournament, grinding out results with a disciplined defensive block and fluid positional play in midfield. Their 1-0 wins over Uruguay and Portugal were not flukes — they controlled possession, restricted counter-attacking space, and created enough to win comfortably had finishing been sharper. The midfield trio has been elite at pressing triggers, winning the ball in transition zones and recycling quickly. De la Fuente's side looks tactically superior to most opponents they will face in the knockout rounds."
+            },
+            {
+              "heading": "Belgium's Inconsistency is a Red Flag",
+              "body": "Belgium's results are deceptively encouraging on paper, but the 2-2 draw with Senegal exposed serious defensive fragility — they were caught repeatedly on the counter and their centre-back pairing looked disorganised in mid-block. The 4-1 win over the USA and 5-1 over New Zealand flattered a side that benefited from weak opposition and a high-risk press that can be punished. Against a Spain team that circulates the ball with precision and punishes overcommitment, Belgium's tendency to leave space in behind is a serious liability."
+            },
+            {
+              "heading": "Tactical Mismatch in Midfield",
+              "body": "The decisive battleground will be midfield control. Spain's ability to dominate the press-and-recover cycle means Belgium's attacking players — reliant on direct service and transitions — will be starved of the ball in dangerous areas. Belgium will look to exploit set-pieces and moments of individual brilliance, but Spain's organisation at dead-balls has been solid. Expect Spain to control the tempo, absorb early Belgium pressure, and punish them in the second half when legs tire and space opens. A second-half goal feels like the most likely match-winner."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 0
+          },
+          "winnerConfidence": 72,
+          "scoreConfidence": 18,
+          "confidenceNote": "While Spain's superiority makes them clear favourites, the exact scoreline is highly uncertain — they could win 1-0 in a tight affair or open up by three if Belgium's defensive issues worsen late on.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 0
+              },
+              "likelihood": "Tighter margin",
+              "reasoning": "If Belgium shore up their defensive shape and sit in a deeper 5-4-1 block, Spain may struggle to break through freely and grind out only a narrow win, consistent with their Portugal and Uruguay results."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Belgium's individual quality at set-pieces or on the counter produces a goal against the run of play, Spain's clinical issues in front of goal could leave this level and push it toward extra time."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 29,
+        "day": 30,
         "totalDays": 39
       }
     }
