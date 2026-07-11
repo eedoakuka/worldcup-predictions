@@ -1768,13 +1768,151 @@
               "reasoning": "If Belgium's individual quality at set-pieces or on the counter produces a goal against the run of play, Spain's clinical issues in front of goal could leave this level and push it toward extra time."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 2,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "close",
+            "writeup": "I predicted Spain to win and to score twice, both of which came true, so the core of the call held up. What I missed was Belgium's ability to stay in the contest — I leaned heavily on their defensive fragility being ruthlessly exposed, but they clearly found enough resilience or Spain enough sloppiness to concede a goal and make it 2-1 rather than the clean sheet I envisioned. My reasoning about the midfield mismatch and Spain controlling tempo was broadly correct, but I overestimated how completely Spain would neutralise Belgium's attacking threat, and the clean sheet assumption was the part that broke. The 'close' grade feels fair — winner right, scoreline one goal off, and the margin of victory was narrower than my tactical framing implied."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 30,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-11",
+      "matches": [
+        {
+          "id": "norw-engl-2026-07-11",
+          "kickoff": "17:00 UTC-4",
+          "venue": "Miami (Miami Gardens)",
+          "round": "Quarter-final",
+          "home": {
+            "name": "Norway",
+            "code": "NOR"
+          },
+          "away": {
+            "name": "England",
+            "code": "ENG"
+          },
+          "homeForm": "L 1-4 vs France; W 2-1 vs Ivory Coast; W 2-1 vs Brazil",
+          "awayForm": "W 2-0 vs Panama; W 2-1 vs DR Congo; W 3-2 vs Mexico",
+          "analysis": [
+            {
+              "heading": "Norway's Giant-Killing Momentum",
+              "body": "Norway arrive at this quarter-final on the back of a stunning 2-1 victory over Brazil, which will have shaken any notion that they are mere makeweights in this competition. Their win over Ivory Coast also demonstrated resilience when pressed. The defeat to France is the only blemish, and France are arguably the tournament's strongest side, so there is no shame in that result. Norway's direct, physical style — built around exploiting aerial duels, wide runners, and quick transitions — has proven genuinely disruptive against technically superior opposition, and England's centre-backs will need to be at their very best."
+            },
+            {
+              "heading": "England's Steady Accumulation",
+              "body": "England have navigated their path with controlled efficiency rather than brilliance. Their 3-2 win over Mexico showed both attacking potency and a slight defensive fragility — conceding two against a good but not elite side is a data point that Norway's direct attackers will be targeting. The wins over Panama and DR Congo were routine but provided minutes and rhythm. England appear tactically solid in a mid-block, patient in possession, and clinical when chances arrive. Their quality in the final third, particularly on transitions, remains the key edge they hold over Norway."
+            },
+            {
+              "heading": "Tactical Mismatch in Miami Heat",
+              "body": "The Miami heat and humidity at a 5 PM kickoff will test both teams physically, but it may paradoxically favour England, whose squad depth and fitness management has been notable throughout the tournament. Norway's game plan of high-energy pressing and aerial bombardment is metabolically expensive. If England absorb pressure in the first 30 minutes and keep it tight, Norway's intensity tends to drop, and that is when England's quality in midfield — threading passes into wide areas — can unlock a retreating Norwegian block. Expect England to win this, but not comfortably."
+            }
+          ],
+          "prediction": {
+            "home": 1,
+            "away": 2
+          },
+          "winnerConfidence": 62,
+          "scoreConfidence": 14,
+          "confidenceNote": "While England are the likelier winner, Norway's proven giant-killing ability and England's demonstrated defensive vulnerability mean the exact scoreline is highly uncertain across a wide range of plausible outcomes.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 2,
+                "away": 2
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If England's defensive frailties from the Mexico match resurface and Norway score from a set-piece or aerial situation, the game could become level late on and go to extra time. England have shown a tendency to concede goals that open matches up."
+            },
+            {
+              "prediction": {
+                "home": 2,
+                "away": 1
+              },
+              "likelihood": "Norway upset",
+              "reasoning": "Norway's Brazil scalp proves they can outperform expectation against technically superior sides; if they score first and England are forced to chase the game in the Miami heat, their direct counter-attacking could carve out a famous quarter-final victory."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        },
+        {
+          "id": "arge-swit-2026-07-11",
+          "kickoff": "20:00 UTC-5",
+          "venue": "Kansas City",
+          "round": "Quarter-final",
+          "home": {
+            "name": "Argentina",
+            "code": "ARG"
+          },
+          "away": {
+            "name": "Switzerland",
+            "code": "SWI"
+          },
+          "homeForm": "W 3-1 vs Jordan; D 1-1 vs Cape Verde; W 3-2 vs Egypt",
+          "awayForm": "W 2-1 vs Canada; W 2-0 vs Algeria; D 0-0 vs Colombia",
+          "analysis": [
+            {
+              "heading": "Argentina's Patchy Form Overstated",
+              "body": "Argentina arrive in the quarter-finals with a mixed group stage showing — the draw against Cape Verde will sting given the quality differential on paper, and the narrow 3-2 win over Egypt exposed genuine defensive vulnerability. That said, their attacking firepower in a knockout context is a different proposition; historically Scaloni's side locks in tactically once the margins matter most. The 3-1 win over Jordan was routine, but the pattern of conceding cheap goals is something Switzerland's disciplined counter-attacking structure will look to exploit ruthlessly."
+            },
+            {
+              "heading": "Switzerland's Defensive Solidity and Tactical Ceiling",
+              "body": "Murat Yakin's Switzerland are exactly the kind of team that makes life difficult in knockouts — they conceded just one goal in three group games, kept a clean sheet against Colombia, and were supremely organised in transition. Their 4-2-3-1 structure is compact and disciplined, pressing high enough to disrupt build-up but pragmatic enough to sit deep when necessary. The 2-1 win over Canada showed they can absorb pressure and punish on the counter; against Argentina's shaky defensive line that blueprint is entirely credible. However, their attacking output against quality opposition has been limited — the two wins came against Canada and Algeria, neither a top-tier defensive unit."
+            },
+            {
+              "heading": "The Kansas City Factor and Tactical Outlook",
+              "body": "Kansas City's Arrowhead Stadium will generate an atmosphere heavily tilted toward Argentina given the South American diaspora turnout across the central US. That crowd factor matters in close games — Switzerland's shape can be rattled by sustained pressure and noise. Argentina will likely set up with a high defensive line and rely on creative central midfield combinations to unlock the Swiss low block; expect Scaloni to press the flanks to create overloads. The likeliest scenario is a tense, low-scoring Argentina win where they create enough to edge through without being entirely comfortable — a repeat of their 2014 and 2022 knockout nerve but ultimately getting the job done."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 1
+          },
+          "winnerConfidence": 62,
+          "scoreConfidence": 17,
+          "confidenceNote": "While Argentina are clear favourites and the structural case for their win is sound, Switzerland's defensive organisation makes the exact scoreline extremely hard to pin down — a 1-0, 2-0, or extra-time finish are all live outcomes.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "If Switzerland's double pivot suffocates Argentina's midfield creativity and Yakin's side score first on the counter, Argentina's recent tendency to drop concentration could see this drag into extra time or penalties — a genuine threat given the Cape Verde draw."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 0
+              },
+              "likelihood": "Tighter margin",
+              "reasoning": "Switzerland's defensive cohesion is good enough to keep Argentina below their expected output, and one set-piece or moment of individual brilliance could be the sole difference — particularly likely if Argentina struggle to break down the Swiss low block for long stretches."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 30,
+        "day": 31,
         "totalDays": 39
       }
     }
