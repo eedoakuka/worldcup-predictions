@@ -1845,9 +1845,16 @@
               "reasoning": "Norway's Brazil scalp proves they can outperform expectation against technically superior sides; if they score first and England are forced to chase the game in the Miami heat, their direct counter-attacking could carve out a famous quarter-final victory."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 1,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted an England win, and they didn't get one — a draw was enough to send Norway through on goal difference (or however the tiebreaker fell), so the 'wrong' grade is fair. My central assumption was that England's quality in transition would prove decisive once Norway's high-energy pressing faded in the Miami heat, but the 1-1 scoreline suggests Norway held their defensive shape well enough to deny England that winning goal, and England's slight defensive fragility I flagged from the Mexico game materialised again. I underweighted how effectively Norway could neutralise England's midfield threading once the game was level — a side that beat Brazil can clearly manage a game state. The 62% winner confidence looks particularly exposed; this was closer to a coin flip than I gave it credit for."
+          }
         },
         {
           "id": "arge-swit-2026-07-11",
@@ -1906,9 +1913,16 @@
               "reasoning": "Switzerland's defensive cohesion is good enough to keep Argentina below their expected output, and one set-piece or moment of individual brilliance could be the sole difference — particularly likely if Argentina struggle to break down the Swiss low block for long stretches."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 1,
+            "away": 1,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted Argentina to edge through narrowly, and they did eventually progress, but the 1-1 draw means my stated score was wrong and my winner confidence never fully materialised inside 90 minutes. The core assumption that broke was Argentina's attacking firepower converting enough to avoid a stalemate — I flagged their defensive vulnerability correctly, and Switzerland's disciplined counter-attacking structure did exactly what I warned it might, but I underestimated how effectively Yakin's side would nullify Argentina's creative central combinations throughout. My note about Switzerland's attacking ceiling against quality opposition was valid, but I failed to follow that logic to its natural conclusion: if both teams' attacking limitations held simultaneously, a draw was the likelier base case than a narrow Argentina win."
+          }
         }
       ],
       "tournamentContext": {
