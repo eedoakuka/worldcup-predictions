@@ -1929,6 +1929,76 @@
         "day": 31,
         "totalDays": 39
       }
+    },
+    {
+      "date": "2026-07-14",
+      "matches": [
+        {
+          "id": "fran-spai-2026-07-14",
+          "kickoff": "14:00 UTC-5",
+          "venue": "Dallas (Arlington)",
+          "round": "Semi-final",
+          "home": {
+            "name": "France",
+            "code": "FRA"
+          },
+          "away": {
+            "name": "Spain",
+            "code": "SPA"
+          },
+          "homeForm": "W 3-0 vs Sweden; W 1-0 vs Paraguay; W 2-0 vs Morocco",
+          "awayForm": "W 3-0 vs Austria; W 1-0 vs Portugal; W 2-1 vs Belgium",
+          "analysis": [
+            {
+              "heading": "Tactical Blueprint Collision",
+              "body": "This is a genuine clash of two elite tactical systems. France under Deschamps continue to operate in their pragmatic, defensively-anchored shape — absorbing pressure and converting moments of individual brilliance into clinical outcomes. Spain under De la Fuente press relentlessly in their structured 4-3-3, building through Rodri and the interior midfielders to create overloads in wide channels. The key tactical battle will be whether Spain's press can disrupt France's buildup or whether France sit deep enough to make it irrelevant, inviting Spain onto them and hitting on the counter — a strategy France have executed to perfection in the tournament so far."
+            },
+            {
+              "heading": "Form and Goals Trajectory",
+              "body": "Both teams arrive in outstanding defensive form — France have conceded zero goals across three knockout matches, while Spain conceded just once, a late consolation against Belgium. France's attack has been functional rather than spectacular: three wins, but only six goals, heavily reliant on set-pieces and transition moments. Spain's 3-0 demolition of Austria showed their ceiling, though the 1-0 edging of Portugal and a slightly nervy 2-1 against Belgium shows they can be tested. France's defensive record in this tournament is frankly extraordinary and becomes the central variable in this prediction."
+            },
+            {
+              "heading": "The Mbappé Factor vs Spain's High Line",
+              "body": "Spain's tendency to play a high defensive line creates the single most dangerous environment for Mbappé to operate in this entire tournament. France have repeatedly set up to spring their front men in behind, and Mbappé's recovery of form and movement in this World Cup makes him the decisive individual threat. Spain will likely accept this risk in exchange for dominating the ball, but if Mbappé breaks the offside trap even once it changes the game. France's defensive unit — battle-hardened and arguably the best collective defensive structure in the tournament — will be expected to handle Yamal and Williams on the flanks with disciplined tracking."
+            }
+          ],
+          "prediction": {
+            "home": 1,
+            "away": 1
+          },
+          "winnerConfidence": 45,
+          "scoreConfidence": 12,
+          "confidenceNote": "Even identifying who wins or draws this match is genuinely uncertain given how evenly matched these sides are in every measurable dimension, and predicting the exact scoreline in a match of this quality and tension is a low-probability exercise regardless of analysis depth.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 0,
+                "away": 1
+              },
+              "likelihood": "Spain edge it",
+              "reasoning": "If Spain successfully suppress Mbappé with a high press and Yamal finds space in behind France's fullbacks, their superior ball retention eventually wears France down. A Spain goal from open play late in the second half in a match France cannot find an equalizer reflects their slight edge in total football quality."
+            },
+            {
+              "prediction": {
+                "home": 2,
+                "away": 1
+              },
+              "likelihood": "France counter-punch wins",
+              "reasoning": "If Spain overcommit in the second half chasing a result after falling behind to a France set-piece or Mbappé breakaway, France's clinical transition game punishes them with a late second goal — echoing France's classic tournament knockout template from previous major tournaments."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        }
+      ],
+      "tournamentContext": {
+        "day": 34,
+        "totalDays": 39
+      }
     }
   ]
 }
