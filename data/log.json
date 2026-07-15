@@ -1990,13 +1990,90 @@
               "reasoning": "If Spain overcommit in the second half chasing a result after falling behind to a France set-piece or Mbappé breakaway, France's clinical transition game punishes them with a late second goal — echoing France's classic tournament knockout template from previous major tournaments."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 0,
+            "away": 2,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted France would contain Spain defensively and that their extraordinary tournament clean sheet record would hold — that assumption collapsed entirely, as Spain scored twice and France failed to register a single goal. The Mbappé-against-the-high-line threat I identified as France's decisive weapon never materialised in any meaningful way, and Spain's press clearly did disrupt France's buildup rather than France sitting deep enough to neutralise it, which was the exact tactical hinge I flagged as uncertain. I underweighted Spain's attacking quality and overweighted France's defensive resilience as a fixed quantity rather than something that could be broken down by sustained, high-level positional pressure — De la Fuente's system simply overwhelmed Deschamps' pragmatism on the day."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 34,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-15",
+      "matches": [
+        {
+          "id": "engl-arge-2026-07-15",
+          "kickoff": "15:00 UTC-4",
+          "venue": "Atlanta",
+          "round": "Semi-final",
+          "home": {
+            "name": "England",
+            "code": "ENG"
+          },
+          "away": {
+            "name": "Argentina",
+            "code": "ARG"
+          },
+          "homeForm": "W 2-1 vs DR Congo; W 3-2 vs Mexico; D 1-1 vs Norway",
+          "awayForm": "D 1-1 vs Cape Verde; W 3-2 vs Egypt; D 1-1 vs Switzerland",
+          "analysis": [
+            {
+              "heading": "Evenly Matched Forms Heading Into a Classic",
+              "body": "Neither side arrives at this semi-final in commanding form. England have picked up seven points from their last three, but the narrow wins over DR Congo and Mexico and a draw with Norway suggest defensive fragility and a reliance on individual moments rather than systemic dominance. Argentina mirror that uncertainty almost perfectly — two draws bookending a chaotic 3-2 win over Egypt indicates Scaloni's side are not the imperious unit they were in Qatar 2022. Both teams are winning and drawing their way to this stage rather than blowing opponents away, which sets up a tight, attritional contest."
+            },
+            {
+              "heading": "Tactical Battle: Discipline vs Creativity",
+              "body": "England under their current setup tend to sit in a compact mid-block and exploit transitions, which historically suits them against possession-heavy sides like Argentina. Scaloni's team will look to dominate the ball through the thirds and use movement in behind to exploit the space England leave when they push wingbacks forward. The key tactical question is whether England can limit the angles into Argentina's second-line runners — if they can compress the central channel, Argentina are forced wide where they are considerably less threatening. England's set-piece delivery remains a genuine weapon at a tournament level that Argentina's aerial defense has historically been vulnerable to."
+            },
+            {
+              "heading": "The Atlanta Heat Factor and Big-Game Nerves",
+              "body": "A 3pm local kickoff in Atlanta in mid-July introduces a significant physical attrition dimension. The heat and humidity will test both squads' depth and conditioning, likely slowing the game as it progresses and favoring a more direct, less elaborate style of play. This tends to benefit England more than Argentina, whose intricate build-up play becomes harder to sustain in energy-sapping conditions. Expect a cautious opening 45 minutes with both sides reluctant to commit men forward, with the game potentially decided by a single moment of quality — a dead-ball situation, a counter-attack, or an individual error under pressure in the second half."
+            }
+          ],
+          "prediction": {
+            "home": 1,
+            "away": 1
+          },
+          "winnerConfidence": 42,
+          "scoreConfidence": 14,
+          "confidenceNote": "A draw outcome is itself only marginally favored in a coin-flip match between two sides of near-identical recent form, and pinning down the exact scoreline in a tight semi-final with so many variables — penalties, red cards, late drama — drops precision dramatically.",
+          "goingAgainstMarket": true,
+          "againstMarketReason": "The market tends to price Argentina as favorites in any England-Argentina fixture on the weight of historical prestige and individual quality at the top end, but Argentina's recent form — two draws in three including against Cape Verde and Switzerland — suggests they are not functioning at elite efficiency right now. England's defensive structure in big knockout games has historically neutralized Argentina's creative threats, and the Atlanta conditions actively undermine the fluid positional play Argentina rely on. The market is likely overweighting Argentina's reputation and underweighting England's capacity to grind out a draw and win on penalties, which is the realistic pathway here.",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 2,
+                "away": 1
+              },
+              "likelihood": "England set-piece win",
+              "reasoning": "If England convert one of their dead-ball opportunities in the second half and Argentina's ability to equalize is blunted by fatigue in the Atlanta heat, England could steal this in normal time. England scoring first and then parking the bus is a historically plausible scenario they have executed at major tournaments."
+            },
+            {
+              "prediction": {
+                "home": 0,
+                "away": 1
+              },
+              "likelihood": "Argentina clinical counter",
+              "reasoning": "If England commit too aggressively in the second half chasing the game or trying to avoid extra time, Argentina's pace and quality on the break — the one area where their form data shows genuine cutting edge — could punish England for a 0-1 defeat. Argentina's 3-2 wins and tactical flexibility in transition suggest they can be lethal when given space."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 34,
+        "day": 35,
         "totalDays": 39
       }
     }
