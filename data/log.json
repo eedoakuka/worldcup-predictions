@@ -2067,9 +2067,16 @@
               "reasoning": "If England commit too aggressively in the second half chasing the game or trying to avoid extra time, Argentina's pace and quality on the break — the one area where their form data shows genuine cutting edge — could punish England for a 0-1 defeat. Argentina's 3-2 wins and tactical flexibility in transition suggest they can be lethal when given space."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 1,
+            "away": 2,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted a draw and England progressing, but Argentina edged it 2-1, so I got the result wrong. My core assumption that both sides were evenly matched and that the game would be decided by a single moment proved partially right — it was that kind of tight, low-scoring contest — but I underestimated Argentina's ability to find a decisive second goal, likely because I over-weighted the heat and physical attrition as a leveler that would suppress their creative quality late in the game. The defensive fragility I flagged in England did materialize, and ironically my own reasoning pointed toward Argentina's second-line runners exploiting space behind England's wingbacks, which is exactly the kind of mechanism that tends to produce winning goals in tight games — I just didn't follow that logic through to its conclusion in the prediction itself."
+          }
         }
       ],
       "tournamentContext": {
