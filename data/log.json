@@ -2083,6 +2083,76 @@
         "day": 35,
         "totalDays": 39
       }
+    },
+    {
+      "date": "2026-07-18",
+      "matches": [
+        {
+          "id": "fran-engl-2026-07-18",
+          "kickoff": "17:00 UTC-4",
+          "venue": "Miami (Miami Gardens)",
+          "round": "Match for third place",
+          "home": {
+            "name": "France",
+            "code": "FRA"
+          },
+          "away": {
+            "name": "England",
+            "code": "ENG"
+          },
+          "homeForm": "W 1-0 vs Paraguay; W 2-0 vs Morocco; L 0-2 vs Spain",
+          "awayForm": "W 3-2 vs Mexico; D 1-1 vs Norway; L 1-2 vs Argentina",
+          "analysis": [
+            {
+              "heading": "Third-Place Motivation Gap",
+              "body": "Third-place matches are notoriously difficult to read because neither side truly wants to be there — both France and England arrived at this tournament expecting a final appearance. France lost a competitive 0-2 to Spain in the semifinal, which will sting a proud squad, and historically Les Bleus have responded poorly to consolation fixtures (they lost the 2002 third-place match and famously disengaged in 2014's group stages after early exits). England, meanwhile, were beaten 1-2 by Argentina in their semifinal, a result that will feel deeply deflating given their recent history of near-misses. The team that channels disappointment into a performance rather than going through the motions will win this match, and France's deeper squad rotation options give Deschamps more tools to field a motivated starting XI."
+            },
+            {
+              "heading": "Tactical Matchup and Form Trajectory",
+              "body": "France's tournament form is the stronger of the two: back-to-back clean sheets against Paraguay and Morocco before a respectable defeat to the eventual finalists Spain suggests a well-organised defensive structure. England's 3-2 win over Mexico was unconvincing at the back, and the 1-1 draw with Norway raised questions about their creativity in midfield. France's pressing intensity and directness in transition — exploiting the space England's high defensive line tends to leave — is a genuine tactical edge. England's best moments in this tournament have come through set-pieces and individual brilliance rather than systemic dominance, and against a French defensive block that conceded nothing in two of three games, those moments may be sparse."
+            },
+            {
+              "heading": "Key Individual Battles and Set-Piece Threat",
+              "body": "England carry a real aerial and dead-ball threat that cannot be dismissed — their goal against Argentina came from a set-piece sequence, and against a French side that can be vulnerable from corners when their concentration lapses, that route to goal is live. France's attacking threat depends heavily on transition and the ability of their forwards to exploit space, with England's full-backs potentially exposed if they commit forward. The midfield battle is critical: if France's central players can control possession and tempo, England will struggle to create the volume of chances their xG numbers require. Expect France to shade possession, limit England to sporadic attacks, and nick the game through a moment of individual quality."
+            }
+          ],
+          "prediction": {
+            "home": 2,
+            "away": 1
+          },
+          "winnerConfidence": 58,
+          "scoreConfidence": 17,
+          "confidenceNote": "While France are marginally the more convincing side in this tournament and the tactical edge is real, third-place matches are volatile, both teams have incentive to protect reputations over results, and the exact scoreline in any 90-minute contest has enormous variance regardless of the likely winner.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Low-stakes draw",
+              "reasoning": "If both camps send out heavily rotated squads and neither side presses with genuine urgency, a tepid, low-energy draw decided by a late penalty or set-piece scramble is a realistic consolation-match scenario. Third-place fixtures have historically drifted to draws at a higher rate than regular knockout rounds."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 2
+              },
+              "likelihood": "England upset win",
+              "reasoning": "If England's set-piece delivery clicks and France's defensive discipline drops — particularly if Deschamps rests key centre-backs — England could nick it through aerial dominance and a counter-attacking goal. A France red card or a moment of individual defensive error would swing the game entirely in England's favour."
+            }
+          ],
+          "status": "upcoming",
+          "result": null,
+          "verdict": null
+        }
+      ],
+      "tournamentContext": {
+        "day": 38,
+        "totalDays": 39
+      }
     }
   ]
 }
