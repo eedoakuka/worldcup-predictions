@@ -2144,13 +2144,90 @@
               "reasoning": "If England's set-piece delivery clicks and France's defensive discipline drops — particularly if Deschamps rests key centre-backs — England could nick it through aerial dominance and a counter-attacking goal. A France red card or a moment of individual defensive error would swing the game entirely in England's favour."
             }
           ],
+          "status": "final",
+          "result": {
+            "home": 4,
+            "away": 6,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted France to win narrowly through defensive organisation and transitional quality, but the actual 4-6 scoreline exposes almost every foundational assumption I made as wrong. The core premise — that France's defensive structure would contain England to sporadic attacks — collapsed completely, and my belief that England's creativity was limited to set-pieces and individual moments was flatly contradicted by a side that scored six. I also leaned heavily on France's motivation and squad depth as advantages, but a 10-goal thriller suggests neither side was \"going through the motions\" — if anything, the defensive discipline I credited to both teams simply wasn't there. The one thing I flagged correctly was England's set-piece and individual threat, but I then discounted it as insufficient to win the match, which turned out to be the key analytical failure."
+          }
+        }
+      ],
+      "tournamentContext": {
+        "day": 38,
+        "totalDays": 39
+      }
+    },
+    {
+      "date": "2026-07-19",
+      "matches": [
+        {
+          "id": "spai-arge-2026-07-19",
+          "kickoff": "15:00 UTC-4",
+          "venue": "New York/New Jersey (East Rutherford)",
+          "round": "Final",
+          "home": {
+            "name": "Spain",
+            "code": "SPA"
+          },
+          "away": {
+            "name": "Argentina",
+            "code": "ARG"
+          },
+          "homeForm": "W 1-0 vs Portugal; W 2-1 vs Belgium; W 2-0 vs France",
+          "awayForm": "W 3-2 vs Egypt; D 1-1 vs Switzerland; W 2-1 vs England",
+          "analysis": [
+            {
+              "heading": "Spain's Defensive Cohesion",
+              "body": "Spain have been virtually impenetrable in their knockout run, conceding just one goal across three matches against Portugal, Belgium, and France — three of Europe's elite sides. Their high defensive line, coordinated pressing triggers, and ball-retention philosophy mean Argentina will face sustained periods without the ball, something that tested them against Switzerland where they dropped points. Spain's structure under their current setup suffocates transitions, which is precisely the channel Argentina rely on through their rapid counter-attacking play."
+            },
+            {
+              "heading": "Argentina's Resilience Under Pressure",
+              "body": "Argentina have shown they can grind results — surviving a 1-1 draw with Switzerland and edging England 2-1 in what was likely a tense knockout encounter. Their ability to absorb pressure and find moments of individual brilliance in tight games is their defining trait. However, their defensive exposure against Egypt (conceding twice in a 3-2 win) raises concerns about Spain's ability to create and convert in transition. Spain's midfield press will be a genuine problem for Argentina's build-up, and the 3-2 scoreline against Egypt suggests defensive frailties that France and Belgium did not have."
+            },
+            {
+              "heading": "Tactical Battle and Venue Factor",
+              "body": "The MetLife Stadium turf and July heat in New Jersey slightly favor a slower, more possession-based game — territory where Spain are the world's most comfortable inhabitants. Argentina will look to sit compact, hit on the break, and leverage set-piece deliveries. Spain's patient build will aim to overload Argentina's midfield and find pockets between the lines for their creative players. Given Spain's superior defensive record in this tournament and their ability to control tempo against elite opposition, they are the slight tactical favorites, though Argentina's big-game mentality and World Cup pedigree make this genuinely 50-50."
+            }
+          ],
+          "prediction": {
+            "home": 1,
+            "away": 0
+          },
+          "winnerConfidence": 52,
+          "scoreConfidence": 16,
+          "confidenceNote": "Even a marginal lean toward Spain winning still leaves this as near coin-flip territory given Argentina's class, and the exact scoreline in a World Cup Final between two elite defensive sides is extraordinarily hard to pin down.",
+          "goingAgainstMarket": false,
+          "againstMarketReason": "",
+          "market": null,
+          "alternates": [
+            {
+              "prediction": {
+                "home": 0,
+                "away": 1
+              },
+              "likelihood": "Different winner",
+              "reasoning": "If Argentina's counter-attacking structure clicks and they absorb Spain's pressure effectively — as they did for long stretches against England — a single clinical breakaway goal could clinch it for the reigning world champions, who know how to win finals."
+            },
+            {
+              "prediction": {
+                "home": 1,
+                "away": 1
+              },
+              "likelihood": "Draw scenario",
+              "reasoning": "A 1-1 draw after 90 minutes is highly plausible given both teams' capacity to grind and the high stakes; if the match goes to extra time or penalties, the dynamics shift entirely and Argentina's knockout-stage resilience becomes an even bigger factor."
+            }
+          ],
           "status": "upcoming",
           "result": null,
           "verdict": null
         }
       ],
       "tournamentContext": {
-        "day": 38,
+        "day": 39,
         "totalDays": 39
       }
     }
