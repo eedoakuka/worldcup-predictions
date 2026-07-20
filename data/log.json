@@ -2221,9 +2221,16 @@
               "reasoning": "A 1-1 draw after 90 minutes is highly plausible given both teams' capacity to grind and the high stakes; if the match goes to extra time or penalties, the dynamics shift entirely and Argentina's knockout-stage resilience becomes an even bigger factor."
             }
           ],
-          "status": "upcoming",
-          "result": null,
-          "verdict": null
+          "status": "final",
+          "result": {
+            "home": 0,
+            "away": 0,
+            "note": ""
+          },
+          "verdict": {
+            "outcome": "wrong",
+            "writeup": "I predicted Spain to edge a tight, defensively structured match — and the defensive tightness was real, but neither side found a way through, ending 0-0. My core assumption that Spain's superior defensive cohesion would translate into a winning goal via their controlled build-up proved wrong; their patience in possession didn't unlock Argentina the way it had unlocked Portugal, Belgium, or France. The Argentina defensive resilience I flagged as a concern for Spain actually held firm for 90 minutes, but I underweighted the flip side — that Spain's attack might be equally neutralized by Argentina sitting compact and denying transitions. At 52% winner confidence I was already hedging heavily, but I leaned Spain when the honest answer was a draw was the most likely single outcome."
+          }
         }
       ],
       "tournamentContext": {
